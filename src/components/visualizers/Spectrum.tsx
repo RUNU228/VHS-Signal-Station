@@ -10,7 +10,7 @@ import {
   SPECTRUM_MAX_FREQUENCY,
   SPECTRUM_MIN_FREQUENCY,
 } from "@/lib/audio/frequency";
-import { signalColor } from "@/lib/visualization/canvas";
+import { smoothEnergy, smoothSignalColor } from "@/lib/visualization/canvas";
 import type { AudioAnalyserBundle } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
@@ -26,6 +26,7 @@ export function Spectrum({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const peaksRef = useRef(new Float32Array(BAR_COUNT));
+  const colorEnergyRef = useRef(0);
   useCanvasSurface(canvasRef);
 
   const draw = useCallback(() => {
@@ -46,6 +47,9 @@ export function Spectrum({
 
     const gap = Math.max(2, width * 0.004);
     const barWidth = Math.max(1, width / BAR_COUNT - gap);
+    const levels = new Float32Array(BAR_COUNT);
+    let visibleBarCount = 0;
+    let meanEnergy = 0;
     for (let bar = 0; bar < BAR_COUNT; bar += 1) {
       const position = bar / (BAR_COUNT - 1);
       const frequency = Math.exp(
@@ -66,18 +70,53 @@ export function Spectrum({
         actualFrequency > SPECTRUM_MAX_FREQUENCY
       ) continue;
       const level = data[Math.min(data.length - 1, estimatedBin)] / 255;
+      levels[bar] = level;
+      meanEnergy += level;
+      visibleBarCount += 1;
+    }
+    meanEnergy /= Math.max(1, visibleBarCount);
+    colorEnergyRef.current = smoothEnergy(colorEnergyRef.current, meanEnergy);
+
+    for (let bar = 0; bar < BAR_COUNT; bar += 1) {
+      const position = bar / (BAR_COUNT - 1);
+      const frequency = Math.exp(
+        Math.log(SPECTRUM_MIN_FREQUENCY) +
+          position *
+            (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
+      );
+      const estimatedBin = Math.round(
+        (frequency * analyser.fftSize) / bundle.context.sampleRate,
+      );
+      const actualFrequency = frequencyForBin(
+        estimatedBin,
+        bundle.context.sampleRate,
+        analyser.fftSize,
+      );
+      if (
+        actualFrequency < SPECTRUM_MIN_FREQUENCY ||
+        actualFrequency > SPECTRUM_MAX_FREQUENCY
+      ) continue;
+      const level = levels[bar];
       const x = logFrequencyPosition(
         frequency,
         SPECTRUM_MIN_FREQUENCY,
         SPECTRUM_MAX_FREQUENCY,
       ) * (width - barWidth);
       const barHeight = Math.max(1, level * height * 0.88);
-      context.fillStyle = signalColor(level, 0.9);
+      const colorLevel = Math.min(
+        1,
+        level * 0.72 + colorEnergyRef.current * 0.28,
+      );
+      context.fillStyle = smoothSignalColor(colorLevel, 0.9);
       context.fillRect(x, height - barHeight, barWidth, barHeight);
 
       const peak = Math.max(level, peaksRef.current[bar] - 0.009);
       peaksRef.current[bar] = peak;
-      context.fillStyle = signalColor(peak, 0.95);
+      const peakColorLevel = Math.min(
+        1,
+        peak * 0.72 + colorEnergyRef.current * 0.28,
+      );
+      context.fillStyle = smoothSignalColor(peakColorLevel, 0.95);
       context.fillRect(x, height - peak * height * 0.88 - 3, barWidth, 2);
     }
   }, [analysersRef]);

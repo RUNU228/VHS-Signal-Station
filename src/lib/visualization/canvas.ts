@@ -5,6 +5,17 @@ export function signalColor(level: number, alpha = 1): string {
   return `rgba(111, 145, 168, ${alpha})`;
 }
 
+export function smoothEnergy(
+  previous: number,
+  target: number,
+  attack = 0.18,
+  release = 0.06,
+): number {
+  const next = Math.min(Math.max(target, 0), 1);
+  const amount = next > previous ? attack : release;
+  return previous + (next - previous) * amount;
+}
+
 type Rgb = readonly [number, number, number];
 
 const SIGNAL_PALETTE = {
@@ -22,9 +33,11 @@ function interpolateRgb(
   end: Rgb,
   amount: number,
 ): string {
-  const red = Math.round(start[0] + (end[0] - start[0]) * amount);
-  const green = Math.round(start[1] + (end[1] - start[1]) * amount);
-  const blue = Math.round(start[2] + (end[2] - start[2]) * amount);
+  const formatChannel = (value: number) =>
+    Number.isInteger(value) ? String(value) : value.toFixed(2);
+  const red = formatChannel(start[0] + (end[0] - start[0]) * amount);
+  const green = formatChannel(start[1] + (end[1] - start[1]) * amount);
+  const blue = formatChannel(start[2] + (end[2] - start[2]) * amount);
 
   return `${red}, ${green}, ${blue}`;
 }

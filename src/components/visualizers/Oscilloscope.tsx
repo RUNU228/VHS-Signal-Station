@@ -4,7 +4,11 @@ import { useCallback, useRef, type MutableRefObject } from "react";
 
 import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
-import { drawScopeGrid, signalColor } from "@/lib/visualization/canvas";
+import {
+  drawScopeGrid,
+  smoothEnergy,
+  smoothSignalColor,
+} from "@/lib/visualization/canvas";
 import type { AudioAnalyserBundle } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
@@ -25,6 +29,7 @@ export function Oscilloscope({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const dataRef = useRef<Float32Array<ArrayBuffer> | null>(null);
+  const colorEnergyRef = useRef(0);
   useCanvasSurface(canvasRef);
 
   const draw = useCallback(() => {
@@ -48,8 +53,9 @@ export function Oscilloscope({
     for (let index = 0; index < data.length; index += 1) {
       peak = Math.max(peak, Math.abs(data[index]));
     }
-    context.strokeStyle = signalColor(peak, 0.96);
-    context.shadowColor = signalColor(peak, 0.7);
+    colorEnergyRef.current = smoothEnergy(colorEnergyRef.current, peak);
+    context.strokeStyle = smoothSignalColor(colorEnergyRef.current, 0.96);
+    context.shadowColor = smoothSignalColor(colorEnergyRef.current, 0.7);
     context.shadowBlur = 5;
     context.lineWidth = Math.max(1, width / 650);
     context.beginPath();
