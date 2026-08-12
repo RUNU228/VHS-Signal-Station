@@ -82,6 +82,9 @@ describe("AudioPlayer", () => {
     expect(screen.getByText("01:28 / 04:17")).toBeInTheDocument();
     expect(screen.getByText("QUEUE 01 / 01")).toBeInTheDocument();
     expect(screen.getByText("END OF QUEUE")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Mute output" })).toBeVisible();
+    expect(screen.getByRole("slider", { name: "Playback position" })).toBeVisible();
+    expect(screen.getByRole("slider", { name: "Output level" })).toBeVisible();
     fireEvent.click(screen.getByRole("button", { name: "Play" }));
     fireEvent.change(screen.getByRole("slider", { name: "Playback position" }), {
       target: { value: "120" },

@@ -82,6 +82,16 @@ describe("responsive station foundation", () => {
   });
 });
 
+describe("responsive player and track library", () => {
+  it("keeps player controls tappable and track rows shrink-safe", () => {
+    expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
+    expect(globalsCss).toMatch(/\.track-row\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
+    expect(globalsCss).toMatch(
+      /@media \(min-width: 761px\) and \(max-width: 1100px\)[\s\S]*\.player-grid\s*\{[^}]*repeat\(8, minmax\(0, 1fr\)\)/,
+    );
+  });
+});
+
 describe("responsive visualizer rack", () => {
   it("defines phone, tablet, and desktop visualizer arrangements", () => {
     expect(globalsCss).toMatch(/@media \(max-width: 760px\)[\s\S]*\.visualizer-rack\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
