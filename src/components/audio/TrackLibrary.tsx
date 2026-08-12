@@ -33,12 +33,14 @@ export function TrackLibrary({
         <ol className="track-list">
           {tracks.map((track, index) => {
             const selected = currentTrackIndex === index;
+            const playing = selected && isPlaying;
             return (
               <li key={track.id}>
                 <button
                   type="button"
                   className="track-row"
                   data-selected={selected}
+                  data-playing={playing}
                   aria-current={selected ? "true" : undefined}
                   aria-label={`Select ${track.name}`}
                   onClick={() => onSelect(index)}
@@ -51,7 +53,7 @@ export function TrackLibrary({
                   </span>
                   <span className="track-duration">{formatTime(track.duration)}</span>
                   <span className="track-state">
-                    {selected ? (isPlaying ? "PLAYING" : "SELECTED") : "READY"}
+                    {selected ? (playing ? "PLAYING" : "SELECTED") : "READY"}
                   </span>
                 </button>
               </li>

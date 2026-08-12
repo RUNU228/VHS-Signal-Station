@@ -82,7 +82,17 @@ describe("AudioPlayer", () => {
     expect(screen.getByText("01:28 / 04:17")).toBeInTheDocument();
     expect(screen.getByText("QUEUE 01 / 01")).toBeInTheDocument();
     expect(screen.getByText("END OF QUEUE")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Mute output" })).toBeVisible();
+    for (const [name, label] of [
+      ["Previous track", "PREVIOUS"],
+      ["Play", "PLAY"],
+      ["Next track", "NEXT"],
+      ["Mute output", "MUTE"],
+    ]) {
+      const control = screen.getByRole("button", { name });
+      expect(control).toBeVisible();
+      expect(control).toHaveTextContent(label);
+    }
+    expect(screen.getByRole("button", { name: "Mute output" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("slider", { name: "Playback position" })).toBeVisible();
     expect(screen.getByRole("slider", { name: "Output level" })).toBeVisible();
     fireEvent.click(screen.getByRole("button", { name: "Play" }));
@@ -131,6 +141,8 @@ describe("TrackUploader and TrackLibrary", () => {
       />,
     );
     const row = screen.getByRole("button", { name: /select the return/i });
+    expect(row).toHaveAttribute("data-selected", "true");
+    expect(row).toHaveAttribute("data-playing", "true");
     expect(row).toHaveAttribute("aria-current", "true");
     expect(screen.getByText("PLAYING")).toBeInTheDocument();
     fireEvent.click(row);

@@ -166,6 +166,28 @@ describe("responsive player and track library", () => {
   });
 });
 
+describe("interactive control feedback", () => {
+  it("defines analog focus, pressed, and disabled button states", () => {
+    for (const selector of [":focus-visible", ":active:not(:disabled)", ":disabled"]) {
+      expect(globalsCss).toContain(selector);
+    }
+  });
+
+  it("shares analog feedback across each interactive control family", () => {
+    const controlFamilies = ":is(.hardware-button, .mute-button, .tape-loader button, .track-row, .system-message button)";
+    expect(globalsCss).toContain(`${controlFamilies} {`);
+    expect(globalsCss).toContain(`${controlFamilies}:focus-visible`);
+  });
+});
+
+describe("track feedback", () => {
+  it("defines distinct selected and playing track states", () => {
+    for (const selector of ['[data-selected="true"]', '[data-playing="true"]']) {
+      expect(globalsCss).toContain(selector);
+    }
+  });
+});
+
 describe("responsive visualizer rack", () => {
   it("defines phone, tablet, and desktop visualizer arrangements", () => {
     expect(globalsCss).toMatch(/@media \(max-width: 760px\)[\s\S]*\.visualizer-rack\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
