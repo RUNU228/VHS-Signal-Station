@@ -186,6 +186,11 @@ describe("track feedback", () => {
       expect(globalsCss).toContain(selector);
     }
   });
+
+  it("reserves the track scan animation for playback", () => {
+    expect(globalsCss).not.toContain('.track-row[data-selected="true"]::after { animation: selected-scan');
+    expect(globalsCss).toContain('.track-row[data-playing="true"]::after { animation: selected-scan');
+  });
 });
 
 describe("responsive visualizer rack", () => {

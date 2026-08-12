@@ -670,8 +670,8 @@ input:focus-visible {
 .track-row::after { position: absolute; top: 0; bottom: 0; left: -30%; width: 18%; background: linear-gradient(90deg, transparent, rgba(230,215,163,.05), transparent); content: ""; }
 .track-row:hover { border-color: #565b58; color: #e2ddcb; background: linear-gradient(90deg, #202222, #141616); }
 .track-row[data-selected="true"] { border-color: #715842; color: #e5ddc5; background: linear-gradient(90deg, rgba(168,77,67,.11), #171815 25%, #101111); box-shadow: inset 3px 0 0 var(--amber); }
-.track-row[data-selected="true"]::after { animation: selected-scan 3.4s linear infinite; }
 .track-row[data-playing="true"] { border-color: color-mix(in srgb, var(--red) 58%, var(--amber)); box-shadow: inset 3px 0 0 var(--red), 0 0 12px rgba(168, 77, 67, .12); }
+.track-row[data-playing="true"]::after { animation: selected-scan 3.4s linear infinite; }
 .track-index { color: var(--amber); font-family: var(--font-display); font-size: 22px; }
 .cassette-mark { position: relative; height: 38px; border: 4px solid #343736; background: #0a0b0b; }
 .cassette-mark::before { position: absolute; right: 8px; bottom: 6px; left: 8px; height: 2px; background: #31251f; content: ""; }
