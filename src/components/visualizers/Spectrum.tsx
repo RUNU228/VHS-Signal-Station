@@ -11,9 +11,9 @@ import {
   SPECTRUM_MIN_FREQUENCY,
 } from "@/lib/audio/frequency";
 import {
+  energySignalColor,
   signalGlow,
   smoothEnergy,
-  smoothSignalColor,
 } from "@/lib/visualization/canvas";
 import type { AudioAnalyserBundle } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
@@ -112,7 +112,7 @@ export function Spectrum({
         1,
         level * 0.72 + colorEnergyRef.current * 0.28,
       );
-      context.fillStyle = smoothSignalColor(colorLevel, glow.barAlpha);
+      context.fillStyle = energySignalColor(colorLevel, glow.barAlpha);
       context.fillRect(x, height - barHeight, barWidth, barHeight);
 
       const peak = Math.max(level, peaksRef.current[bar] - 0.009);
@@ -121,7 +121,7 @@ export function Spectrum({
         1,
         peak * 0.72 + colorEnergyRef.current * 0.28,
       );
-      context.fillStyle = smoothSignalColor(peakColorLevel, glow.peakAlpha);
+      context.fillStyle = energySignalColor(peakColorLevel, glow.peakAlpha);
       context.fillRect(x, height - peak * height * 0.88 - 3, barWidth, 2);
     }
   }, [analysersRef]);

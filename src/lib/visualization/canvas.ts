@@ -36,22 +36,38 @@ const SIGNAL_PALETTE = {
   high: [168, 77, 67],
 } as const satisfies Record<string, Rgb>;
 
+const ENERGY_SIGNAL_PALETTE = {
+  low: [73, 97, 112],
+  amber: SIGNAL_PALETTE.middle,
+  red: SIGNAL_PALETTE.high,
+  phosphor: [230, 215, 163],
+} as const satisfies Record<string, Rgb>;
+
 function smoothstep(value: number): number {
   return value * value * (3 - 2 * value);
 }
 
-function interpolateRgb(
+function blendRgb(
   start: Rgb,
   end: Rgb,
   amount: number,
-): string {
+): Rgb {
+  return [
+    start[0] + (end[0] - start[0]) * amount,
+    start[1] + (end[1] - start[1]) * amount,
+    start[2] + (end[2] - start[2]) * amount,
+  ];
+}
+
+function formatRgb([red, green, blue]: Rgb): string {
   const formatChannel = (value: number) =>
     Number.isInteger(value) ? String(value) : value.toFixed(2);
-  const red = formatChannel(start[0] + (end[0] - start[0]) * amount);
-  const green = formatChannel(start[1] + (end[1] - start[1]) * amount);
-  const blue = formatChannel(start[2] + (end[2] - start[2]) * amount);
 
   return `${red}, ${green}, ${blue}`;
+}
+
+function interpolateRgb(start: Rgb, end: Rgb, amount: number): string {
+  return formatRgb(blendRgb(start, end, amount));
 }
 
 export function smoothSignalColor(level: number, alpha = 1): string {
@@ -71,6 +87,30 @@ export function smoothSignalColor(level: number, alpha = 1): string {
   const localValue = value <= 0.5 ? value * 2 : (value - 0.5) * 2;
 
   return `rgba(${interpolateRgb(start, end, smoothstep(localValue))}, ${opacity})`;
+}
+
+export function energySignalColor(level: number, alpha = 1): string {
+  const value = Math.min(Math.max(level, 0), 1);
+  const opacity = Math.min(Math.max(alpha, 0), 1);
+  let color: Rgb;
+
+  if (value <= 0.5) {
+    color = blendRgb(
+      ENERGY_SIGNAL_PALETTE.low,
+      ENERGY_SIGNAL_PALETTE.amber,
+      smoothstep(value * 2),
+    );
+  } else {
+    const transition = smoothstep((value - 0.5) * 2);
+    const redAccent = blendRgb(
+      ENERGY_SIGNAL_PALETTE.amber,
+      ENERGY_SIGNAL_PALETTE.red,
+      transition,
+    );
+    color = blendRgb(redAccent, ENERGY_SIGNAL_PALETTE.phosphor, transition);
+  }
+
+  return `rgba(${formatRgb(color)}, ${opacity})`;
 }
 
 export function drawScopeGrid(

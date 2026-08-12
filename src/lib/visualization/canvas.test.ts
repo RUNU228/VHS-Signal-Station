@@ -1,5 +1,41 @@
 import { describe, expect, it } from "vitest";
-import { signalGlow, smoothEnergy, smoothSignalColor } from "./canvas";
+import {
+  energySignalColor,
+  signalGlow,
+  smoothEnergy,
+  smoothSignalColor,
+} from "./canvas";
+
+const CANVAS_BACKGROUND = [5, 7, 7] as const;
+
+function parseRgba(color: string): [number, number, number, number] {
+  const channels = color.match(/[\d.]+/g)?.map(Number);
+  if (!channels || channels.length !== 4) {
+    throw new Error(`Expected an rgba color, received ${color}`);
+  }
+  return channels as [number, number, number, number];
+}
+
+function linearizeSrgb(value: number): number {
+  const normalized = value / 255;
+  return normalized <= 0.04045
+    ? normalized / 12.92
+    : ((normalized + 0.055) / 1.055) ** 2.4;
+}
+
+function compositedRelativeLuminance(color: string): number {
+  const [red, green, blue, alpha] = parseRgba(color);
+  const composite = [red, green, blue].map(
+    (channel, index) => channel * alpha + CANVAS_BACKGROUND[index] * (1 - alpha),
+  );
+  const [compositeRed, compositeGreen, compositeBlue] = composite.map(linearizeSrgb);
+
+  return (
+    compositeRed * 0.2126 +
+    compositeGreen * 0.7152 +
+    compositeBlue * 0.0722
+  );
+}
 
 describe("smoothEnergy", () => {
   it("uses faster attack and slower release for visual energy", () => {
@@ -41,6 +77,43 @@ describe("signalGlow", () => {
     expect(lower.strokeAlpha).toBeLessThan(higher.strokeAlpha);
     expect(lower.shadowAlpha).toBeLessThan(higher.shadowAlpha);
     expect(lower.shadowBlur).toBeLessThan(higher.shadowBlur);
+  });
+});
+
+describe("energySignalColor", () => {
+  it("increases composited Spectrum peak luminance from low to high energy", () => {
+    const luminance = [0, 0.5, 1].map((level) =>
+      compositedRelativeLuminance(
+        energySignalColor(level, signalGlow(level).peakAlpha),
+      ),
+    );
+
+    expect(luminance[0]).toBeLessThan(luminance[1]);
+    expect(luminance[1]).toBeLessThan(luminance[2]);
+  });
+
+  it("increases composited Oscilloscope stroke luminance from low to high energy", () => {
+    const luminance = [0, 0.5, 1].map((level) =>
+      compositedRelativeLuminance(
+        energySignalColor(level, signalGlow(level).strokeAlpha),
+      ),
+    );
+
+    expect(luminance[0]).toBeLessThan(luminance[1]);
+    expect(luminance[1]).toBeLessThan(luminance[2]);
+  });
+
+  it("keeps adjacent energy colors continuous and clamps inputs", () => {
+    const lower = parseRgba(energySignalColor(0.49, 0.85));
+    const higher = parseRgba(energySignalColor(0.51, 0.85));
+
+    for (let index = 0; index < 3; index += 1) {
+      expect(Math.abs(lower[index] - higher[index])).toBeLessThan(10);
+    }
+    expect(energySignalColor(-1, 0.7)).toBe(energySignalColor(0, 0.7));
+    expect(energySignalColor(2, 0.7)).toBe(energySignalColor(1, 0.7));
+    expect(parseRgba(energySignalColor(0.5, -1))[3]).toBe(0);
+    expect(parseRgba(energySignalColor(0.5, 2))[3]).toBe(1);
   });
 });
 
