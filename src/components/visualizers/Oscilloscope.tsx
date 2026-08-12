@@ -6,6 +6,7 @@ import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
 import {
   drawScopeGrid,
+  signalGlow,
   smoothEnergy,
   smoothSignalColor,
 } from "@/lib/visualization/canvas";
@@ -54,9 +55,10 @@ export function Oscilloscope({
       peak = Math.max(peak, Math.abs(data[index]));
     }
     colorEnergyRef.current = smoothEnergy(colorEnergyRef.current, peak);
-    context.strokeStyle = smoothSignalColor(colorEnergyRef.current, 0.96);
-    context.shadowColor = smoothSignalColor(colorEnergyRef.current, 0.7);
-    context.shadowBlur = 5;
+    const glow = signalGlow(colorEnergyRef.current);
+    context.strokeStyle = smoothSignalColor(colorEnergyRef.current, glow.strokeAlpha);
+    context.shadowColor = smoothSignalColor(colorEnergyRef.current, glow.shadowAlpha);
+    context.shadowBlur = glow.shadowBlur;
     context.lineWidth = Math.max(1, width / 650);
     context.beginPath();
     const visible = data.length - start;

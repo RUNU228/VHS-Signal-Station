@@ -16,6 +16,18 @@ export function smoothEnergy(
   return previous + (next - previous) * amount;
 }
 
+export function signalGlow(level: number) {
+  const value = Math.min(Math.max(level, 0), 1);
+
+  return {
+    barAlpha: 0.5 + value * 0.4,
+    peakAlpha: 0.7 + value * 0.25,
+    strokeAlpha: 0.72 + value * 0.24,
+    shadowAlpha: 0.2 + value * 0.5,
+    shadowBlur: 1 + value * 4,
+  };
+}
+
 type Rgb = readonly [number, number, number];
 
 const SIGNAL_PALETTE = {
