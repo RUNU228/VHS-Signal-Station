@@ -80,7 +80,6 @@ export function Spectrum({
     }
     meanEnergy /= Math.max(1, visibleBarCount);
     colorEnergyRef.current = smoothEnergy(colorEnergyRef.current, meanEnergy);
-    const glow = signalGlow(colorEnergyRef.current);
 
     for (let bar = 0; bar < BAR_COUNT; bar += 1) {
       const position = bar / (BAR_COUNT - 1);
@@ -112,7 +111,10 @@ export function Spectrum({
         1,
         level * 0.72 + colorEnergyRef.current * 0.28,
       );
-      context.fillStyle = energySignalColor(colorLevel, glow.barAlpha);
+      context.fillStyle = energySignalColor(
+        colorLevel,
+        signalGlow(colorLevel).barAlpha,
+      );
       context.fillRect(x, height - barHeight, barWidth, barHeight);
 
       const peak = Math.max(level, peaksRef.current[bar] - 0.009);
@@ -121,7 +123,10 @@ export function Spectrum({
         1,
         peak * 0.72 + colorEnergyRef.current * 0.28,
       );
-      context.fillStyle = energySignalColor(peakColorLevel, glow.peakAlpha);
+      context.fillStyle = energySignalColor(
+        peakColorLevel,
+        signalGlow(peakColorLevel).peakAlpha,
+      );
       context.fillRect(x, height - peak * height * 0.88 - 3, barWidth, 2);
     }
   }, [analysersRef]);

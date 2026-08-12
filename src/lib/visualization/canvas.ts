@@ -39,7 +39,7 @@ const SIGNAL_PALETTE = {
 const ENERGY_SIGNAL_PALETTE = {
   low: [73, 97, 112],
   amber: SIGNAL_PALETTE.middle,
-  red: SIGNAL_PALETTE.high,
+  redOrange: [228, 166, 90],
   phosphor: [230, 215, 163],
 } as const satisfies Record<string, Rgb>;
 
@@ -63,7 +63,7 @@ function formatRgb([red, green, blue]: Rgb): string {
   const formatChannel = (value: number) =>
     Number.isInteger(value) ? String(value) : value.toFixed(2);
 
-  return `${red}, ${green}, ${blue}`;
+  return `${formatChannel(red)}, ${formatChannel(green)}, ${formatChannel(blue)}`;
 }
 
 function interpolateRgb(start: Rgb, end: Rgb, amount: number): string {
@@ -100,14 +100,18 @@ export function energySignalColor(level: number, alpha = 1): string {
       ENERGY_SIGNAL_PALETTE.amber,
       smoothstep(value * 2),
     );
-  } else {
-    const transition = smoothstep((value - 0.5) * 2);
-    const redAccent = blendRgb(
+  } else if (value <= 0.75) {
+    color = blendRgb(
       ENERGY_SIGNAL_PALETTE.amber,
-      ENERGY_SIGNAL_PALETTE.red,
-      transition,
+      ENERGY_SIGNAL_PALETTE.redOrange,
+      smoothstep((value - 0.5) * 4),
     );
-    color = blendRgb(redAccent, ENERGY_SIGNAL_PALETTE.phosphor, transition);
+  } else {
+    color = blendRgb(
+      ENERGY_SIGNAL_PALETTE.redOrange,
+      ENERGY_SIGNAL_PALETTE.phosphor,
+      smoothstep((value - 0.75) * 4),
+    );
   }
 
   return `rgba(${formatRgb(color)}, ${opacity})`;

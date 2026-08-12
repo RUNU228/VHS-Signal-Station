@@ -37,6 +37,19 @@ function compositedRelativeLuminance(color: string): number {
   );
 }
 
+function expectNondecreasingLuminance(alphaForLevel: (level: number) => number) {
+  let previous = -Infinity;
+
+  for (let sample = 0; sample <= 100; sample += 1) {
+    const level = sample / 100;
+    const luminance = compositedRelativeLuminance(
+      energySignalColor(level, alphaForLevel(level)),
+    );
+    expect(luminance).toBeGreaterThanOrEqual(previous - 1e-10);
+    previous = luminance;
+  }
+}
+
 describe("smoothEnergy", () => {
   it("uses faster attack and slower release for visual energy", () => {
     expect(smoothEnergy(0, 1)).toBeCloseTo(0.18);
@@ -81,15 +94,20 @@ describe("signalGlow", () => {
 });
 
 describe("energySignalColor", () => {
-  it("increases composited Spectrum peak luminance from low to high energy", () => {
-    const luminance = [0, 0.5, 1].map((level) =>
-      compositedRelativeLuminance(
-        energySignalColor(level, signalGlow(level).peakAlpha),
-      ),
-    );
+  it("increases composited Spectrum mark luminance from low to high energy", () => {
+    for (const alphaForLevel of [
+      (level: number) => signalGlow(level).barAlpha,
+      (level: number) => signalGlow(level).peakAlpha,
+    ]) {
+      const luminance = [0, 0.5, 1].map((level) =>
+        compositedRelativeLuminance(
+          energySignalColor(level, alphaForLevel(level)),
+        ),
+      );
 
-    expect(luminance[0]).toBeLessThan(luminance[1]);
-    expect(luminance[1]).toBeLessThan(luminance[2]);
+      expect(luminance[0]).toBeLessThan(luminance[1]);
+      expect(luminance[1]).toBeLessThan(luminance[2]);
+    }
   });
 
   it("increases composited Oscilloscope stroke luminance from low to high energy", () => {
@@ -103,6 +121,15 @@ describe("energySignalColor", () => {
     expect(luminance[1]).toBeLessThan(luminance[2]);
   });
 
+  it("does not dim Spectrum bars or peaks across 101 energy samples", () => {
+    expectNondecreasingLuminance((level) => signalGlow(level).barAlpha);
+    expectNondecreasingLuminance((level) => signalGlow(level).peakAlpha);
+  });
+
+  it("does not dim the Oscilloscope stroke across 101 energy samples", () => {
+    expectNondecreasingLuminance((level) => signalGlow(level).strokeAlpha);
+  });
+
   it("keeps adjacent energy colors continuous and clamps inputs", () => {
     const lower = parseRgba(energySignalColor(0.49, 0.85));
     const higher = parseRgba(energySignalColor(0.51, 0.85));
@@ -114,6 +141,12 @@ describe("energySignalColor", () => {
     expect(energySignalColor(2, 0.7)).toBe(energySignalColor(1, 0.7));
     expect(parseRgba(energySignalColor(0.5, -1))[3]).toBe(0);
     expect(parseRgba(energySignalColor(0.5, 2))[3]).toBe(1);
+  });
+
+  it("formats interpolated RGB channels to two decimal places", () => {
+    expect(energySignalColor(0.125, 0.5)).toMatch(
+      /^rgba\(\d+(?:\.\d{1,2})?, \d+(?:\.\d{1,2})?, \d+(?:\.\d{1,2})?, 0.5\)$/,
+    );
   });
 });
 
