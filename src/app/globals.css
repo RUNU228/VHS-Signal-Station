@@ -254,8 +254,9 @@ input:focus-visible {
 
 .visualizer-rack {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--panel-gap);
+  min-width: 0;
   padding: var(--panel-gap);
   border: 1px solid #343737;
   background: linear-gradient(90deg, #0a0b0b, #151616 40%, #101111 70%, #090a0a);
@@ -273,12 +274,6 @@ input:focus-visible {
     linear-gradient(180deg, #202222, #131515 23%, #0d0e0e 100%);
   box-shadow: var(--panel-shadow);
 }
-
-.module--spectrogram,
-.module--waveform { grid-column: span 3; }
-.module--stereometer,
-.module--oscilloscope,
-.module--spectrum { grid-column: span 2; }
 
 .panel-header {
   display: flex;
@@ -353,7 +348,8 @@ input:focus-visible {
 
 .crt-screen {
   position: relative;
-  min-height: 250px;
+  aspect-ratio: 16 / 10;
+  min-height: clamp(220px, 60vw, 300px);
   overflow: hidden;
   border: 1px solid #343b3e;
   background:
@@ -361,9 +357,6 @@ input:focus-visible {
     #050707;
   box-shadow: 0 0 0 3px #0a0b0b, 0 0 0 4px #292c2c, 0 18px 30px #000 inset, 0 0 38px rgba(111,145,168,.035) inset;
 }
-
-.module--spectrogram .crt-screen,
-.module--waveform .crt-screen { min-height: 300px; }
 
 .crt-screen::before,
 .crt-screen::after {
@@ -694,10 +687,29 @@ input:focus-visible {
 @keyframes reel-spin { to { rotate: 360deg; } }
 @keyframes selected-scan { from { left: -25%; } to { left: 112%; } }
 
-@media (max-width: 1120px) {
+@media (min-width: 761px) and (max-width: 1100px) {
   .visualizer-rack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .module--spectrogram, .module--waveform, .module--stereometer, .module--oscilloscope { grid-column: span 1; }
+  .module--spectrogram,
+  .module--waveform,
+  .module--stereometer,
+  .module--oscilloscope { grid-column: span 1; }
   .module--spectrum { grid-column: 1 / -1; }
+  .crt-screen { min-height: clamp(230px, 31vw, 340px); }
+}
+
+@media (min-width: 1101px) {
+  .visualizer-rack { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .module--spectrogram,
+  .module--waveform { grid-column: span 3; }
+  .module--stereometer,
+  .module--oscilloscope,
+  .module--spectrum { grid-column: span 2; }
+  .crt-screen { min-height: clamp(240px, 22vw, 360px); }
+  .module--spectrogram .crt-screen,
+  .module--waveform .crt-screen { aspect-ratio: 16 / 11; }
+}
+
+@media (max-width: 1120px) {
   .tape-bay { grid-column: 1 / -1; }
   .queue-display { grid-column: span 4; }
   .transport-controls { grid-column: span 8; }
@@ -711,9 +723,8 @@ input:focus-visible {
   .station-status { display: none; }
   .station-dateline span:nth-child(2) { display: none; }
   .rack-telemetry { display: none; }
-  .visualizer-rack { grid-template-columns: 1fr; }
+  .visualizer-rack { grid-template-columns: minmax(0, 1fr); }
   .module--spectrogram, .module--waveform, .module--stereometer, .module--oscilloscope, .module--spectrum { grid-column: 1; }
-  .crt-screen, .module--spectrogram .crt-screen, .module--waveform .crt-screen { min-height: 245px; }
   .panel-meta { max-width: 45%; }
   .tape-bay { grid-template-columns: 1fr; }
   .tape-window { min-height: 110px; }

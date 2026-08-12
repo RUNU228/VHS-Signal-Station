@@ -81,3 +81,12 @@ describe("responsive station foundation", () => {
     expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
   });
 });
+
+describe("responsive visualizer rack", () => {
+  it("defines phone, tablet, and desktop visualizer arrangements", () => {
+    expect(globalsCss).toMatch(/@media \(max-width: 760px\)[\s\S]*\.visualizer-rack\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+    expect(globalsCss).toMatch(/@media \(min-width: 761px\) and \(max-width: 1100px\)[\s\S]*\.visualizer-rack\s*\{[^}]*repeat\(2, minmax\(0, 1fr\)\)/);
+    expect(globalsCss).toMatch(/@media \(min-width: 1101px\)[\s\S]*\.visualizer-rack\s*\{[^}]*repeat\(6, minmax\(0, 1fr\)\)/);
+    expect(globalsCss).toMatch(/\.crt-screen\s*\{[^}]*aspect-ratio:/s);
+  });
+});
