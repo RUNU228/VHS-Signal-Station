@@ -701,7 +701,15 @@ input:focus-visible {
   .module--stereometer,
   .module--oscilloscope { grid-column: span 1; }
   .module--spectrum { grid-column: 1 / -1; }
-  .crt-screen { min-height: clamp(230px, 31vw, 340px); }
+  .crt-screen {
+    aspect-ratio: auto;
+    height: clamp(230px, 31vw, 340px);
+    min-height: 0;
+  }
+  .module--spectrum .crt-screen {
+    aspect-ratio: auto;
+    height: clamp(260px, 33vw, 340px);
+  }
 }
 
 @media (min-width: 1101px) {
@@ -714,6 +722,9 @@ input:focus-visible {
   .crt-screen { min-height: clamp(240px, 22vw, 360px); }
   .module--spectrogram .crt-screen,
   .module--waveform .crt-screen { aspect-ratio: 16 / 11; }
+  .module--stereometer .crt-screen,
+  .module--oscilloscope .crt-screen,
+  .module--spectrum .crt-screen { aspect-ratio: auto; }
 }
 
 @media (min-width: 761px) and (max-width: 1100px) {
@@ -744,6 +755,11 @@ input:focus-visible {
   .rack-telemetry { display: none; }
   .visualizer-rack { grid-template-columns: minmax(0, 1fr); }
   .module--spectrogram, .module--waveform, .module--stereometer, .module--oscilloscope, .module--spectrum { grid-column: 1; }
+  .crt-screen {
+    aspect-ratio: auto;
+    height: clamp(220px, 60vw, 300px);
+    min-height: 0;
+  }
   .panel-meta { max-width: 45%; }
   .tape-bay { grid-template-columns: 1fr; }
   .tape-window { min-height: 110px; }
@@ -766,6 +782,38 @@ input:focus-visible {
   .seek-readout { grid-template-columns: 1fr auto; }
   .seek-readout__end { grid-column: 1; text-align: left; }
   .track-row { gap: 8px; padding-inline: 10px; }
+}
+
+@media (max-width: 380px) {
+  .station-header { padding: 14px 12px; }
+  .station-brand h1 { font-size: clamp(20px, 7vw, 24px); }
+  .transport-controls { gap: 5px; }
+  .hardware-button { padding-inline: 4px; }
+  .panel-header { align-items: flex-start; }
+  .panel-meta { max-width: 46%; }
+}
+
+@media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px) {
+  :root { --section-gap: 28px; }
+  .crt-screen {
+    aspect-ratio: auto;
+    height: clamp(230px, 42vh, 300px);
+    min-height: 0;
+    max-height: none;
+  }
+}
+
+@media (min-width: 1920px) {
+  :root { --station-gutter: clamp(28px, 2vw, 48px); }
+  .station-shell { --station-max: 1800px; }
+  .station-brand h1 { font-size: clamp(38px, 2.4vw, 52px); }
+  .crt-screen {
+    aspect-ratio: auto;
+    height: clamp(360px, 22vw, 440px);
+    max-height: 440px;
+  }
+  .module--spectrogram .crt-screen,
+  .module--waveform .crt-screen { aspect-ratio: auto; }
 }
 
 .smooth-cursor {

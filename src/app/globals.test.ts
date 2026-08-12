@@ -74,18 +74,92 @@ describe("responsive station foundation", () => {
   it("uses fluid spacing, bounded width, and a 44px control target", () => {
     expect(globalsCss).toContain("--station-gutter: clamp(");
     expect(globalsCss).toContain("--control-target: 44px");
-    expect(globalsCss).toMatch(/\.station-shell\s*\{[^}]*width:\s*min\(100%/s);
-    expect(globalsCss).toMatch(/body\s*\{[^}]*overflow-x:\s*clip/s);
-    expect(globalsCss).toMatch(/\.visualizer-rack\s*\{[^}]*gap:\s*var\(--panel-gap\)/s);
-    expect(globalsCss).toMatch(/\.player-grid\s*\{[^}]*gap:\s*var\(--panel-gap\)/s);
-    expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
+    expect(globalsCss).toMatch(/\.station-shell\s*\{[^}]*width:\s*min\(100%/);
+    expect(globalsCss).toMatch(/body\s*\{[^}]*overflow-x:\s*clip/);
+    expect(globalsCss).toMatch(/\.visualizer-rack\s*\{[^}]*gap:\s*var\(--panel-gap\)/);
+    expect(globalsCss).toMatch(/\.player-grid\s*\{[^}]*gap:\s*var\(--panel-gap\)/);
+    expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/);
+  });
+
+  it("contains explicit small-phone, phone, tablet, desktop, and large-display policies", () => {
+    for (const query of [
+      "@media (max-width: 380px)",
+      "@media (max-width: 760px)",
+      "@media (min-width: 761px) and (max-width: 1100px)",
+      "@media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px)",
+      "@media (min-width: 1101px)",
+      "@media (min-width: 1920px)",
+    ]) {
+      expect(globalsCss).toContain(query);
+    }
+  });
+
+  it("keeps shallow and full-width tablet CRTs wide while bounding their height", () => {
+    const tabletCss = globalsCss.slice(
+      globalsCss.indexOf("@media (min-width: 761px) and (max-width: 1100px)"),
+      globalsCss.indexOf("@media (min-width: 1101px)"),
+    );
+    const shallowCss = globalsCss.slice(
+      globalsCss.indexOf(
+        "@media (orientation: landscape) and (max-height: 600px) and (max-width: 1100px)",
+      ),
+      globalsCss.indexOf("@media (min-width: 1920px)"),
+    );
+    expect(tabletCss).toMatch(
+      /\.module--spectrum \.crt-screen\s*\{[^}]*aspect-ratio:\s*auto[^}]*height:\s*clamp\(/,
+    );
+    expect(shallowCss).toMatch(
+      /\.crt-screen\s*\{[^}]*aspect-ratio:\s*auto[^}]*height:\s*clamp\(/,
+    );
+  });
+
+  it("keeps phone CRTs inside their panels while preserving readable height", () => {
+    const phoneCss = globalsCss.slice(
+      globalsCss.indexOf("@media (max-width: 760px)"),
+      globalsCss.indexOf("@media (max-width: 480px)"),
+    );
+    expect(phoneCss).toMatch(
+      /\.crt-screen\s*\{[^}]*aspect-ratio:\s*auto[^}]*height:\s*clamp\([^}]*min-height:\s*0/,
+    );
+  });
+
+  it("keeps tablet CRTs inside their columns while preserving readable height", () => {
+    const tabletCss = globalsCss.slice(
+      globalsCss.indexOf("@media (min-width: 761px) and (max-width: 1100px)"),
+      globalsCss.indexOf("@media (min-width: 1101px)"),
+    );
+    expect(tabletCss).toMatch(
+      /\.crt-screen\s*\{[^}]*aspect-ratio:\s*auto[^}]*height:\s*clamp\([^}]*min-height:\s*0/,
+    );
+  });
+
+  it("keeps the three lower desktop CRTs inside their panels", () => {
+    const desktopRackCss = globalsCss.slice(
+      globalsCss.indexOf("@media (min-width: 1101px)"),
+      globalsCss.indexOf(
+        "@media (min-width: 761px) and (max-width: 1100px)",
+        globalsCss.indexOf("@media (min-width: 1101px)") + 1,
+      ),
+    );
+    expect(desktopRackCss).toMatch(
+      /\.module--stereometer \.crt-screen,\s*\.module--oscilloscope \.crt-screen,\s*\.module--spectrum \.crt-screen\s*\{[^}]*aspect-ratio:\s*auto/,
+    );
+  });
+
+  it("bounds large-display CRT height without narrowing the screen", () => {
+    expect(globalsCss).toMatch(
+      /@media \(min-width: 1920px\)[\s\S]*\.crt-screen\s*\{[^}]*aspect-ratio:\s*auto[^}]*height:\s*clamp\([^}]*max-height:\s*440px/,
+    );
+    expect(globalsCss).toMatch(
+      /@media \(min-width: 1920px\)[\s\S]*\.module--spectrogram \.crt-screen,\s*\.module--waveform \.crt-screen\s*\{[^}]*aspect-ratio:\s*auto/,
+    );
   });
 });
 
 describe("responsive player and track library", () => {
   it("keeps player controls tappable and track rows shrink-safe", () => {
-    expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
-    expect(globalsCss).toMatch(/\.track-row\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
+    expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/);
+    expect(globalsCss).toMatch(/\.track-row\s*\{[^}]*min-height:\s*var\(--control-target\)/);
     expect(globalsCss).toMatch(
       /@media \(min-width: 761px\) and \(max-width: 1100px\)[\s\S]*\.player-grid\s*\{[^}]*repeat\(8, minmax\(0, 1fr\)\)/,
     );
@@ -97,6 +171,6 @@ describe("responsive visualizer rack", () => {
     expect(globalsCss).toMatch(/@media \(max-width: 760px\)[\s\S]*\.visualizer-rack\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/);
     expect(globalsCss).toMatch(/@media \(min-width: 761px\) and \(max-width: 1100px\)[\s\S]*\.visualizer-rack\s*\{[^}]*repeat\(2, minmax\(0, 1fr\)\)/);
     expect(globalsCss).toMatch(/@media \(min-width: 1101px\)[\s\S]*\.visualizer-rack\s*\{[^}]*repeat\(6, minmax\(0, 1fr\)\)/);
-    expect(globalsCss).toMatch(/\.crt-screen\s*\{[^}]*aspect-ratio:/s);
+    expect(globalsCss).toMatch(/\.crt-screen\s*\{[^}]*aspect-ratio:/);
   });
 });
