@@ -7,6 +7,11 @@ import {
 } from "./canvas";
 
 const CANVAS_BACKGROUND = [5, 7, 7] as const;
+const DENSE_MONOTONICITY_LEVELS = [
+  ...Array.from({ length: 10_001 }, (_, sample) => sample / 10_000),
+  0.00373,
+  0.00374,
+].sort((left, right) => left - right);
 
 function parseRgba(color: string): [number, number, number, number] {
   const channels = color.match(/[\d.]+/g)?.map(Number);
@@ -40,12 +45,14 @@ function compositedRelativeLuminance(color: string): number {
 function expectNondecreasingLuminance(alphaForLevel: (level: number) => number) {
   let previous = -Infinity;
 
-  for (let sample = 0; sample <= 100; sample += 1) {
-    const level = sample / 100;
+  for (const level of DENSE_MONOTONICITY_LEVELS) {
     const luminance = compositedRelativeLuminance(
       energySignalColor(level, alphaForLevel(level)),
     );
-    expect(luminance).toBeGreaterThanOrEqual(previous - 1e-10);
+    expect(
+      luminance,
+      `expected luminance at ${level} not to be below the previous sample`,
+    ).toBeGreaterThanOrEqual(previous - 1e-10);
     previous = luminance;
   }
 }
@@ -94,6 +101,62 @@ describe("signalGlow", () => {
 });
 
 describe("energySignalColor", () => {
+  it("keeps every palette stop channel nondecreasing", () => {
+    const stops = [0, 0.5, 0.75, 1].map((level) =>
+      parseRgba(energySignalColor(level)).slice(0, 3),
+    );
+
+    for (let stop = 1; stop < stops.length; stop += 1) {
+      for (let channel = 0; channel < 3; channel += 1) {
+        expect(stops[stop][channel]).toBeGreaterThanOrEqual(
+          stops[stop - 1][channel],
+        );
+      }
+    }
+  });
+
+  it("does not reverse an RGB channel around the prior rounding regression", () => {
+    const lower = parseRgba(energySignalColor(0.00373)).slice(0, 3);
+    const higher = parseRgba(energySignalColor(0.00374)).slice(0, 3);
+
+    for (let channel = 0; channel < 3; channel += 1) {
+      expect(higher[channel]).toBeGreaterThanOrEqual(lower[channel]);
+    }
+  });
+
+  it("does not dim production marks around the prior rounding regression", () => {
+    for (const alphaForLevel of [
+      (level: number) => signalGlow(level).barAlpha,
+      (level: number) => signalGlow(level).peakAlpha,
+      (level: number) => signalGlow(level).strokeAlpha,
+    ]) {
+      const lower = compositedRelativeLuminance(
+        energySignalColor(0.00373, alphaForLevel(0.00373)),
+      );
+      const higher = compositedRelativeLuminance(
+        energySignalColor(0.00374, alphaForLevel(0.00374)),
+      );
+
+      expect(higher).toBeGreaterThanOrEqual(lower);
+    }
+  });
+
+  it("keeps every RGB channel nondecreasing across dense energy samples", () => {
+    let previous = parseRgba(energySignalColor(0)).slice(0, 3);
+
+    for (const level of DENSE_MONOTONICITY_LEVELS.slice(1)) {
+      const current = parseRgba(energySignalColor(level)).slice(0, 3);
+
+      for (let channel = 0; channel < 3; channel += 1) {
+        expect(
+          current[channel],
+          `expected channel ${channel} at ${level} not to be below the previous sample`,
+        ).toBeGreaterThanOrEqual(previous[channel]);
+      }
+      previous = current;
+    }
+  });
+
   it("increases composited Spectrum mark luminance from low to high energy", () => {
     for (const alphaForLevel of [
       (level: number) => signalGlow(level).barAlpha,
@@ -121,12 +184,12 @@ describe("energySignalColor", () => {
     expect(luminance[1]).toBeLessThan(luminance[2]);
   });
 
-  it("does not dim Spectrum bars or peaks across 101 energy samples", () => {
+  it("does not dim Spectrum bars or peaks across dense energy samples", () => {
     expectNondecreasingLuminance((level) => signalGlow(level).barAlpha);
     expectNondecreasingLuminance((level) => signalGlow(level).peakAlpha);
   });
 
-  it("does not dim the Oscilloscope stroke across 101 energy samples", () => {
+  it("does not dim the Oscilloscope stroke across dense energy samples", () => {
     expectNondecreasingLuminance((level) => signalGlow(level).strokeAlpha);
   });
 
@@ -151,8 +214,25 @@ describe("energySignalColor", () => {
 });
 
 describe("smoothSignalColor", () => {
-  it("keeps adjacent palette samples continuous", () => {
-    expect(smoothSignalColor(0.49)).not.toBe(smoothSignalColor(0.51));
+  it("preserves legacy integer serialization at intermediate levels", () => {
+    expect(smoothSignalColor(0.125, 0.5)).toBe(
+      "rgba(124, 146, 155, 0.5)",
+    );
+    expect(smoothSignalColor(0.25, 0.5)).toBe(
+      "rgba(154, 150, 125, 0.5)",
+    );
+    expect(smoothSignalColor(0.75, 0.5)).toBe(
+      "rgba(182, 116, 75, 0.5)",
+    );
+  });
+
+  it("keeps adjacent palette samples visually continuous", () => {
+    const lower = parseRgba(smoothSignalColor(0.49));
+    const higher = parseRgba(smoothSignalColor(0.51));
+
+    for (let channel = 0; channel < 3; channel += 1) {
+      expect(Math.abs(lower[channel] - higher[channel])).toBeLessThanOrEqual(1);
+    }
     expect(smoothSignalColor(0.49)).toMatch(/^rgba\(/);
   });
 

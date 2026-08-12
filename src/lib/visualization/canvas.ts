@@ -37,7 +37,7 @@ const SIGNAL_PALETTE = {
 } as const satisfies Record<string, Rgb>;
 
 const ENERGY_SIGNAL_PALETTE = {
-  low: [73, 97, 112],
+  low: [53, 69, 82],
   amber: SIGNAL_PALETTE.middle,
   redOrange: [228, 166, 90],
   phosphor: [230, 215, 163],
@@ -59,7 +59,11 @@ function blendRgb(
   ];
 }
 
-function formatRgb([red, green, blue]: Rgb): string {
+function formatLegacyRgb([red, green, blue]: Rgb): string {
+  return `${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)}`;
+}
+
+function formatEnergyRgb([red, green, blue]: Rgb): string {
   const formatChannel = (value: number) =>
     Number.isInteger(value) ? String(value) : value.toFixed(2);
 
@@ -67,7 +71,7 @@ function formatRgb([red, green, blue]: Rgb): string {
 }
 
 function interpolateRgb(start: Rgb, end: Rgb, amount: number): string {
-  return formatRgb(blendRgb(start, end, amount));
+  return formatLegacyRgb(blendRgb(start, end, amount));
 }
 
 export function smoothSignalColor(level: number, alpha = 1): string {
@@ -114,7 +118,7 @@ export function energySignalColor(level: number, alpha = 1): string {
     );
   }
 
-  return `rgba(${formatRgb(color)}, ${opacity})`;
+  return `rgba(${formatEnergyRgb(color)}, ${opacity})`;
 }
 
 export function drawScopeGrid(
