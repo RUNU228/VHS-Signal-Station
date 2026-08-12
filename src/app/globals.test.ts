@@ -69,3 +69,15 @@ describe("smooth cursor global selectors", () => {
     style.remove();
   });
 });
+
+describe("responsive station foundation", () => {
+  it("uses fluid spacing, bounded width, and a 44px control target", () => {
+    expect(globalsCss).toContain("--station-gutter: clamp(");
+    expect(globalsCss).toContain("--control-target: 44px");
+    expect(globalsCss).toMatch(/\.station-shell\s*\{[^}]*width:\s*min\(100%/s);
+    expect(globalsCss).toMatch(/body\s*\{[^}]*overflow-x:\s*clip/s);
+    expect(globalsCss).toMatch(/\.visualizer-rack\s*\{[^}]*gap:\s*var\(--panel-gap\)/s);
+    expect(globalsCss).toMatch(/\.player-grid\s*\{[^}]*gap:\s*var\(--panel-gap\)/s);
+    expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/s);
+  });
+});
