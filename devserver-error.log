@@ -1,0 +1,2464 @@
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+  [90m 6 |[0m [36mimport[0m { useCanvasSurface } [36mfrom[0m [32m"@/hooks/useCanvasSurface"[0m;
+  [90m 7 |[0m [36mimport[0m { drawScopeGrid, smoothSignalColor } [36mfrom[0m [32m"@/lib/visualization/canvas"[0m;
+[31m[1m>[0m [90m 8 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   particleOpacity,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   particleReveal,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   seedStereoField,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mSTEREOMETER_PARTICLE_COUNT[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mSTEREOMETER_PARTICLE_STRIDE[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m } [36mfrom[0m [32m"@/lib/visualization/stereometer"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m15 |[0m [36mimport[0m [36mtype[0m { [33mAudioAnalyserBundle[0m } [36mfrom[0m [32m"@/types/audio"[0m;
+  [90m16 |[0m [36mimport[0m { [33mVisualizerFrame[0m } [36mfrom[0m [32m"./VisualizerFrame"[0m;
+  [90m17 |[0m
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Module not found: Can't resolve '@/lib/visualization/stereometer'
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+Import map: aliased to relative './src/lib/visualization/stereometer' inside of [project]/
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export particleReveal doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export particleReveal was not found in module [project]/src/lib/visualization/stereometer.ts [app-client] (ecmascript).
+Did you mean to import particleOpacity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export particleReveal doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export particleReveal was not found in module [project]/src/lib/visualization/stereometer.ts [app-ssr] (ecmascript).
+Did you mean to import particleOpacity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export seedStereoField doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export seedStereoField was not found in module [project]/src/lib/visualization/stereometer.ts [app-client] (ecmascript).
+Did you mean to import initializeStereoField?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export seedStereoField doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export seedStereoField was not found in module [project]/src/lib/visualization/stereometer.ts [app-ssr] (ecmascript).
+Did you mean to import initializeStereoField?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export particleReveal doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export particleReveal was not found in module [project]/src/lib/visualization/stereometer.ts [app-client] (ecmascript).
+Did you mean to import particleOpacity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export particleReveal doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export particleReveal was not found in module [project]/src/lib/visualization/stereometer.ts [app-ssr] (ecmascript).
+Did you mean to import particleOpacity?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export seedStereoField doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export seedStereoField was not found in module [project]/src/lib/visualization/stereometer.ts [app-client] (ecmascript).
+Did you mean to import initializeStereoField?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/visualizers/Stereometer.tsx:8:1
+Error: Export seedStereoField doesn't exist in target module
+   6 | import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+   7 | import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
+>  8 | import {
+     | ^^^^^^^
+>  9 |   particleOpacity,
+     | ^^^^^^^^^^^^^^^^^^
+> 10 |   particleReveal,
+     | ^^^^^^^^^^^^^^^^^
+> 11 |   seedStereoField,
+     | ^^^^^^^^^^^^^^^^^^
+> 12 |   STEREOMETER_PARTICLE_COUNT,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 13 |   STEREOMETER_PARTICLE_STRIDE,
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 | } from "@/lib/visualization/stereometer";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  15 | import type { AudioAnalyserBundle } from "@/types/audio";
+  16 | import { VisualizerFrame } from "./VisualizerFrame";
+  17 |
+
+The export seedStereoField was not found in module [project]/src/lib/visualization/stereometer.ts [app-ssr] (ecmascript).
+Did you mean to import initializeStereoField?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/visualizers/Stereometer.tsx [Client Component Browser]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Client Component Browser]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/visualizers/Stereometer.tsx [Client Component SSR]
+    ./src/components/visualizers/VisualizerRack.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Client Component SSR]
+    ./src/components/VhsVisualizerApp.tsx [Server Component]
+    ./src/app/page.tsx [Server Component] 
