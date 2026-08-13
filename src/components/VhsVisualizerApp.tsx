@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { TrackLibrary } from "@/components/audio/TrackLibrary";
@@ -8,6 +8,8 @@ import { TrackUploader } from "@/components/audio/TrackUploader";
 import { VhsNoise } from "@/components/ui/VhsNoise";
 import { VisualizerRack } from "@/components/visualizers/VisualizerRack";
 import { useAudioEngine, type AudioEngineOptions } from "@/hooks/useAudioEngine";
+import { useAudioAnalysis } from "@/hooks/useAudioAnalysis";
+import { useReactiveStyles } from "@/hooks/useReactiveStyles";
 import { loadAudioTracks } from "@/lib/audio/files";
 import { commandForKey, isEditableTarget } from "@/lib/audio/keyboard";
 
@@ -54,10 +56,13 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
   }, [currentTime, next, previous, seek, setVolume, toggleMute, togglePlayback, volume]);
 
   const signalActive = engine.isPlaying && engine.analysersRef.current !== null;
+  const stationRef = useRef<HTMLElement>(null);
+  const reactiveRef = useAudioAnalysis(engine.analysersRef, signalActive);
+  useReactiveStyles(stationRef, reactiveRef, signalActive);
   const message = engine.error ?? notice;
 
   return (
-    <main className="station-shell">
+    <main ref={stationRef} className="station-shell">
       <VhsNoise />
       <header className="station-header">
         <div className="station-brand">

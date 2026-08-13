@@ -70,6 +70,23 @@ describe("smooth cursor global selectors", () => {
   });
 });
 
+describe("audio-reactive interface contracts", () => {
+  it("defines bounded root variables and restrained major-button reactions", () => {
+    for (const variable of [
+      "--audio-volume",
+      "--audio-bass",
+      "--audio-mid",
+      "--audio-treble",
+      "--audio-peak",
+      "--audio-smoothed",
+    ]) {
+      expect(globalsCss).toContain(variable);
+    }
+    expect(globalsCss).toContain('.station-shell[data-audio-active="true"]');
+    expect(globalsCss).toMatch(/scale\(calc\(1 \+ var\(--audio-peak\) \* \.006\)\)/);
+  });
+});
+
 describe("responsive station foundation", () => {
   it("uses fluid spacing, bounded width, and a 44px control target", () => {
     expect(globalsCss).toContain("--station-gutter: clamp(");

@@ -18,7 +18,7 @@ class SilentAudio extends EventTarget {
 
 describe("VhsVisualizerApp", () => {
   it("renders the workstation hierarchy around one client engine", () => {
-    render(
+    const { container } = render(
       <VhsVisualizerApp
         engineOptions={{
           createAudioElement: () => new SilentAudio() as unknown as HTMLAudioElement,
@@ -34,5 +34,9 @@ describe("VhsVisualizerApp", () => {
     expect(rack.compareDocumentPosition(player) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(player.compareDocumentPosition(library) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByText("DROP AUDIO TAPE HERE")).toBeInTheDocument();
+    expect(container.querySelector("main.station-shell")).toHaveAttribute(
+      "data-audio-active",
+      "false",
+    );
   });
 });

@@ -61,6 +61,12 @@ input:focus-visible {
 }
 
 .station-shell {
+  --audio-volume: 0;
+  --audio-bass: 0;
+  --audio-mid: 0;
+  --audio-treble: 0;
+  --audio-peak: 0;
+  --audio-smoothed: 0;
   position: relative;
   z-index: 1;
   isolation: isolate;
@@ -571,6 +577,11 @@ input:focus-visible {
 .hardware-button span { display: block; margin-bottom: 6px; color: var(--blue); font-size: 12px; }
 .hardware-button--primary { border-color: #5c4b39; color: #e1d5b6; background: linear-gradient(180deg, #3a352b, #211f1a 58%, #11110f); }
 .hardware-button--primary .transport-symbol { color: var(--red); font-size: 18px; text-shadow: 0 0 8px rgba(168,77,67,.5); }
+.station-shell[data-audio-active="true"] :is(.hardware-button--primary, .tape-loader button) {
+  border-color: color-mix(in srgb, var(--amber) calc(32% + var(--audio-bass) * 20%), #343737);
+  box-shadow: 0 0 calc(4px + 8px * var(--audio-bass)) rgba(196, 154, 82, calc(.06 + .12 * var(--audio-smoothed)));
+  transform: scale(calc(1 + var(--audio-peak) * .006));
+}
 :is(.hardware-button, .mute-button, .tape-loader button, .track-row, .system-message button) {
   transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease,
     filter 140ms ease, box-shadow 140ms ease, transform 90ms ease;
