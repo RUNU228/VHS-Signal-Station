@@ -85,7 +85,7 @@ describe("audio-reactive interface contracts", () => {
     expect(globalsCss).toContain('.station-shell[data-audio-active="true"]');
     expect(globalsCss).toMatch(/scale\(calc\(1 \+ var\(--audio-peak\) \* \.006\)\)/);
     expect(globalsCss).toMatch(
-      /\.track-row\[data-playing="true"\]\s*\{[^}]*var\(--audio-bass\)[^}]*var\(--audio-peak\)/s,
+      /\.track-row\[data-playing="true"\]\s*\{[^}]*var\(--audio-bass\)[^}]*var\(--audio-peak\)/,
     );
   });
 
