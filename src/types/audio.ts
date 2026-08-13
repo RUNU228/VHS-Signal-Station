@@ -17,4 +17,15 @@ export type AudioAnalyserBundle = {
   right: AnalyserNode;
 };
 
+export type AudioReactiveSnapshot = {
+  volume: number;
+  bass: number;
+  lowMid: number;
+  mid: number;
+  highMid: number;
+  treble: number;
+  peak: number;
+  smoothed: number;
+};
+
 export type PlaybackStatus = "NO SIGNAL" | "READY" | "PLAYING" | "PAUSED" | "END";
