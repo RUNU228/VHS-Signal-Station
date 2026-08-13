@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, type MutableRefObject } from "react";
 
-import { useCanvasSurface } from "@/hooks/useCanvasSurface";
 import type { AudioReactiveSnapshot } from "@/types/audio";
 
 type AudioReactiveBackgroundProps = {
@@ -80,10 +79,6 @@ export function AudioReactiveBackground({
 }: AudioReactiveBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const qualityRef = useRef<BackgroundQuality>(DEFAULT_QUALITY);
-  useCanvasSurface(canvasRef, {
-    maxDevicePixelRatio: DEFAULT_QUALITY.maxDevicePixelRatio,
-    resolutionScale: DEFAULT_QUALITY.resolutionScale,
-  });
 
   const draw = useCallback(
     (time: number) => {
@@ -204,17 +199,38 @@ export function AudioReactiveBackground({
       else restart();
     };
 
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      resizeCanvas(canvas, qualityRef.current);
+      if (qualityRef.current.reducedMotion) {
+        cancel();
+        lastDraw = Number.NEGATIVE_INFINITY;
+        schedule();
+      }
+    };
+
+    const resizeObserver =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(handleResize);
+
     mobileQuery?.addEventListener("change", restart);
     motionQuery?.addEventListener("change", restart);
     document.addEventListener("visibilitychange", handleVisibility);
+    if (canvasRef.current) resizeObserver?.observe(canvasRef.current);
+    if (!resizeObserver) window.addEventListener("resize", handleResize);
     restart();
 
     return () => {
       disposed = true;
       cancel();
+      resizeObserver?.disconnect();
       mobileQuery?.removeEventListener("change", restart);
       motionQuery?.removeEventListener("change", restart);
       document.removeEventListener("visibilitychange", handleVisibility);
+      if (!resizeObserver) window.removeEventListener("resize", handleResize);
     };
   }, [active, draw]);
 

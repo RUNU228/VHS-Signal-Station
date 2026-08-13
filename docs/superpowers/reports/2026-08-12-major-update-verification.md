@@ -1,18 +1,22 @@
 # VHS Visualizer First Major Update Verification
 
-**Date:** 2026-08-13  
-**Branch:** `codex/vhs-major-update`  
+**Date:** 2026-08-13
+
+**Branch:** `codex/vhs-major-update`
+
 **Specification:** `UPDATE_SPEC.md` and `docs/superpowers/specs/2026-08-12-vhs-visualizer-major-update-design.md`
 
 ## Automated Verification
 
 | Command | Result | Evidence |
 |---|---|---|
-| `pnpm test` | pass, exit 0 | 23 test files and 97 tests passed |
+| `pnpm test` | pass, exit 0 | 23 test files and 98 tests passed |
 | `pnpm lint` | pass, exit 0 | ESLint completed without warnings or errors |
 | `pnpm build` | pass, exit 0 | Next.js 16.3.0 compiled, type-checked, generated 4 static pages, and finalized optimization |
 
 The first production-build attempt exposed one update-caused test compatibility issue: `src/app/globals.test.ts` used the RegExp dotAll flag while `tsconfig.json` targets ES2017. The assertion was rewritten with the existing ES2017-compatible pattern style, the focused 17-test stylesheet suite passed, and the complete production build then passed.
+
+Final review also exposed a mobile-only Canvas resize race between the adaptive background and the shared surface hook. A regression test reproduced the desktop pixel budget overwriting the mobile budget after `ResizeObserver` fired; the background now owns one quality-aware resize path, and the complete verification gate passed again.
 
 ## Responsive Matrix
 
