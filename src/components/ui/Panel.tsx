@@ -4,14 +4,26 @@ type PanelProps = {
   title: string;
   serial: string;
   className?: string;
+  reactive?: boolean;
   children: ReactNode;
   meta?: ReactNode;
 };
 
-export function Panel({ title, serial, className = "", children, meta }: PanelProps) {
+export function Panel({
+  title,
+  serial,
+  className = "",
+  reactive,
+  children,
+  meta,
+}: PanelProps) {
   const titleId = useId();
   return (
-    <section className={`equipment-panel ${className}`} aria-labelledby={titleId}>
+    <section
+      className={`equipment-panel ${className}`}
+      aria-labelledby={titleId}
+      data-reactive={reactive}
+    >
       <span className="panel-screw panel-screw--tl" aria-hidden="true" />
       <span className="panel-screw panel-screw--tr" aria-hidden="true" />
       <span className="panel-screw panel-screw--bl" aria-hidden="true" />

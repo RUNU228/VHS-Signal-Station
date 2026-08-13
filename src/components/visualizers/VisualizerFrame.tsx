@@ -27,6 +27,7 @@ export function VisualizerFrame({
       title={title}
       serial={serial}
       className={className}
+      reactive={active}
       meta={
         <>
           <Led label="SYNC" active={active} tone="blue" />

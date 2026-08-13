@@ -29,4 +29,21 @@ describe("VisualizerRack", () => {
     expect(screen.getByText("100")).toBeInTheDocument();
     expect(screen.getByText("5K")).toBeInTheDocument();
   });
+
+  it("marks each live instrument frame for subtle shared reactions", () => {
+    const { container } = render(
+      <VisualizerRack
+        analysersRef={createRef<AudioAnalyserBundle | null>()}
+        active
+      />,
+    );
+
+    const panels = container.querySelectorAll(
+      ".visualizer-rack .equipment-panel",
+    );
+    expect(panels).toHaveLength(5);
+    for (const panel of panels) {
+      expect(panel).toHaveAttribute("data-reactive", "true");
+    }
+  });
 });

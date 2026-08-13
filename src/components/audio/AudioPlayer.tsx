@@ -14,7 +14,11 @@ export function AudioPlayer({ engine }: { engine: AudioEngine }) {
     .padStart(2, "0")}`;
 
   return (
-    <section className="player-section" aria-labelledby="player-title">
+    <section
+      className="player-section"
+      aria-labelledby="player-title"
+      data-playing={engine.isPlaying}
+    >
       <header className="section-heading">
         <div>
           <p>MASTER TRANSPORT / DECK B</p>

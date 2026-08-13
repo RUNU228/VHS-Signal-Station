@@ -54,6 +54,26 @@ describe("AudioPlayer", () => {
     expect(screen.getByText("NO TAPE INSERTED")).toBeInTheDocument();
   });
 
+  it("marks the deck as playing for restrained reactive styling", () => {
+    const { container } = render(
+      <AudioPlayer
+        engine={engine({
+          tracks: [sampleTrack],
+          currentTrackIndex: 0,
+          currentTrack: sampleTrack,
+          isPlaying: true,
+          audioReady: true,
+          status: "PLAYING",
+        })}
+      />,
+    );
+
+    expect(container.querySelector(".player-section")).toHaveAttribute(
+      "data-playing",
+      "true",
+    );
+  });
+
   it("shows real queue information and routes custom controls", () => {
     const togglePlayback = vi.fn().mockResolvedValue(undefined);
     const seek = vi.fn();
