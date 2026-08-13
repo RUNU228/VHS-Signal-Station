@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { TrackLibrary } from "@/components/audio/TrackLibrary";
 import { TrackUploader } from "@/components/audio/TrackUploader";
+import { AudioReactiveBackground } from "@/components/ui/AudioReactiveBackground";
 import { VhsNoise } from "@/components/ui/VhsNoise";
 import { VisualizerRack } from "@/components/visualizers/VisualizerRack";
 import { useAudioEngine, type AudioEngineOptions } from "@/hooks/useAudioEngine";
@@ -63,6 +64,7 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
 
   return (
     <main ref={stationRef} className="station-shell">
+      <AudioReactiveBackground reactiveRef={reactiveRef} active={signalActive} />
       <VhsNoise />
       <header className="station-header">
         <div className="station-brand">

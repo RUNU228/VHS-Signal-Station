@@ -280,6 +280,16 @@ input:focus-visible {
     linear-gradient(180deg, #202222, #131515 23%, #0d0e0e 100%);
   box-shadow: var(--panel-shadow);
 }
+
+.audio-reactive-background {
+  position: fixed;
+  z-index: -2;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: .82;
+}
 .equipment-panel[data-reactive="true"] {
   border-color: color-mix(in srgb, var(--line), var(--amber) calc(var(--audio-smoothed) * 14%));
   box-shadow: var(--panel-shadow), 0 0 calc(3px + 8px * var(--audio-volume)) rgba(196, 154, 82, calc(.02 + .05 * var(--audio-volume)));

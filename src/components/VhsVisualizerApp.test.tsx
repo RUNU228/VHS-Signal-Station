@@ -38,5 +38,15 @@ describe("VhsVisualizerApp", () => {
       "data-audio-active",
       "false",
     );
+    const background = container.querySelector(
+      "canvas.audio-reactive-background",
+    );
+    const noise = container.querySelector(".vhs-atmosphere");
+    expect(background).toBeInTheDocument();
+    expect(container.querySelectorAll("canvas.audio-reactive-background")).toHaveLength(1);
+    expect(
+      background!.compareDocumentPosition(noise!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });
