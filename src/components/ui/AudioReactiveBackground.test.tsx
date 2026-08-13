@@ -92,6 +92,36 @@ describe("AudioReactiveBackground", () => {
     expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps mobile drawing close to 30 frames per second", () => {
+    vi.mocked(matchMedia).mockImplementation((query: string) => ({
+      matches: query === "(max-width: 760px)",
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    const gradient = { addColorStop: vi.fn() } as unknown as CanvasGradient;
+    const context = {
+      clearRect: vi.fn(),
+      fillRect: vi.fn(),
+      createRadialGradient: vi.fn(() => gradient),
+      fillStyle: "",
+    } as unknown as CanvasRenderingContext2D;
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
+    render(<AudioReactiveBackground reactiveRef={idleRef} active />);
+
+    for (const time of [0, 16, 32, 48, 64]) {
+      const callback = scheduledFrames.shift();
+      expect(callback).toBeDefined();
+      callback!(time);
+    }
+
+    expect(context.clearRect).toHaveBeenCalledTimes(3);
+  });
+
   it("keeps the reduced mobile resolution after a canvas resize", () => {
     vi.stubGlobal("devicePixelRatio", 3);
     vi.mocked(matchMedia).mockImplementation((query: string) => ({

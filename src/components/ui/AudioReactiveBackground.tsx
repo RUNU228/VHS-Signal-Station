@@ -29,6 +29,8 @@ const DEFAULT_QUALITY: BackgroundQuality = {
   grainScale: 1,
 };
 
+const RAF_INTERVAL_TOLERANCE = 1.5;
+
 function qualityFor(mobile: boolean, reducedMotion: boolean): BackgroundQuality {
   return {
     mobile,
@@ -175,7 +177,7 @@ export function AudioReactiveBackground({
       const quality = qualityRef.current;
       if (
         quality.reducedMotion ||
-        time - lastDraw >= quality.frameInterval
+        time - lastDraw >= quality.frameInterval - RAF_INTERVAL_TOLERANCE
       ) {
         draw(time);
         lastDraw = time;

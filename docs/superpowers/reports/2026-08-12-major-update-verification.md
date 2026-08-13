@@ -10,13 +10,15 @@
 
 | Command | Result | Evidence |
 |---|---|---|
-| `pnpm test` | pass, exit 0 | 23 test files and 98 tests passed |
+| `pnpm test` | pass, exit 0 | 23 test files and 99 tests passed |
 | `pnpm lint` | pass, exit 0 | ESLint completed without warnings or errors |
 | `pnpm build` | pass, exit 0 | Next.js 16.3.0 compiled, type-checked, generated 4 static pages, and finalized optimization |
 
 The first production-build attempt exposed one update-caused test compatibility issue: `src/app/globals.test.ts` used the RegExp dotAll flag while `tsconfig.json` targets ES2017. The assertion was rewritten with the existing ES2017-compatible pattern style, the focused 17-test stylesheet suite passed, and the complete production build then passed.
 
 Final review also exposed a mobile-only Canvas resize race between the adaptive background and the shared surface hook. A regression test reproduced the desktop pixel budget overwriting the mobile budget after `ResizeObserver` fired; the background now owns one quality-aware resize path, and the complete verification gate passed again.
+
+Independent review then found that the range inputs inherited only a 19px-high pointer surface and that the nominal mobile 30 FPS throttle could slip to every third RAF callback. The input and housing rectangles now both measure 44px at 320px, 390px, 768px, and 820px; a timestamp-level regression locks the mobile scheduler to alternate 60 Hz callbacks.
 
 ## Responsive Matrix
 
@@ -40,6 +42,8 @@ Measurements were collected in the Codex in-app Chromium browser against the loc
 
 At 2560px and 3840px the station measured 1896px wide, confirming the large-display cap. Phone and desktop screenshots showed readable labels, intact CRT framing, correct module hierarchy, and no overlaps in the inspected regions.
 
+The two range controls were remeasured after final review. Their interactive input rectangles are exactly 44px high at 320px, 390px, 768px, and 820px, matching their visible housings and the shared control-target policy.
+
 ## Browser Coverage
 
 - Codex in-app Chromium: performed at every viewport in the matrix. DOM, layout, interaction-target, Canvas sizing, and console-error checks passed. The console contained zero warnings or errors during the recorded idle audit.
@@ -60,7 +64,8 @@ The implementation uses standards-based Grid, Flexbox, Canvas 2D, ResizeObserver
 - Mobile background quality uses a 0.5 resolution scale, a 1.5 DPR cap, three interference bands, half grain density, and a 30 FPS interval. Desktop uses a 0.75 resolution scale, a 2 DPR cap, five bands, and a 60 FPS interval.
 - Analysis and background loops pause while the document is hidden. Automated lifecycle tests verify cancellation and resumption behavior.
 - Reduced-motion mode draws a static background frame, lowers its opacity, removes reactive transforms, and disables selected-track scanning and reel rotation while keeping playback controls unchanged.
-- Live playback upload could not be completed through the available in-app browser file chooser, so this report does not claim a live audio cadence measurement. Actual analyser behavior is covered by deterministic Web Audio boundary tests and the Canvas/component integration suites.
+- A non-copyright 8 kHz WAV containing low, mid, and high test tones was generated entirely inside the browser and loaded through the real local-file boundary. At 390x844, playback advanced continuously for 20.008 seconds while the background recorded exactly 600 draws (30.0 FPS). At 1440x900, playback advanced continuously for 20.015 seconds while the background recorded 1201 draws (60.0 FPS).
+- During the mobile run, all 202 samples reported active audio; normalized volume, bass, and mid variables changed; previous/next and mute transforms were active; and the playback progress effect was active. A separate live Canvas readback recorded changing Spectrum and Oscilloscope frame hashes (2 and 12 distinct sampled frames respectively). The only console warnings from that readback were the browser's expected `willReadFrequently` diagnostic caused by the QA instrumentation itself; the application produced no runtime errors.
 
 ## Identity and Feature Comparison
 
@@ -75,4 +80,4 @@ The updated page remains the same VHS Signal Station rather than a redesign:
 
 ## Acceptance Review
 
-The implementation covers the ordered specification stages: responsive foundation and device layouts; interface clarity and track feedback; smooth Spectrum then Oscilloscope transitions; centralized normalized analysis; restrained button, player, track, and frame reactions; one adaptive analog background; mobile and reduced-motion performance policies; and final tests, lint, build, responsive, console, and identity checks. Browser families unavailable in this environment and live playback cadence are the only verification items not claimed as performed.
+The implementation covers the ordered specification stages: responsive foundation and device layouts; interface clarity and track feedback; smooth Spectrum then Oscilloscope transitions; centralized normalized analysis; restrained button, player, track, and frame reactions; one adaptive analog background; mobile and reduced-motion performance policies; and final tests, lint, build, responsive, live-playback cadence, console, and identity checks. Browser families unavailable in this environment are the only verification items not claimed as performed.

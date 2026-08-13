@@ -30,6 +30,9 @@ export function useAudioAnalysis(
     let disposed = false;
     let frame = 0;
 
+    const hasAnalyser = () =>
+      active && Boolean(analysersRef.current?.frequency);
+
     const schedule = () => {
       if (disposed || document.hidden || frame !== 0) return;
       frame = requestAnimationFrame(sample);
@@ -74,7 +77,7 @@ export function useAudioAnalysis(
         }
       }
 
-      if (active || hasAudibleEnergy(snapshotRef.current)) schedule();
+      if (hasAnalyser() || hasAudibleEnergy(snapshotRef.current)) schedule();
     };
 
     const handleVisibility = () => {
@@ -83,11 +86,11 @@ export function useAudioAnalysis(
         frame = 0;
         return;
       }
-      if (active || hasAudibleEnergy(snapshotRef.current)) schedule();
+      if (hasAnalyser() || hasAudibleEnergy(snapshotRef.current)) schedule();
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
-    if (active || hasAudibleEnergy(snapshotRef.current)) schedule();
+    if (hasAnalyser() || hasAudibleEnergy(snapshotRef.current)) schedule();
 
     return () => {
       disposed = true;

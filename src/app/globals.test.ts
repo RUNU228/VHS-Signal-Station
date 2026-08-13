@@ -87,6 +87,12 @@ describe("audio-reactive interface contracts", () => {
     expect(globalsCss).toMatch(
       /\.track-row\[data-playing="true"\]\s*\{[^}]*var\(--audio-bass\)[^}]*var\(--audio-peak\)/,
     );
+    expect(globalsCss).toMatch(
+      /data-audio-active="true"[^\{]*:is\(\.hardware-button:not\(\.hardware-button--primary\), \.mute-button\)[^{]*\{[^}]*var\(--audio-mid\)[^}]*var\(--audio-peak\)/,
+    );
+    expect(globalsCss).toMatch(
+      /\.player-section\[data-playing="true"\] \.seek-module \.range-housing::before\s*\{[^}]*var\(--audio-smoothed\)/,
+    );
   });
 
   it("removes background motion and reactive transforms for reduced motion", () => {
@@ -188,6 +194,13 @@ describe("responsive station foundation", () => {
 describe("responsive player and track library", () => {
   it("keeps player controls tappable and track rows shrink-safe", () => {
     expect(globalsCss).toMatch(/\.mute-button\s*\{[^}]*min-height:\s*var\(--control-target\)/);
+    expect(globalsCss).toMatch(/\.range-housing\s*\{[^}]*min-height:\s*var\(--control-target\)/);
+    expect(globalsCss).toMatch(
+      /\.range-housing::before\s*\{[^}]*top:\s*50%[^}]*translate:\s*0 -50%/,
+    );
+    expect(globalsCss).toMatch(
+      /\.range-housing input\s*\{[^}]*inset:\s*-1px[^}]*calc\(100% \+ 2px\)/,
+    );
     expect(globalsCss).toMatch(/\.track-row\s*\{[^}]*min-height:\s*var\(--control-target\)/);
     expect(globalsCss).toMatch(
       /@media \(min-width: 761px\) and \(max-width: 1100px\)[\s\S]*\.player-grid\s*\{[^}]*repeat\(8, minmax\(0, 1fr\)\)/,

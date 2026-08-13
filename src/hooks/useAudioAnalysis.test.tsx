@@ -95,9 +95,8 @@ describe("useAudioAnalysis", () => {
     const analysersRef = createRef<AudioAnalyserBundle | null>();
     const { result } = renderHook(() => useAudioAnalysis(analysersRef, true));
 
-    act(() => runNextFrame());
-
     expect(result.current.current).toEqual(IDLE_AUDIO_SNAPSHOT);
+    expect(frames).toHaveLength(0);
   });
 
   it("pauses sampling while the document is hidden and resumes when visible", () => {

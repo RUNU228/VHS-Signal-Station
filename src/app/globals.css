@@ -602,6 +602,11 @@ input:focus-visible {
   box-shadow: 0 0 calc(4px + 8px * var(--audio-bass)) rgba(196, 154, 82, calc(.06 + .12 * var(--audio-smoothed)));
   transform: scale(calc(1 + var(--audio-peak) * .006));
 }
+.station-shell[data-audio-active="true"] :is(.hardware-button:not(.hardware-button--primary), .mute-button) {
+  border-color: color-mix(in srgb, var(--blue) calc(22% + var(--audio-mid) * 16%), #343737);
+  box-shadow: 0 0 calc(3px + 5px * var(--audio-treble)) rgba(111, 145, 168, calc(.035 + .075 * var(--audio-smoothed)));
+  transform: scale(calc(1 + var(--audio-peak) * .003));
+}
 :is(.hardware-button, .mute-button, .tape-loader button, .track-row, .system-message button) {
   transition: border-color 140ms ease, color 140ms ease, background-color 140ms ease,
     filter 140ms ease, box-shadow 140ms ease, transform 90ms ease;
@@ -633,14 +638,18 @@ input:focus-visible {
 
 .range-housing {
   position: relative;
-  height: 19px;
+  min-height: var(--control-target);
   padding: 5px 7px;
   border: 1px solid #252828;
   background: #050606;
   box-shadow: 0 3px 8px #000 inset;
 }
-.range-housing::before { position: absolute; top: 7px; right: 7px; left: 7px; height: 3px; background: linear-gradient(90deg, var(--amber) var(--range-value), #242828 var(--range-value)); content: ""; }
-.range-housing input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.range-housing::before { position: absolute; top: 50%; right: 7px; left: 7px; height: 3px; translate: 0 -50%; background: linear-gradient(90deg, var(--amber) var(--range-value), #242828 var(--range-value)); content: ""; }
+.player-section[data-playing="true"] .seek-module .range-housing::before {
+  filter: brightness(calc(1 + var(--audio-smoothed) * .12));
+  box-shadow: 0 0 calc(3px + 7px * var(--audio-smoothed)) rgba(196, 154, 82, calc(.06 + .12 * var(--audio-volume)));
+}
+.range-housing input { position: absolute; inset: -1px; width: calc(100% + 2px); height: calc(100% + 2px); margin: 0; opacity: 0; cursor: pointer; }
 .range-housing:has(input:focus-visible) { outline: 2px solid var(--phosphor); outline-offset: 2px; }
 .range-housing:has(input:disabled) { opacity: .35; }
 .mute-button { min-height: var(--control-target); padding-inline: 10px; }
@@ -908,7 +917,7 @@ input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .audio-reactive-background { opacity: .45; }
-  .station-shell[data-audio-active="true"] :is(.hardware-button--primary, .track-row, .equipment-panel) {
+  .station-shell[data-audio-active="true"] :is(.hardware-button, .mute-button, .tape-loader button, .track-row, .equipment-panel) {
     transform: none !important;
   }
   .track-row[data-selected="true"]::after,
