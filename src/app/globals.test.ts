@@ -88,6 +88,15 @@ describe("audio-reactive interface contracts", () => {
       /\.track-row\[data-playing="true"\]\s*\{[^}]*var\(--audio-bass\)[^}]*var\(--audio-peak\)/s,
     );
   });
+
+  it("removes background motion and reactive transforms for reduced motion", () => {
+    expect(globalsCss).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.audio-reactive-background\s*\{[^}]*opacity:/,
+    );
+    expect(globalsCss).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*data-audio-active[^}]*transform:\s*none\s*!important/,
+    );
+  });
 });
 
 describe("responsive station foundation", () => {

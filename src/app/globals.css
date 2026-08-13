@@ -907,5 +907,11 @@ input:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .audio-reactive-background { opacity: .45; }
+  .station-shell[data-audio-active="true"] :is(.hardware-button--primary, .track-row, .equipment-panel) {
+    transform: none !important;
+  }
+  .track-row[data-selected="true"]::after,
+  .tape-bay[data-playing="true"] .reel { animation: none !important; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }

@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useRef, type MutableRefObject } from "react";
+import { useCallback, useEffect, useRef, type MutableRefObject } from "react";
 
-import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
 import type { AudioReactiveSnapshot } from "@/types/audio";
 
@@ -10,6 +9,47 @@ type AudioReactiveBackgroundProps = {
   reactiveRef: MutableRefObject<AudioReactiveSnapshot>;
   active: boolean;
 };
+
+type BackgroundQuality = {
+  mobile: boolean;
+  reducedMotion: boolean;
+  frameInterval: number;
+  maxDevicePixelRatio: number;
+  resolutionScale: number;
+  bandCount: number;
+  grainScale: number;
+};
+
+const DEFAULT_QUALITY: BackgroundQuality = {
+  mobile: false,
+  reducedMotion: false,
+  frameInterval: 1000 / 60,
+  maxDevicePixelRatio: 2,
+  resolutionScale: 0.75,
+  bandCount: 5,
+  grainScale: 1,
+};
+
+function qualityFor(mobile: boolean, reducedMotion: boolean): BackgroundQuality {
+  return {
+    mobile,
+    reducedMotion,
+    frameInterval: mobile ? 1000 / 30 : 1000 / 60,
+    maxDevicePixelRatio: mobile ? 1.5 : 2,
+    resolutionScale: mobile ? 0.5 : 0.75,
+    bandCount: mobile ? 3 : 5,
+    grainScale: mobile ? 0.5 : 1,
+  };
+}
+
+function resizeCanvas(canvas: HTMLCanvasElement, quality: BackgroundQuality): void {
+  const bounds = canvas.getBoundingClientRect();
+  const width = Math.max(1, Math.round(bounds.width || canvas.clientWidth || 640));
+  const height = Math.max(1, Math.round(bounds.height || canvas.clientHeight || 260));
+  const dpr = Math.min(window.devicePixelRatio || 1, quality.maxDevicePixelRatio);
+  canvas.width = Math.max(1, Math.round(width * dpr * quality.resolutionScale));
+  canvas.height = Math.max(1, Math.round(height * dpr * quality.resolutionScale));
+}
 
 function seededNoise(x: number, y: number, frame: number): number {
   let value = Math.imul(x + 1, 374_761_393);
@@ -39,7 +79,11 @@ export function AudioReactiveBackground({
   active,
 }: AudioReactiveBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  useCanvasSurface(canvasRef);
+  const qualityRef = useRef<BackgroundQuality>(DEFAULT_QUALITY);
+  useCanvasSurface(canvasRef, {
+    maxDevicePixelRatio: DEFAULT_QUALITY.maxDevicePixelRatio,
+    resolutionScale: DEFAULT_QUALITY.resolutionScale,
+  });
 
   const draw = useCallback(
     (time: number) => {
@@ -54,7 +98,8 @@ export function AudioReactiveBackground({
       const mid = active ? (snapshot.lowMid + snapshot.mid + snapshot.highMid) / 3 : 0;
       const treble = active ? snapshot.treble : 0;
       const smoothed = active ? snapshot.smoothed : 0;
-      const drift = time * 0.00004;
+      const quality = qualityRef.current;
+      const drift = quality.reducedMotion ? 0 : time * 0.00004;
 
       context.clearRect(0, 0, width, height);
       context.fillStyle = `rgba(5, 7, 7, ${0.018 + volume * 0.018})`;
@@ -78,7 +123,7 @@ export function AudioReactiveBackground({
         Math.min(0.09, 0.015 + volume * 0.07),
       );
 
-      const bandCount = active ? 5 : 3;
+      const bandCount = active ? quality.bandCount : Math.min(3, quality.bandCount);
       for (let band = 0; band < bandCount; band += 1) {
         const baseY = ((band + 1) / (bandCount + 1)) * height;
         const displacement = Math.sin(drift * 20 + band * 1.73) * width * (0.002 + mid * 0.008);
@@ -88,7 +133,10 @@ export function AudioReactiveBackground({
       }
 
       const frameBucket = Math.floor(time / 90);
-      const grainCount = Math.min(260, Math.max(50, Math.round((width * height) / 18_000)));
+      const grainCount = Math.round(
+        Math.min(260, Math.max(50, (width * height) / 18_000)) *
+          quality.grainScale,
+      );
       context.fillStyle = `rgba(230, 215, 163, ${0.018 + treble * 0.045})`;
       for (let index = 0; index < grainCount; index += 1) {
         const x = seededNoise(index, 17, frameBucket) * width;
@@ -106,7 +154,69 @@ export function AudioReactiveBackground({
     [active, reactiveRef],
   );
 
-  useAnimationFrame(draw);
+  useEffect(() => {
+    if (typeof requestAnimationFrame === "undefined") return;
+
+    const mobileQuery = window.matchMedia?.("(max-width: 760px)") ?? null;
+    const motionQuery =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)") ?? null;
+    let disposed = false;
+    let frame = 0;
+    let lastDraw = Number.NEGATIVE_INFINITY;
+
+    const cancel = () => {
+      if (frame !== 0) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+
+    const schedule = () => {
+      if (disposed || document.hidden || frame !== 0) return;
+      frame = requestAnimationFrame(loop);
+    };
+
+    const loop = (time: number) => {
+      frame = 0;
+      if (disposed || document.hidden) return;
+      const quality = qualityRef.current;
+      if (
+        quality.reducedMotion ||
+        time - lastDraw >= quality.frameInterval
+      ) {
+        draw(time);
+        lastDraw = time;
+      }
+      if (!quality.reducedMotion) schedule();
+    };
+
+    const restart = () => {
+      cancel();
+      qualityRef.current = qualityFor(
+        mobileQuery?.matches ?? window.innerWidth <= 760,
+        motionQuery?.matches ?? false,
+      );
+      if (canvasRef.current) resizeCanvas(canvasRef.current, qualityRef.current);
+      lastDraw = Number.NEGATIVE_INFINITY;
+      schedule();
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) cancel();
+      else restart();
+    };
+
+    mobileQuery?.addEventListener("change", restart);
+    motionQuery?.addEventListener("change", restart);
+    document.addEventListener("visibilitychange", handleVisibility);
+    restart();
+
+    return () => {
+      disposed = true;
+      cancel();
+      mobileQuery?.removeEventListener("change", restart);
+      motionQuery?.removeEventListener("change", restart);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [active, draw]);
 
   return (
     <canvas
