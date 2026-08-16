@@ -81,6 +81,78 @@ describe("createPeakEffectRecipe", () => {
     expect(recipes.every(({ shakeX, shakeY, sliceOffset }) => shakeX === 0 && shakeY === 0 && sliceOffset === 0)).toBe(true);
   });
 
+  it("allocates only the treatment budget selected by each variant", () => {
+    const cases = [
+      { seed: 2, strength: 0.6, variant: "glow" },
+      { seed: 1, strength: 0.6, variant: "burst" },
+      { seed: 2, strength: 0.8, variant: "shake" },
+      { seed: 1, strength: 0.8, variant: "glitch-band" },
+      { seed: 1, strength: 0.9, variant: "combined" },
+    ] as const;
+
+    const recipes = cases.map(({ seed, strength, variant }) => {
+      const result = createPeakEffectRecipe(
+        snapshot({ peakEventId: seed, peakSeed: seed, peakStrength: strength }),
+        "HIGH",
+        false,
+      )!;
+      expect(result.variant).toBe(variant);
+      return result;
+    });
+
+    const [glow, burst, shake, glitchBand, combined] = recipes;
+    expect(glow).toMatchObject({
+      shakeX: 0,
+      shakeY: 0,
+      sliceOffset: 0,
+      rgbOffset: 0,
+      noiseOpacity: 0,
+      crackleDensity: 0,
+      burstCount: 0,
+    });
+    expect(glow.flash).toBeGreaterThan(0);
+
+    expect(burst).toMatchObject({
+      shakeX: 0,
+      shakeY: 0,
+      sliceOffset: 0,
+      rgbOffset: 0,
+      noiseOpacity: 0,
+      flash: 0,
+      crackleDensity: 0,
+    });
+    expect(burst.burstCount).toBeGreaterThan(0);
+
+    expect(shake).toMatchObject({
+      sliceOffset: 0,
+      rgbOffset: 0,
+      noiseOpacity: 0,
+      flash: 0,
+      crackleDensity: 0,
+      burstCount: 0,
+    });
+    expect(Math.abs(shake.shakeX) + Math.abs(shake.shakeY)).toBeGreaterThan(0);
+
+    expect(glitchBand).toMatchObject({
+      shakeX: 0,
+      shakeY: 0,
+      noiseOpacity: 0,
+      flash: 0,
+      crackleDensity: 0,
+      burstCount: 0,
+    });
+    expect(Math.abs(glitchBand.sliceOffset)).toBeGreaterThan(0);
+    expect(glitchBand.rgbOffset).toBeGreaterThan(0);
+
+    expect(Math.abs(combined.shakeX) + Math.abs(combined.shakeY)).toBeGreaterThan(0);
+    expect(Math.abs(combined.sliceOffset)).toBeGreaterThan(0);
+    expect(combined.rgbOffset).toBeGreaterThan(0);
+    expect(combined.noiseOpacity).toBeGreaterThan(0);
+    expect(combined.flash).toBeGreaterThan(0);
+    expect(combined.crackleDensity).toBeGreaterThan(0);
+    expect(combined.burstCount).toBeGreaterThan(0);
+  });
+
   it("keeps strong non-extreme peaks to one local motion treatment", () => {
     const recipes = Array.from({ length: 20 }, (_, index) =>
       createPeakEffectRecipe(
@@ -131,18 +203,25 @@ describe("createPeakEffectRecipe", () => {
     expect(Math.abs(recipe.sliceOffset)).toBeGreaterThan(0);
   });
 
-  it("preserves color but removes aggressive motion for reduced motion", () => {
+  it("uses a restrained static glow-only budget for reduced motion", () => {
     const recipe = createPeakEffectRecipe(
       snapshot({ peakEventId: 1, peakStrength: 1 }),
       "HIGH",
       true,
     )!;
 
-    expect(recipe.shakeX).toBe(0);
-    expect(recipe.shakeY).toBe(0);
-    expect(recipe.sliceOffset).toBe(0);
-    expect(recipe.rgbOffset).toBeGreaterThan(0);
-    expect(recipe.flash).toBeLessThanOrEqual(0.08);
+    expect(recipe).toMatchObject({
+      variant: "glow",
+      shakeX: 0,
+      shakeY: 0,
+      sliceOffset: 0,
+      rgbOffset: 0,
+      noiseOpacity: 0,
+      crackleDensity: 0,
+      burstCount: 0,
+    });
+    expect(recipe.flash).toBeGreaterThan(0);
+    expect(recipe.flash).toBeLessThanOrEqual(0.05);
   });
 
   it("reduces expensive particles and displacement at low quality", () => {

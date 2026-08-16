@@ -243,6 +243,32 @@ describe("PeakEffectsLayer", () => {
     }
   });
 
+  it("passes a moderate burst to WebGL without aggressive CSS treatments", () => {
+    const { bus, target } = renderLayer();
+
+    act(() => bus.publish(effectFrame({
+      peakSeed: 1,
+      peakStrength: 0.6,
+    }), 100));
+
+    expect(rendererSpies.render).toHaveBeenLastCalledWith(
+      100,
+      expect.objectContaining({
+        variant: "burst",
+        rgbOffset: 0,
+        noiseOpacity: 0,
+        flash: 0,
+        crackleDensity: 0,
+        burstCount: expect.any(Number),
+      }),
+      0,
+    );
+    const renderedRecipe = rendererSpies.render.mock.calls.at(-1)?.[1];
+    expect(renderedRecipe?.burstCount).toBeGreaterThan(0);
+    expect(target.style.getPropertyValue("--peak-rgb-offset")).toBe("0.000px");
+    expect(target.style.getPropertyValue("--peak-noise")).toBe("0.0000");
+  });
+
   it("clears and ignores a peak carried by a new source revision", () => {
     const { bus, target } = renderLayer();
     act(() => bus.publish(peakFrame(1), 100));
@@ -274,7 +300,23 @@ describe("PeakEffectsLayer", () => {
     expect(target.style.getPropertyValue("--peak-shake-x")).toBe("0px");
     expect(target.style.getPropertyValue("--peak-shake-y")).toBe("0px");
     expect(target.style.getPropertyValue("--peak-scale")).toBe("0");
-    expect(Number.parseFloat(target.style.getPropertyValue("--peak-flash"))).toBeLessThanOrEqual(0.08);
+    expect(target.style.getPropertyValue("--peak-rgb-offset")).toBe("0.000px");
+    expect(target.style.getPropertyValue("--peak-noise")).toBe("0.0000");
+    expect(Number.parseFloat(target.style.getPropertyValue("--peak-flash"))).toBeLessThanOrEqual(0.05);
+    expect(rendererSpies.render).toHaveBeenLastCalledWith(
+      100,
+      expect.objectContaining({
+        variant: "glow",
+        shakeX: 0,
+        shakeY: 0,
+        sliceOffset: 0,
+        rgbOffset: 0,
+        noiseOpacity: 0,
+        crackleDensity: 0,
+        burstCount: 0,
+      }),
+      0,
+    );
   });
 
   it("keeps the bounded CSS glow when WebGL initialization fails", () => {

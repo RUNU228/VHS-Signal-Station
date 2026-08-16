@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { PeakEffectRecipe } from "@/lib/effects/peakEffects";
+import { IDLE_AUDIO_SNAPSHOT } from "@/lib/audio/analysis";
+import {
+  createPeakEffectRecipe,
+  type PeakEffectRecipe,
+} from "@/lib/effects/peakEffects";
 import { createVhsSignalRenderer } from "./vhsSignalRenderer";
 
 function webGlContext() {
@@ -119,6 +123,65 @@ describe("createVhsSignalRenderer", () => {
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_seed" }, 91);
     expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_strength" }, 0.705);
     expect(gl.drawArrays).toHaveBeenCalledWith(gl.TRIANGLES, 0, 3);
+  });
+
+  it("renders a moderate burst through its burst uniform without full-screen artifacts", () => {
+    const gl = webGlContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext")
+      .mockReturnValue(gl as unknown as WebGLRenderingContext);
+    const renderer = createVhsSignalRenderer(document.createElement("canvas"))!;
+    const burst = createPeakEffectRecipe({
+      ...IDLE_AUDIO_SNAPSHOT,
+      peakEventId: 1,
+      peakSeed: 1,
+      peakStrength: 0.6,
+    }, "HIGH", false)!;
+
+    expect(burst.variant).toBe("burst");
+    renderer.render(1_250, burst, 0.25);
+
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_time" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_strength" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_rgbOffset" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_noise" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_flash" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_crackle" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith(
+      { name: "u_burst" },
+      expect.any(Number),
+    );
+    const burstUniform = gl.uniform1f.mock.calls.find(
+      ([location]) => location.name === "u_burst",
+    );
+    expect(burstUniform?.[1]).toBeGreaterThan(0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_progress" }, 0.25);
+  });
+
+  it("keeps reduced-motion glow output static and free of artifact uniforms", () => {
+    const gl = webGlContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext")
+      .mockReturnValue(gl as unknown as WebGLRenderingContext);
+    const renderer = createVhsSignalRenderer(document.createElement("canvas"))!;
+    const glow = createPeakEffectRecipe({
+      ...IDLE_AUDIO_SNAPSHOT,
+      peakEventId: 4,
+      peakSeed: 4,
+      peakStrength: 1,
+    }, "HIGH", true)!;
+
+    renderer.render(3_200, glow, 0.5);
+
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_time" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_strength" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_rgbOffset" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_sliceOffset" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_noise" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_crackle" }, 0);
+    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_burst" }, 0);
+    const flashUniform = gl.uniform1f.mock.calls.find(
+      ([location]) => location.name === "u_flash",
+    );
+    expect(flashUniform?.[1]).toBeGreaterThan(0);
   });
 
   it("clears with neutral uniforms when there is no active recipe", () => {

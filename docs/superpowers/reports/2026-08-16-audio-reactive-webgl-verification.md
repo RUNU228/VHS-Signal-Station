@@ -138,3 +138,57 @@ The temporary browser tab was closed, the viewport override was reset, the compl
 - Mutation review: removing the hidden-frame guard, allowing duplicate resume RAFs, retaining any rack renderer subscription, skipping source-revision cleanup, throwing after context loss, removing DPR caps, emitting reduced-motion shake, reusing a stale draw callback, or retrying a null 2D context breaks a focused assertion.
 - No physical-GPU shader output or actual audio playback was exercised. WebGL contract/lifecycle behavior is automated with a renderer test double, while browser inspection covered the real idle page and real layout.
 - `pnpm exec vitest` remains unusable under the managed fallback pnpm shim; `pnpm test` and the checked-in local Vitest executable work normally.
+
+## Final peak-budget and reduced-motion fix
+
+An independent final review found that the variant label did not control the rendered budget: RGB separation, noise, flash, and crackle were populated for every recipe, while `burstCount` was never consumed. Reduced motion only removed shake and slice displacement, leaving the rapidly changing full-screen shader treatments active.
+
+The final fix gives each variant an explicit budget:
+
+- `glow` renders only a restrained warm glow;
+- `burst` renders only a seeded radial WebGL burst through new `u_burst` and `u_progress` uniforms;
+- `shake` uses only the existing physical movement path;
+- `glitch-band` uses slice displacement and its related RGB accent without noise, flash, crackle, or particles;
+- `combined` remains the extreme-only multi-treatment recipe.
+
+Reduced motion now always projects the confirmed peak to a glow recipe. Shake, slice, RGB separation, noise, crackle, and burst density are all exactly zero, and the renderer uploads a zero time uniform so the former 30/45 Hz band and grain inputs cannot animate the output. The glow remains bounded at `0.05` and preserves color/brightness information.
+
+### Final-fix RED and GREEN
+
+The focused tests were added before production changes. The production mutation each test catches is the old all-variants budget, a renderer that omits or ignores burst density, or a reduced-motion renderer that uploads animated artifact inputs.
+
+```text
+RED:
+.\node_modules\.bin\vitest.cmd run src/lib/effects/peakEffects.test.ts src/lib/webgl/vhsSignalRenderer.test.ts src/components/effects/PeakEffectsLayer.test.tsx
+3 files failed; 6 tests failed / 26 passed; exit 1
+
+Expected failures showed nonzero RGB/noise/crackle on glow and burst recipes,
+a combined reduced-motion recipe with a nonzero burst, no u_burst/u_progress
+renderer path, nonzero u_time/u_strength artifact output, and nonzero layer CSS
+RGB/noise values.
+
+GREEN:
+.\node_modules\.bin\vitest.cmd run src/lib/effects/peakEffects.test.ts src/lib/webgl/vhsSignalRenderer.test.ts src/components/effects/PeakEffectsLayer.test.tsx
+3 files passed; 32 tests passed; exit 0
+
+Focused integration:
+.\node_modules\.bin\vitest.cmd run src/lib/effects/peakEffects.test.ts src/lib/webgl/vhsSignalRenderer.test.ts src/components/effects/PeakEffectsLayer.test.tsx src/components/VhsVisualizerApp.test.tsx src/app/globals.test.ts
+5 files passed; 52 tests passed; exit 0
+```
+
+The focused coverage asserts actual recipe fields, uploaded WebGL uniforms, and layer CSS/renderer arguments rather than relying on variant names alone. Existing exact `0.72`/`0.88` tier tests, deterministic seed tests, physical-movement gates, source-reset/same-ID cleanup, context loss/restoration, fallback, and LOW-quality DPR tests remain green.
+
+### Fresh final verification
+
+| Command | Result | Evidence |
+|---|---|---|
+| `pnpm test` | pass, exit 0 | 30 files and 149 tests passed |
+| `pnpm lint` | pass, exit 0 | ESLint completed without diagnostics |
+| `pnpm build` | pass, exit 0 | Next.js 16.3.0 compiled, typechecked, generated 4/4 static pages, and prerendered `/` |
+| `git diff --check` | pass, exit 0 | no whitespace errors; only Windows LF-to-CRLF checkout notices |
+
+### Final live-check limitation
+
+The in-app browser loaded the final development page with `GET / 200`, found one `canvas.peak-effects-layer`, and reported no console warnings or errors. Its actual `prefers-reduced-motion: reduce` query was false. The browser exposes viewport and visibility controls only, with no preferred-motion emulation, so a live reduced-motion run was not performed. Automated recipe, uniform, layer, and stylesheet tests provide the reduced-motion evidence; they are not presented as a live browser check. No audio asset was available to trigger and subjectively inspect the new burst on a physical GPU.
+
+The untracked user-owned `audio_visualizer_update_spec.md` remained untouched and excluded from staging.
