@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { VhsVisualizerApp } from "./VhsVisualizerApp";
 
@@ -18,6 +18,7 @@ class SilentAudio extends EventTarget {
 
 describe("VhsVisualizerApp", () => {
   it("renders the workstation hierarchy around one client engine", () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
     const { container } = render(
       <VhsVisualizerApp
         engineOptions={{
@@ -43,11 +44,17 @@ describe("VhsVisualizerApp", () => {
     const background = container.querySelector(
       "canvas.audio-reactive-background",
     );
+    const peakEffects = container.querySelector("canvas.peak-effects-layer");
     const noise = container.querySelector(".vhs-atmosphere");
     expect(background).toBeInTheDocument();
+    expect(peakEffects).toBeInTheDocument();
     expect(container.querySelectorAll("canvas.audio-reactive-background")).toHaveLength(1);
     expect(
-      background!.compareDocumentPosition(noise!) &
+      background!.compareDocumentPosition(peakEffects!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      peakEffects!.compareDocumentPosition(noise!) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

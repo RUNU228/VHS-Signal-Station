@@ -103,6 +103,30 @@ describe("audio-reactive interface contracts", () => {
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*data-audio-active[^}]*transform:\s*none\s*!important/,
     );
   });
+
+  it("keeps peak effects transparent, non-interactive, and below controls", () => {
+    expect(globalsCss).toMatch(
+      /\.peak-effects-layer\s*\{[^}]*position:\s*fixed[^}]*z-index:\s*-1[^}]*pointer-events:\s*none[^}]*background:/,
+    );
+    expect(globalsCss).toMatch(
+      /\.station-shell\s*>\s*:is\(\.audio-reactive-background,\s*\.peak-effects-layer\)[^{]*\{[^}]*transform:/,
+    );
+    expect(globalsCss).toMatch(
+      /\.visualizer-rack\s*\{[^}]*transform:\s*translate3d\(var\(--peak-shake-x\),\s*var\(--peak-shake-y\),\s*0\)\s*scale\(calc\(1\s*\+\s*var\(--peak-scale\)\)\)/,
+    );
+    expect(globalsCss).not.toMatch(
+      /:(?:is|where)\([^)]*(?:player|uploader|library)[^)]*\)[^{]*\{[^}]*--peak-shake/,
+    );
+  });
+
+  it("zeros peak displacement and lowers the shader layer for reduced motion", () => {
+    expect(globalsCss).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.station-shell\s*\{[^}]*--peak-shake-x:\s*0px[^}]*--peak-shake-y:\s*0px[^}]*--peak-scale:\s*0[^}]*--peak-rgb-offset:\s*0px/,
+    );
+    expect(globalsCss).toMatch(
+      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.peak-effects-layer\s*\{[^}]*opacity:\s*\.35/,
+    );
+  });
 });
 
 describe("responsive station foundation", () => {

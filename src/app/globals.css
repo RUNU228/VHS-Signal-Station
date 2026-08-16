@@ -67,6 +67,12 @@ input:focus-visible {
   --audio-treble: 0;
   --audio-peak: 0;
   --audio-smoothed: 0;
+  --peak-shake-x: 0px;
+  --peak-shake-y: 0px;
+  --peak-scale: 0;
+  --peak-rgb-offset: 0px;
+  --peak-flash: 0;
+  --peak-noise: 0;
   position: relative;
   z-index: 1;
   isolation: isolate;
@@ -289,6 +295,31 @@ input:focus-visible {
   height: 100%;
   pointer-events: none;
   opacity: .82;
+}
+.peak-effects-layer {
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: transparent;
+  background-image:
+    radial-gradient(circle at 31% 28%, rgba(168, 77, 67, var(--peak-flash)), transparent 42%),
+    radial-gradient(circle at 72% 67%, rgba(111, 145, 168, var(--peak-flash)), transparent 38%),
+    repeating-linear-gradient(to bottom, transparent 0 5px, rgba(230, 215, 163, var(--peak-noise)) 5px 6px);
+  opacity: .78;
+  transform-origin: center;
+}
+.station-shell > :is(.audio-reactive-background, .peak-effects-layer) {
+  transform: translate3d(var(--peak-shake-x), var(--peak-shake-y), 0);
+  filter:
+    drop-shadow(var(--peak-rgb-offset) 0 rgba(168, 77, 67, .2))
+    drop-shadow(calc(-1 * var(--peak-rgb-offset)) 0 rgba(111, 145, 168, .2));
+}
+.visualizer-rack {
+  transform: translate3d(var(--peak-shake-x), var(--peak-shake-y), 0) scale(calc(1 + var(--peak-scale)));
+  transform-origin: center;
 }
 .equipment-panel[data-reactive="true"] {
   border-color: color-mix(in srgb, var(--line), var(--amber) calc(var(--audio-smoothed) * 14%));
@@ -916,7 +947,14 @@ input:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .station-shell {
+    --peak-shake-x: 0px !important;
+    --peak-shake-y: 0px !important;
+    --peak-scale: 0 !important;
+    --peak-rgb-offset: 0px !important;
+  }
   .audio-reactive-background { opacity: .45; }
+  .peak-effects-layer { opacity: .35; }
   .station-shell[data-audio-active="true"] :is(.hardware-button, .mute-button, .tape-loader button, .track-row, .equipment-panel) {
     transform: none !important;
   }
