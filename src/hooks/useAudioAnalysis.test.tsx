@@ -99,6 +99,23 @@ describe("useAudioAnalysis", () => {
     expect(frames).toHaveLength(0);
   });
 
+  it("does not schedule frames for peak metadata after energy has decayed", () => {
+    const analysersRef = createRef<AudioAnalyserBundle | null>();
+    const { result, rerender } = renderHook(
+      ({ active }) => useAudioAnalysis(analysersRef, active),
+      { initialProps: { active: false } },
+    );
+
+    result.current.current = {
+      ...IDLE_AUDIO_SNAPSHOT,
+      peakEventId: 1,
+      peakSeed: 0.618,
+    };
+    rerender({ active: true });
+
+    expect(frames).toHaveLength(0);
+  });
+
   it("pauses sampling while the document is hidden and resumes when visible", () => {
     let hidden = false;
     vi.spyOn(document, "hidden", "get").mockImplementation(() => hidden);

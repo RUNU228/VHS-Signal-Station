@@ -12,10 +12,15 @@ import type {
 } from "@/types/audio";
 
 const DECAY_THRESHOLD = 0.001;
+const AUDIBLE_ENERGY_FIELDS = [
+  "overallEnergy",
+  "peakStrength",
+  "transientEnergy",
+] as const;
 
 function hasAudibleEnergy(snapshot: AudioReactiveSnapshot): boolean {
-  return Object.values(snapshot).some(
-    (value) => typeof value === "number" && value > DECAY_THRESHOLD,
+  return AUDIBLE_ENERGY_FIELDS.some(
+    (field) => snapshot[field] > DECAY_THRESHOLD,
   );
 }
 
