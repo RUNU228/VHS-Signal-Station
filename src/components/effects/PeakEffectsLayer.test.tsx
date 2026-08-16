@@ -249,7 +249,16 @@ describe("PeakEffectsLayer", () => {
     expect(target.style.getPropertyValue("--peak-noise")).not.toBe("");
 
     act(() => bus.publish(peakFrame(2, { sourceRevision: 1 }), 110));
-    expect(target.style.getPropertyValue("--peak-noise")).toBe("");
+    for (const variable of [
+      "--peak-shake-x",
+      "--peak-shake-y",
+      "--peak-scale",
+      "--peak-rgb-offset",
+      "--peak-flash",
+      "--peak-noise",
+    ]) {
+      expect(target.style.getPropertyValue(variable)).toBe("");
+    }
     expect(rendererSpies.render).toHaveBeenLastCalledWith(110, null, 1);
 
     act(() => bus.publish(peakFrame(3, { sourceRevision: 1 }), 120));
@@ -292,13 +301,19 @@ describe("PeakEffectsLayer", () => {
     rendererSpies.create
       .mockReturnValueOnce(firstRenderer)
       .mockReturnValueOnce(restoredRenderer);
-    const { container } = renderLayer();
+    const { bus, container, target } = renderLayer();
     const canvas = container.querySelector("canvas")!;
     const loss = new Event("webglcontextlost", { cancelable: true });
 
     act(() => canvas.dispatchEvent(loss));
     expect(loss.defaultPrevented).toBe(true);
     expect(rendererSpies.dispose).toHaveBeenCalledTimes(1);
+
+    expect(() => {
+      act(() => bus.publish(peakFrame(1), 100));
+    }).not.toThrow();
+    expect(target.style.getPropertyValue("--peak-flash")).not.toBe("");
+    expect(rendererSpies.render).not.toHaveBeenCalled();
 
     act(() => canvas.dispatchEvent(new Event("webglcontextrestored")));
     expect(rendererSpies.create).toHaveBeenCalledTimes(2);

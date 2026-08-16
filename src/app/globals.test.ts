@@ -120,9 +120,18 @@ describe("audio-reactive interface contracts", () => {
   });
 
   it("zeros peak displacement and lowers the shader layer for reduced motion", () => {
-    expect(globalsCss).toMatch(
-      /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.station-shell\s*\{[^}]*--peak-shake-x:\s*0px[^}]*--peak-shake-y:\s*0px[^}]*--peak-scale:\s*0[^}]*--peak-rgb-offset:\s*0px/,
-    );
+    for (const [variable, value] of [
+      ["--peak-shake-x", "0px"],
+      ["--peak-shake-y", "0px"],
+      ["--peak-scale", "0"],
+      ["--peak-rgb-offset", "0px"],
+    ]) {
+      expect(globalsCss).toMatch(
+        new RegExp(
+          `@media \\(prefers-reduced-motion: reduce\\)[\\s\\S]*\\.station-shell\\s*\\{[^}]*${variable}:\\s*${value}\\s*!important`,
+        ),
+      );
+    }
     expect(globalsCss).toMatch(
       /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.peak-effects-layer\s*\{[^}]*opacity:\s*\.35/,
     );

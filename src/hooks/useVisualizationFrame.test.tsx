@@ -2,7 +2,10 @@ import { renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { IDLE_AUDIO_SNAPSHOT } from "@/lib/audio/analysis";
-import type { AudioVisualizationBus } from "@/types/audio";
+import type {
+  AudioVisualizationBus,
+  AudioVisualizationListener,
+} from "@/types/audio";
 import { useVisualizationFrame } from "./useVisualizationFrame";
 
 function fakeBus(overrides: Partial<AudioVisualizationBus> = {}): AudioVisualizationBus {
@@ -32,7 +35,13 @@ describe("useVisualizationFrame", () => {
 
   it("subscribes once, uses the latest callback, and unsubscribes", () => {
     const unsubscribe = vi.fn();
-    const subscribe = vi.fn(() => unsubscribe);
+    let subscribed: AudioVisualizationListener = () => {
+      throw new Error("Renderer did not subscribe");
+    };
+    const subscribe = vi.fn((listener: AudioVisualizationListener) => {
+      subscribed = listener;
+      return unsubscribe;
+    });
     const bus = fakeBus({ subscribe });
     const first = vi.fn();
     const second = vi.fn();
@@ -44,6 +53,10 @@ describe("useVisualizationFrame", () => {
     rerender({ draw: second });
 
     expect(subscribe).toHaveBeenCalledTimes(1);
+    const publishedFrame = bus.frameRef.current;
+    subscribed(publishedFrame, 42);
+    expect(first).not.toHaveBeenCalled();
+    expect(second).toHaveBeenCalledWith(publishedFrame, 42);
     unmount();
     expect(unsubscribe).toHaveBeenCalledTimes(1);
   });

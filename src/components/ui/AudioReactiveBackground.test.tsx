@@ -42,6 +42,7 @@ function fakeBus(initialFrame = frame()) {
 
   return {
     analysis,
+    listenerCount: () => listeners.size,
     publish(nextFrame = initialFrame, time = 16) {
       analysis.frameRef.current = nextFrame;
       for (const listener of listeners) listener(nextFrame, time);
@@ -111,17 +112,37 @@ describe("AudioReactiveBackground", () => {
     ).not.toThrow();
   });
 
+  it("caches a failed 2d context lookup so the null fallback stays inert", () => {
+    const getContext = vi
+      .spyOn(HTMLCanvasElement.prototype, "getContext")
+      .mockReturnValue(null);
+    const bus = fakeBus();
+
+    render(<AudioReactiveBackground analysis={bus.analysis} active />);
+    for (const time of [0, 34, 68]) {
+      act(() => bus.publish(frame(), time));
+    }
+
+    expect(getContext).toHaveBeenCalledTimes(1);
+  });
+
   it("draws persistent idle frames from the shared bus without a private RAF", () => {
     const context = canvasContext();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
     const bus = fakeBus();
 
-    render(<AudioReactiveBackground analysis={bus.analysis} active={false} />);
+    const { unmount } = render(
+      <AudioReactiveBackground analysis={bus.analysis} active={false} />,
+    );
     act(() => bus.publish(frame(), 0));
 
     expect(bus.analysis.subscribe).toHaveBeenCalledTimes(1);
+    expect(bus.listenerCount()).toBe(1);
     expect(context.clearRect).toHaveBeenCalledTimes(1);
     expect(requestAnimationFrame).not.toHaveBeenCalled();
+
+    unmount();
+    expect(bus.listenerCount()).toBe(0);
   });
 
   it("keeps low-quality drawing close to 30 frames per second", () => {

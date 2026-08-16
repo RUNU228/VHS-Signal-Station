@@ -163,6 +163,7 @@ export function AudioReactiveBackground({
 
     let quality = analysis.frameRef.current.quality;
     let lastDraw = Number.NEGATIVE_INFINITY;
+    let context: CanvasRenderingContext2D | null | undefined;
     resizeCanvas(canvas, quality);
 
     const unsubscribe = analysis.subscribe((frame, time) => {
@@ -174,7 +175,7 @@ export function AudioReactiveBackground({
 
       const policy = backgroundPolicy(frame);
       if (time - lastDraw < policy.frameInterval - RAF_INTERVAL_TOLERANCE) return;
-      const context = canvas.getContext("2d");
+      if (context === undefined) context = canvas.getContext("2d");
       if (!context) return;
 
       const pointCount = Math.max(32, Math.min(96, Math.floor(canvas.width / 12)));

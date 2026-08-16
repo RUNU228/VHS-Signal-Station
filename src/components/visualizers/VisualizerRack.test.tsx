@@ -44,6 +44,7 @@ function fakeBus() {
 
   return {
     analysis,
+    listenerCount: () => listeners.size,
     publish(nextFrame = frame, time = 16) {
       analysis.frameRef.current = nextFrame;
       for (const listener of listeners) listener(nextFrame, time);
@@ -144,9 +145,9 @@ describe("VisualizerRack", () => {
     }
   });
 
-  it("subscribes all five renderers to one bus", () => {
-    const { analysis } = fakeBus();
-    render(
+  it("subscribes all five renderers to one bus and unsubscribes them on unmount", () => {
+    const { analysis, listenerCount } = fakeBus();
+    const { unmount } = render(
       <VisualizerRack
         analysis={analysis}
         active
@@ -154,6 +155,10 @@ describe("VisualizerRack", () => {
     );
 
     expect(analysis.subscribe).toHaveBeenCalledTimes(5);
+    expect(listenerCount()).toBe(5);
+
+    unmount();
+    expect(listenerCount()).toBe(0);
   });
 
   it("draws blue, yellow, and red local signal colors from one published frame", () => {

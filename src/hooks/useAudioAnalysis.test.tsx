@@ -18,11 +18,25 @@ function runNextFrame(time = 16): void {
   entry[1](time);
 }
 
-function analyserBundle(fill = 255): AudioAnalyserBundle {
+function analyserBundle(
+  frequencyFrames: number | readonly Uint8Array[] = 255,
+): AudioAnalyserBundle {
+  let frequencyFrame = 0;
   const frequency = {
     frequencyBinCount: 2_048,
     fftSize: 4_096,
-    getByteFrequencyData: vi.fn((target: Uint8Array) => target.fill(fill)),
+    getByteFrequencyData: vi.fn((target: Uint8Array) => {
+      if (typeof frequencyFrames === "number") {
+        target.fill(frequencyFrames);
+        return;
+      }
+
+      const source = frequencyFrames[
+        Math.min(frequencyFrame, frequencyFrames.length - 1)
+      ];
+      frequencyFrame += 1;
+      target.set(source);
+    }),
   } as unknown as AnalyserNode;
   return {
     context: { sampleRate: 48_000 } as AudioContext,
@@ -53,6 +67,15 @@ function spiedBundle(fill = 255) {
   };
 }
 
+function frequencyBins(
+  baseline: number,
+  ranges: readonly (readonly [start: number, end: number, value: number])[] = [],
+): Uint8Array {
+  const bins = new Uint8Array(2_048).fill(baseline);
+  for (const [start, end, value] of ranges) bins.fill(value, start, end);
+  return bins;
+}
+
 describe("useAudioAnalysis", () => {
   beforeEach(() => {
     nextFrame = 1;
@@ -75,6 +98,7 @@ describe("useAudioAnalysis", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllGlobals();
   });
 
@@ -189,20 +213,32 @@ describe("useAudioAnalysis", () => {
     expect(frames).toHaveLength(0);
   });
 
-  it("pauses sampling while the document is hidden and resumes when visible", () => {
+  it("cancels the sole root frame while hidden and resumes with exactly one frame", () => {
     let hidden = false;
     vi.spyOn(document, "hidden", "get").mockImplementation(() => hidden);
     const analysersRef = { current: analyserBundle() };
-    renderHook(() => useAudioAnalysis(analysersRef, { active: true, resetKey: "track-a" }));
+    const { unmount } = renderHook(() =>
+      useAudioAnalysis(analysersRef, { active: true, resetKey: "track-a" }),
+    );
+
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
+    expect(frames).toHaveLength(1);
 
     hidden = true;
     act(() => document.dispatchEvent(new Event("visibilitychange")));
-    expect(cancelAnimationFrame).toHaveBeenCalled();
+    act(() => document.dispatchEvent(new Event("visibilitychange")));
+    expect(cancelAnimationFrame).toHaveBeenCalledTimes(1);
     expect(frames).toHaveLength(0);
 
     hidden = false;
     act(() => document.dispatchEvent(new Event("visibilitychange")));
+    act(() => document.dispatchEvent(new Event("visibilitychange")));
+    expect(requestAnimationFrame).toHaveBeenCalledTimes(2);
     expect(frames).toHaveLength(1);
+
+    unmount();
+    expect(cancelAnimationFrame).toHaveBeenCalledTimes(2);
+    expect(frames).toHaveLength(0);
   });
 
   it("clears buffers and peak state when resetKey changes", () => {
@@ -218,5 +254,73 @@ describe("useAudioAnalysis", () => {
     expect(result.current.frameRef.current.snapshot.peakEventId).toBe(0);
     expect(result.current.frameRef.current.frequencyData.every((value) => value === 0)).toBe(true);
     expect(result.current.frameRef.current.sourceRevision).toBe(1);
+  });
+
+  it("publishes deterministic snapshots for representative synthetic signal profiles", () => {
+    const quiet = frequencyBins(8);
+    const normal = frequencyBins(100);
+    const bassHeavy = frequencyBins(24, [[3, 22, 240]]);
+    const highHeavy = frequencyBins(24, [[342, 1_707, 240]]);
+    const loud = frequencyBins(220);
+    const clipped = frequencyBins(255);
+
+    const sample = (frequencyFrames: readonly Uint8Array[]) => {
+      const analysersRef = { current: analyserBundle(frequencyFrames) };
+      const { result, unmount } = renderHook(() =>
+        useAudioAnalysis(analysersRef, { active: true, resetKey: "profile" }),
+      );
+      const snapshots = frequencyFrames.map((_, index) => {
+        act(() => runNextFrame((index + 1) * 160));
+        return { ...result.current.frameRef.current.snapshot };
+      });
+      unmount();
+      return snapshots;
+    };
+
+    const first = {
+      quiet: sample([quiet])[0],
+      normal: sample([normal])[0],
+      bassHeavy: sample([bassHeavy])[0],
+      highHeavy: sample([highHeavy])[0],
+      sustainedLoud: sample([loud, loud]),
+      sharpTransient: sample([quiet, clipped]),
+      clipped: sample([clipped])[0],
+    };
+    const second = {
+      quiet: sample([quiet])[0],
+      normal: sample([normal])[0],
+      bassHeavy: sample([bassHeavy])[0],
+      highHeavy: sample([highHeavy])[0],
+      sustainedLoud: sample([loud, loud]),
+      sharpTransient: sample([quiet, clipped]),
+      clipped: sample([clipped])[0],
+    };
+
+    expect(second).toEqual(first);
+    expect(first.quiet.signalState).toBe("IDLE");
+    expect(first.normal.overallEnergy).toBeGreaterThan(first.quiet.overallEnergy);
+    expect(first.normal.peakEventId).toBe(0);
+    expect(first.bassHeavy.lowEnergy).toBeGreaterThan(first.bassHeavy.midEnergy);
+    expect(first.bassHeavy.lowEnergy).toBeGreaterThan(first.bassHeavy.highEnergy);
+    expect(first.highHeavy.highEnergy).toBeGreaterThan(first.highHeavy.lowEnergy);
+    expect(first.highHeavy.highEnergy).toBeGreaterThan(first.highHeavy.midEnergy);
+    expect(first.sustainedLoud[0].peakEventId).toBe(1);
+    expect(first.sustainedLoud[1].peakEventId).toBe(1);
+    expect(first.sustainedLoud[1].transientEnergy).toBeLessThan(
+      first.sustainedLoud[0].transientEnergy,
+    );
+    expect(first.sharpTransient[1].peakStrength).toBeGreaterThan(0);
+    expect(first.sharpTransient[1].transientEnergy).toBeGreaterThan(
+      first.sustainedLoud[1].transientEnergy,
+    );
+    const { signalState, peakEventId, peakSeed, ...clippedNumericFields } = first.clipped;
+    expect(signalState).not.toBe("IDLE");
+    expect(peakEventId).toBe(1);
+    expect(peakSeed).toBeGreaterThan(0);
+    for (const value of Object.values(clippedNumericFields)) {
+      expect(Number.isFinite(value)).toBe(true);
+      expect(value).toBeGreaterThanOrEqual(-1);
+      expect(value).toBeLessThanOrEqual(1);
+    }
   });
 });
