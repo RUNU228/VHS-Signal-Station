@@ -8,7 +8,7 @@ import { drawScopeGrid, smoothSignalColor } from "@/lib/visualization/canvas";
 import {
   createStereoField,
   initializeStereoField,
-  particleOpacity,
+  particleFinalOpacity,
   particleSize,
   stereoMotionFactor,
   STEREOMETER_PARTICLE_STRIDE,
@@ -107,7 +107,7 @@ export function Stereometer({
       particles[offset] += (particles[offset + 2] - particles[offset]) * motionEase;
       particles[offset + 1] += (particles[offset + 3] - particles[offset + 1]) * motionEase;
       const intensity = particles[offset + 4];
-      const opacity = particleOpacity(intensity) * (0.88 + particles[offset + 6] * 0.12);
+      const opacity = particleFinalOpacity(intensity, particles[offset + 6]);
       const x = width / 2 + particles[offset] * width * 0.42;
       const y = height / 2 - particles[offset + 1] * height * 0.42;
       const size = particleSize(intensity) * peakExpansion;

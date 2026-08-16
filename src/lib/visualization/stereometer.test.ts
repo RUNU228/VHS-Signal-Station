@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   createStereoField,
   particleCountForQuality,
+  particleFinalOpacity,
   particleOpacity,
   particleSize,
   readCohort,
@@ -58,6 +59,19 @@ describe("adaptive stereometer field", () => {
     expect(particleOpacity(1)).toBe(0.92);
     expect(particleSize(0)).toBe(0.8);
     expect(particleSize(1)).toBe(3.6);
+  });
+
+  it("keeps phase-modulated rendered opacity inside the sharp bounds", () => {
+    expect(particleFinalOpacity(0, 0)).toBe(0.1);
+    expect(particleFinalOpacity(1, 1)).toBe(0.92);
+
+    const phaseZero = particleFinalOpacity(0.5, 0);
+    const phaseMid = particleFinalOpacity(0.5, 0.5);
+    const phaseOne = particleFinalOpacity(0.5, 1);
+    expect(phaseZero).toBeGreaterThanOrEqual(0.1);
+    expect(phaseMid).toBeGreaterThan(phaseZero);
+    expect(phaseOne).toBeGreaterThan(phaseMid);
+    expect(phaseOne).toBeLessThanOrEqual(0.92);
   });
 
   it("uses faster motion for high cohorts without exceeding one", () => {

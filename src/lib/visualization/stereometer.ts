@@ -56,6 +56,15 @@ export function particleOpacity(value: number): number {
     + (PARTICLE_MAX_ALPHA - PARTICLE_MIN_ALPHA) * smoothstep(value);
 }
 
+export function particleFinalOpacity(intensity: number, phase: number): number {
+  const phaseMultiplier = 0.88 + clamp(phase, 0, 1) * 0.12;
+  return clamp(
+    particleOpacity(intensity) * phaseMultiplier,
+    PARTICLE_MIN_ALPHA,
+    PARTICLE_MAX_ALPHA,
+  );
+}
+
 export function particleSize(value: number): number {
   if (value <= 0) return PARTICLE_MIN_SIZE;
   if (value >= 1) return PARTICLE_MAX_SIZE;
