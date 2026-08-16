@@ -145,7 +145,20 @@ describe("VisualizerRack", () => {
     }
   });
 
-  it("subscribes all five renderers to one bus and unsubscribes them on unmount", () => {
+  it("subscribes all five renderers to one bus", () => {
+    const { analysis, listenerCount } = fakeBus();
+    render(
+      <VisualizerRack
+        analysis={analysis}
+        active
+      />,
+    );
+
+    expect(analysis.subscribe).toHaveBeenCalledTimes(5);
+    expect(listenerCount()).toBe(5);
+  });
+
+  it("unsubscribes all five renderers when the rack unmounts", () => {
     const { analysis, listenerCount } = fakeBus();
     const { unmount } = render(
       <VisualizerRack
@@ -154,7 +167,6 @@ describe("VisualizerRack", () => {
       />,
     );
 
-    expect(analysis.subscribe).toHaveBeenCalledTimes(5);
     expect(listenerCount()).toBe(5);
 
     unmount();

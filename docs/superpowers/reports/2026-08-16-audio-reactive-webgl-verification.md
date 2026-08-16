@@ -49,6 +49,19 @@ GREEN after the tri-state context cache:
 1 file passed, 2 tests passed, exit 0
 ```
 
+Independent review requested direct rack-level cleanup proof. The rack fixture was extended with a separately named unmount test, then `useVisualizationFrame` was temporarily mutated to subscribe without returning its cleanup callback. No production change was retained.
+
+```text
+RED — missing-cleanup mutation:
+.\node_modules\.bin\vitest.cmd run src/components/visualizers/VisualizerRack.test.tsx
+1 file failed; 1 test failed / 4 passed; exit 1
+Expected 0 listeners after unmount, received 5.
+
+GREEN — original production cleanup restored unchanged:
+.\node_modules\.bin\vitest.cmd run src/components/visualizers/VisualizerRack.test.tsx
+1 file passed; 5 tests passed; exit 0
+```
+
 The assertions now demonstrate:
 
 - repeated hidden notifications cancel only the one pending root RAF; repeated visible notifications schedule only one replacement RAF; unmount cancels it;
@@ -78,7 +91,7 @@ Findings:
 
 | Command | Result | Evidence |
 |---|---|---|
-| `pnpm test` | pass, exit 0 | 30 files and 144 tests passed; no unhandled rejection or React `act` warning was printed |
+| `pnpm test` | pass, exit 0 | 30 files and 145 tests passed; no unhandled rejection or React `act` warning was printed |
 | `pnpm lint` | pass, exit 0 | `eslint` completed without diagnostics |
 | `pnpm build` | pass, exit 0 | Next.js 16.3.0 compiled, typechecked, generated 4/4 static pages, and prerendered `/` |
 | `git diff --check` | pass, exit 0 | no whitespace errors; only Windows LF-to-CRLF checkout notices |
@@ -121,7 +134,7 @@ The temporary browser tab was closed, the viewport override was reset, the compl
 ## Self-review and limitations
 
 - The change set is confined to verification tests, the failed-context cache, and this report; it does not alter visual design, audio processing, public interfaces, or playback behavior.
-- Independent review found that generic hook cleanup plus a five-subscription assertion did not directly prove rack-wide cleanup. `VisualizerRack.test.tsx` now asserts five live listeners before unmount and zero afterward.
+- Independent review found that generic hook cleanup plus a five-subscription assertion did not directly prove rack-wide cleanup. `VisualizerRack.test.tsx` now has a separately named regression asserting five live listeners before unmount and zero afterward; a controlled missing-cleanup mutation produced the expected 5-versus-0 RED before the production hook was restored unchanged for GREEN.
 - Mutation review: removing the hidden-frame guard, allowing duplicate resume RAFs, retaining any rack renderer subscription, skipping source-revision cleanup, throwing after context loss, removing DPR caps, emitting reduced-motion shake, reusing a stale draw callback, or retrying a null 2D context breaks a focused assertion.
 - No physical-GPU shader output or actual audio playback was exercised. WebGL contract/lifecycle behavior is automated with a renderer test double, while browser inspection covered the real idle page and real layout.
 - `pnpm exec vitest` remains unusable under the managed fallback pnpm shim; `pnpm test` and the checked-in local Vitest executable work normally.
