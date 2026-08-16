@@ -42,6 +42,28 @@ describe("createPeakEffectRecipe", () => {
     expect(first!.burstCount).toBeLessThanOrEqual(50);
   });
 
+  it("preserves distinct real normalized peak seeds deterministically", () => {
+    const firstInput = snapshot({
+      peakEventId: 1,
+      peakSeed: 0.61803398875,
+      peakStrength: 0.8,
+    });
+    const secondInput = snapshot({
+      peakEventId: 2,
+      peakSeed: 0.2360679775,
+      peakStrength: 0.8,
+    });
+    const first = createPeakEffectRecipe(firstInput, "HIGH", false)!;
+    const repeated = createPeakEffectRecipe(firstInput, "HIGH", false)!;
+    const second = createPeakEffectRecipe(secondInput, "HIGH", false)!;
+
+    expect(first).toEqual(repeated);
+    expect(first.seed).toBeGreaterThan(0);
+    expect(second.seed).toBeGreaterThan(0);
+    expect(first.seed).not.toBe(second.seed);
+    expect(first).not.toEqual(second);
+  });
+
   it("keeps moderate peaks to glow or burst recipes", () => {
     const recipes = Array.from({ length: 20 }, (_, index) =>
       createPeakEffectRecipe(
@@ -75,6 +97,26 @@ describe("createPeakEffectRecipe", () => {
     expect(recipes.every(({ variant }) => variant === "shake" || variant === "glitch-band")).toBe(true);
     expect(recipes.every((recipe) => recipe.variant !== "shake" || recipe.sliceOffset === 0)).toBe(true);
     expect(recipes.every((recipe) => recipe.variant !== "glitch-band" || (recipe.shakeX === 0 && recipe.shakeY === 0))).toBe(true);
+  });
+
+  it("starts strong effects at exactly 0.72 strength", () => {
+    const recipe = createPeakEffectRecipe(
+      snapshot({ peakEventId: 1, peakSeed: 1, peakStrength: 0.72 }),
+      "HIGH",
+      false,
+    )!;
+
+    expect(["shake", "glitch-band"]).toContain(recipe.variant);
+  });
+
+  it("starts combined extreme effects at exactly 0.88 strength", () => {
+    const recipe = createPeakEffectRecipe(
+      snapshot({ peakEventId: 1, peakSeed: 1, peakStrength: 0.88 }),
+      "HIGH",
+      false,
+    )!;
+
+    expect(recipe.variant).toBe("combined");
   });
 
   it("allows extreme peaks to combine bounded treatments", () => {

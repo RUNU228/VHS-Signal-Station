@@ -53,9 +53,12 @@ function applyPeakVariables(
   const shakeEnvelope = elapsedMs >= recipe.shakeDurationMs
     ? 0
     : 1 - elapsedMs / recipe.shakeDurationMs;
-  const shakeX = reducedMotion ? 0 : recipe.shakeX * shakeEnvelope;
-  const shakeY = reducedMotion ? 0 : recipe.shakeY * shakeEnvelope;
-  const scale = reducedMotion ? 0 : recipe.strength * 0.006 * shakeEnvelope;
+  const usesPhysicalMotion = recipe.variant === "shake" || recipe.variant === "combined";
+  const shakeX = reducedMotion || !usesPhysicalMotion ? 0 : recipe.shakeX * shakeEnvelope;
+  const shakeY = reducedMotion || !usesPhysicalMotion ? 0 : recipe.shakeY * shakeEnvelope;
+  const scale = reducedMotion || !usesPhysicalMotion
+    ? 0
+    : recipe.strength * 0.006 * shakeEnvelope;
 
   target.style.setProperty("--peak-shake-x", shakeX === 0 ? "0px" : `${shakeX.toFixed(3)}px`);
   target.style.setProperty("--peak-shake-y", shakeY === 0 ? "0px" : `${shakeY.toFixed(3)}px`);
@@ -126,6 +129,14 @@ export function PeakEffectsLayer({
         return;
       }
 
+      if (frame.snapshot.peakStrength <= 0) {
+        activeRecipe = null;
+        activeSnapshot = null;
+        clearPeakVariables(target);
+        clearRenderer(time);
+        return;
+      }
+
       if (frame.snapshot.peakEventId !== peakEventId) {
         peakEventId = frame.snapshot.peakEventId;
         activeRecipe = createPeakEffectRecipe(
@@ -182,8 +193,8 @@ export function PeakEffectsLayer({
     const resizeObserver = typeof ResizeObserver === "undefined"
       ? null
       : new ResizeObserver(resize);
-    resizeObserver?.observe(target);
-    if (!resizeObserver) window.addEventListener("resize", resize);
+    resizeObserver?.observe(canvas);
+    window.addEventListener("resize", resize);
 
     const handleContextLost = (event: Event) => {
       event.preventDefault();
@@ -203,7 +214,7 @@ export function PeakEffectsLayer({
       disposed = true;
       unsubscribe();
       resizeObserver?.disconnect();
-      if (!resizeObserver) window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", resize);
       canvas.removeEventListener("webglcontextlost", handleContextLost);
       canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       renderer?.dispose();

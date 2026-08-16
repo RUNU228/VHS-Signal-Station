@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { IDLE_AUDIO_SNAPSHOT } from "@/lib/audio/analysis";
 import type {
+  AudioReactiveSnapshot,
   AudioVisualizationBus,
   AudioVisualizationFrame,
   AudioVisualizationListener,
@@ -57,6 +58,22 @@ function peakFrame(
   });
 }
 
+function effectFrame(
+  snapshot: Partial<AudioReactiveSnapshot>,
+  options: Partial<AudioVisualizationFrame> = {},
+): AudioVisualizationFrame {
+  return frame({
+    ...options,
+    snapshot: {
+      ...IDLE_AUDIO_SNAPSHOT,
+      peakEventId: 1,
+      peakSeed: 1,
+      peakStrength: 0.8,
+      ...snapshot,
+    },
+  });
+}
+
 function fakeBus(initialFrame = frame()) {
   const listeners = new Set<AudioVisualizationListener>();
   const analysis: AudioVisualizationBus = {
@@ -91,13 +108,15 @@ function renderLayer(initialFrame = frame()) {
 
 describe("PeakEffectsLayer", () => {
   let disconnect: ReturnType<typeof vi.fn>;
+  let observe: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     disconnect = vi.fn();
+    observe = vi.fn();
     vi.stubGlobal("devicePixelRatio", 3);
     vi.stubGlobal("ResizeObserver", class {
-      observe = vi.fn();
+      observe = observe;
       disconnect = disconnect;
       unobserve = vi.fn();
     });
@@ -124,6 +143,23 @@ describe("PeakEffectsLayer", () => {
     expect(canvas).toHaveAttribute("aria-hidden", "true");
     expect(rendererSpies.create).toHaveBeenCalledTimes(1);
     expect(rendererSpies.resize).toHaveBeenCalledWith(400, 240, 2);
+    expect(observe).toHaveBeenCalledWith(canvas);
+  });
+
+  it("resizes for viewport and DPR changes even when ResizeObserver exists", () => {
+    const bounds = vi.spyOn(HTMLCanvasElement.prototype, "getBoundingClientRect");
+    const { unmount } = renderLayer();
+
+    bounds.mockReturnValue({ width: 400, height: 310 } as DOMRect);
+    vi.stubGlobal("devicePixelRatio", 1.5);
+    act(() => window.dispatchEvent(new Event("resize")));
+    expect(rendererSpies.resize).toHaveBeenCalledTimes(2);
+    expect(rendererSpies.resize).toHaveBeenLastCalledWith(400, 310, 1.5);
+
+    const callsBeforeUnmount = rendererSpies.resize.mock.calls.length;
+    unmount();
+    act(() => window.dispatchEvent(new Event("resize")));
+    expect(rendererSpies.resize).toHaveBeenCalledTimes(callsBeforeUnmount);
   });
 
   it("starts only on a new confirmed peak id within the current source revision", () => {
@@ -159,6 +195,52 @@ describe("PeakEffectsLayer", () => {
 
     expect(target.style.getPropertyValue("--peak-flash")).toBe("");
     expect(rendererSpies.render).toHaveBeenLastCalledWith(110, null, 1);
+  });
+
+  it("clears active output when strength reaches zero without changing the peak id", () => {
+    const { bus, target } = renderLayer();
+    act(() => bus.publish(peakFrame(1), 100));
+    expect(target.style.getPropertyValue("--peak-flash")).not.toBe("");
+
+    act(() => bus.publish(effectFrame({
+      peakEventId: 1,
+      peakSeed: 101,
+      peakStrength: 0,
+    }, { frameId: 2 }), 110));
+
+    expect(target.style.getPropertyValue("--peak-flash")).toBe("");
+    expect(rendererSpies.render).toHaveBeenLastCalledWith(110, null, 1);
+  });
+
+  it("maps physical movement only to shake and combined variants", () => {
+    const cases = [
+      { seed: 2, strength: 0.6, variant: "glow", moves: false },
+      { seed: 1, strength: 0.6, variant: "burst", moves: false },
+      { seed: 1, strength: 0.8, variant: "glitch-band", moves: false },
+      { seed: 2, strength: 0.8, variant: "shake", moves: true },
+      { seed: 1, strength: 0.9, variant: "combined", moves: true },
+    ] as const;
+
+    for (const [index, expected] of cases.entries()) {
+      const { bus, target, unmount } = renderLayer();
+      act(() => bus.publish(effectFrame({
+        peakEventId: index + 1,
+        peakSeed: expected.seed,
+        peakStrength: expected.strength,
+      }), 100));
+
+      expect(rendererSpies.render).toHaveBeenLastCalledWith(
+        100,
+        expect.objectContaining({ variant: expected.variant }),
+        0,
+      );
+      const scale = Number.parseFloat(target.style.getPropertyValue("--peak-scale"));
+      const shakeX = Number.parseFloat(target.style.getPropertyValue("--peak-shake-x"));
+      const shakeY = Number.parseFloat(target.style.getPropertyValue("--peak-shake-y"));
+      expect(scale > 0).toBe(expected.moves);
+      expect(shakeX !== 0 || shakeY !== 0).toBe(expected.moves);
+      unmount();
+    }
   });
 
   it("clears and ignores a peak carried by a new source revision", () => {

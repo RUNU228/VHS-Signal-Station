@@ -45,6 +45,15 @@ function xorshift(seed: number): () => number {
   };
 }
 
+function uint32Seed(peakSeed: number, peakEventId: number): number {
+  const source = Number.isFinite(peakSeed) && peakSeed !== 0
+    ? Math.abs(peakSeed)
+    : Math.abs(peakEventId);
+  const whole = Math.trunc(source) >>> 0;
+  const fractional = Math.floor((source - Math.trunc(source)) * 0x1_0000_0000) >>> 0;
+  return (whole ^ fractional) >>> 0 || (peakEventId >>> 0);
+}
+
 export function createPeakEffectRecipe(
   snapshot: AudioReactiveSnapshot,
   quality: VisualQuality,
@@ -52,7 +61,7 @@ export function createPeakEffectRecipe(
 ): PeakEffectRecipe | null {
   if (snapshot.peakEventId <= 0 || snapshot.peakStrength <= 0) return null;
 
-  const seed = (snapshot.peakSeed || snapshot.peakEventId) >>> 0;
+  const seed = uint32Seed(snapshot.peakSeed, snapshot.peakEventId);
   const random = xorshift(seed);
   const strength = clamp(snapshot.peakStrength, 0, 1);
   const qualityScale = QUALITY_SCALE[quality];
@@ -66,9 +75,9 @@ export function createPeakEffectRecipe(
   );
 
   let variant: PeakEffectVariant;
-  if (strength <= 0.72) {
+  if (strength < 0.72) {
     variant = random() < 0.5 ? "glow" : "burst";
-  } else if (strength <= 0.88) {
+  } else if (strength < 0.88) {
     variant = random() < 0.5 ? "shake" : "glitch-band";
   } else {
     variant = "combined";
