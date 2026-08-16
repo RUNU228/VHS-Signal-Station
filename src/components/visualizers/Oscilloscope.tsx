@@ -20,17 +20,74 @@ function findZeroCrossing(samples: Float32Array): number {
   return 0;
 }
 
-function splitOffset(
-  point: number,
-  visible: number,
-  peakStrength: number,
-  peakSeed: number,
-): number {
-  const region = Math.min(2, Math.floor((point / Math.max(1, visible)) * 3));
-  const seedDirection = peakSeed < 0.5 ? -1 : 1;
-  const regionDirection = region % 2 === 0 ? seedDirection : -seedDirection;
-  return regionDirection * 4 * Math.min(1, Math.max(0, peakStrength));
+export type OscilloscopePeakFrame = {
+  peakEventId: number;
+  remainingFrames: number;
+  peakStrength: number;
+  peakSeed: number;
+};
+
+type OscilloscopePeakEvent = Omit<OscilloscopePeakFrame, "remainingFrames">;
+
+export function nextOscilloscopePeakFrame(
+  previous: OscilloscopePeakFrame,
+  event: OscilloscopePeakEvent,
+): OscilloscopePeakFrame {
+  if (previous.peakEventId !== event.peakEventId) {
+    const peakStrength = Math.min(1, Math.max(0, event.peakStrength));
+    return {
+      peakEventId: event.peakEventId,
+      remainingFrames: peakStrength > 0.72 ? 3 : 0,
+      peakStrength,
+      peakSeed: event.peakSeed,
+    };
+  }
+
+  return {
+    ...previous,
+    remainingFrames: Math.max(0, previous.remainingFrames - 1),
+  };
 }
+
+export function oscilloscopeSegmentCount(
+  visibleSampleCount: number,
+  canvasWidth: number,
+): number {
+  return Math.min(
+    Math.max(0, visibleSampleCount - 1),
+    Math.max(0, Math.floor(canvasWidth)),
+  );
+}
+
+export function oscilloscopePointPolicy(
+  point: number,
+  pointCount: number,
+  peakFrame: OscilloscopePeakFrame,
+): { connectPrevious: boolean; offset: number } {
+  const safePointCount = Math.max(1, pointCount);
+  const fragment = Math.min(2, Math.floor((point / safePointCount) * 3));
+  const previousFragment = Math.min(
+    2,
+    Math.floor(((point - 1) / safePointCount) * 3),
+  );
+  const active = peakFrame.remainingFrames > 0;
+  const seedDirection = peakFrame.peakSeed < 0.5 ? -1 : 1;
+  const regionDirection = fragment % 2 === 0 ? seedDirection : -seedDirection;
+  return {
+    connectPrevious:
+      point > 0 && (!active || fragment === previousFragment),
+    offset: active ? regionDirection * 4 * peakFrame.peakStrength : 0,
+  };
+}
+
+const OSCILLOSCOPE_STYLE_BUCKET_COUNT = 12;
+
+type OscilloscopeStyle = {
+  strokeStyle: string;
+  shadowColor: string;
+  shadowBlur: number;
+  lineWidth: number;
+};
 
 export function Oscilloscope({
   analysis,
@@ -41,8 +98,20 @@ export function Oscilloscope({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sourceRevisionRef = useRef<number | null>(null);
-  const peakEventRef = useRef(0);
-  const splitFramesRef = useRef(0);
+  const peakFrameRef = useRef<OscilloscopePeakFrame>({
+    peakEventId: 0,
+    remainingFrames: 0,
+    peakStrength: 0,
+    peakSeed: 0,
+  });
+  const stylesRef = useRef<OscilloscopeStyle[]>(
+    Array.from({ length: OSCILLOSCOPE_STYLE_BUCKET_COUNT }, () => ({
+      strokeStyle: "",
+      shadowColor: "",
+      shadowBlur: 0,
+      lineWidth: 1,
+    })),
+  );
   useCanvasSurface(canvasRef);
 
   const draw = useCallback((frame: AudioVisualizationFrame) => {
@@ -52,11 +121,18 @@ export function Oscilloscope({
 
     if (sourceRevisionRef.current !== frame.sourceRevision) {
       sourceRevisionRef.current = frame.sourceRevision;
-      peakEventRef.current = frame.snapshot.peakEventId;
-      splitFramesRef.current = 0;
-    } else if (peakEventRef.current !== frame.snapshot.peakEventId) {
-      peakEventRef.current = frame.snapshot.peakEventId;
-      if (frame.snapshot.peakStrength > 0.72) splitFramesRef.current = 3;
+      peakFrameRef.current = {
+        peakEventId: frame.snapshot.peakEventId,
+        remainingFrames: 0,
+        peakStrength: 0,
+        peakSeed: 0,
+      };
+    } else {
+      peakFrameRef.current = nextOscilloscopePeakFrame(peakFrameRef.current, {
+        peakEventId: frame.snapshot.peakEventId,
+        peakStrength: frame.snapshot.peakStrength,
+        peakSeed: frame.snapshot.peakSeed,
+      });
     }
 
     const data = frame.oscilloscopeData;
@@ -68,52 +144,76 @@ export function Oscilloscope({
     drawScopeGrid(context, width, height, 8, 4);
 
     const visible = data.length - start;
-    const splitActive = splitFramesRef.current > 0;
-    for (let point = 1; point < visible; point += 1) {
-      const previousSample = data[start + point - 1];
-      const sample = data[start + point];
-      const localAmplitude = Math.min(
-        1,
-        Math.max(Math.abs(previousSample), Math.abs(sample)),
-      );
+    const segmentCount = oscilloscopeSegmentCount(visible, width);
+    const pointCount = segmentCount + 1;
+    const styles = stylesRef.current;
+    for (let bucket = 0; bucket < styles.length; bucket += 1) {
+      const localAmplitude = bucket / (styles.length - 1);
       const colorLevel = localSignalLevel(
         localAmplitude,
         frame.snapshot.overallEnergy,
       );
       const glow = signalGlow(colorLevel);
-      const previousOffset = splitActive
-        ? splitOffset(
-            point - 1,
-            visible,
-            frame.snapshot.peakStrength,
-            frame.snapshot.peakSeed,
-          )
-        : 0;
-      const offset = splitActive
-        ? splitOffset(
-            point,
-            visible,
-            frame.snapshot.peakStrength,
-            frame.snapshot.peakSeed,
-          )
-        : 0;
+      styles[bucket].strokeStyle = signalColorForLevel(
+        colorLevel,
+        glow.strokeAlpha,
+      );
+      styles[bucket].shadowColor = signalColorForLevel(
+        colorLevel,
+        glow.shadowAlpha,
+      );
+      styles[bucket].shadowBlur = Math.min(6, glow.shadowBlur);
+      styles[bucket].lineWidth = 1 + localAmplitude * 1.8;
+    }
+
+    for (let point = 1; point <= segmentCount; point += 1) {
+      const previousIndex = Math.round(
+        ((point - 1) / segmentCount) * (visible - 1),
+      );
+      const index = Math.round((point / segmentCount) * (visible - 1));
+      const previousSample = data[start + previousIndex];
+      const sample = data[start + index];
+      let localAmplitude = 0;
+      for (let sampleIndex = previousIndex; sampleIndex <= index; sampleIndex += 1) {
+        localAmplitude = Math.max(
+          localAmplitude,
+          Math.min(1, Math.abs(data[start + sampleIndex])),
+        );
+      }
+      const style = styles[
+        Math.min(
+          styles.length - 1,
+          Math.round(localAmplitude * (styles.length - 1)),
+        )
+      ];
+      const previousPolicy = oscilloscopePointPolicy(
+        point - 1,
+        pointCount,
+        peakFrameRef.current,
+      );
+      const policy = oscilloscopePointPolicy(
+        point,
+        pointCount,
+        peakFrameRef.current,
+      );
+      if (!policy.connectPrevious) continue;
+
       const previousX =
-        ((point - 1) / Math.max(1, visible - 1)) * width + previousOffset;
-      const x = (point / Math.max(1, visible - 1)) * width + offset;
+        ((point - 1) / segmentCount) * width + previousPolicy.offset;
+      const x = (point / segmentCount) * width + policy.offset;
       const previousY = height / 2 - previousSample * height * 0.43;
       const y = height / 2 - sample * height * 0.43;
 
-      context.strokeStyle = signalColorForLevel(colorLevel, glow.strokeAlpha);
-      context.shadowColor = signalColorForLevel(colorLevel, glow.shadowAlpha);
-      context.shadowBlur = Math.min(6, glow.shadowBlur);
-      context.lineWidth = 1 + localAmplitude * 1.8;
+      context.strokeStyle = style.strokeStyle;
+      context.shadowColor = style.shadowColor;
+      context.shadowBlur = style.shadowBlur;
+      context.lineWidth = style.lineWidth;
       context.beginPath();
       context.moveTo(previousX, previousY);
       context.lineTo(x, y);
       context.stroke();
     }
     context.shadowBlur = 0;
-    if (splitFramesRef.current > 0) splitFramesRef.current -= 1;
   }, []);
 
   useVisualizationFrame(analysis, draw, active);
