@@ -5,23 +5,17 @@ import { useEffect, type RefObject } from "react";
 import { createSignalTheme, signalColor } from "@/lib/visualization/signalTheme";
 import type { AudioReactiveSnapshot, AudioVisualizationBus } from "@/types/audio";
 
-const LEGACY_PROJECTIONS = [
-  ["volume", "--audio-volume"],
-  ["bass", "--audio-bass"],
-  ["mid", "--audio-mid"],
-  ["treble", "--audio-treble"],
-  ["peak", "--audio-peak"],
-  ["smoothed", "--audio-smoothed"],
-] as const satisfies ReadonlyArray<
-  readonly [keyof AudioReactiveSnapshot, `--audio-${string}`]
->;
-
-const SHARED_PROJECTIONS = [
+const ENERGY_PROJECTIONS = [
+  ["overallEnergy", "--audio-volume"],
+  ["lowEnergy", "--audio-bass"],
+  ["midEnergy", "--audio-mid"],
+  ["highEnergy", "--audio-treble"],
+  ["peakStrength", "--audio-peak"],
+  ["smoothedEnergy", "--audio-smoothed"],
   ["overallEnergy", "--signal-strength"],
   ["peakStrength", "--peak-strength"],
   ["smoothedEnergy", "--background-reactivity"],
   ["lowEnergy", "--audio-low"],
-  ["midEnergy", "--audio-mid"],
   ["highEnergy", "--audio-high"],
 ] as const satisfies ReadonlyArray<
   readonly [keyof AudioReactiveSnapshot, `--${string}`]
@@ -47,11 +41,7 @@ export function useReactiveStyles(
     const project = (snapshot: AudioReactiveSnapshot) => {
       const theme = createSignalTheme(snapshot);
       const projections: readonly (readonly [string, string])[] = [
-        ...LEGACY_PROJECTIONS.map(([key, variable]) => [
-          variable,
-          formatEnergy(snapshot[key]),
-        ] as const),
-        ...SHARED_PROJECTIONS.map(([key, variable]) => [
+        ...ENERGY_PROJECTIONS.map(([key, variable]) => [
           variable,
           formatEnergy(snapshot[key]),
         ] as const),
@@ -72,8 +62,9 @@ export function useReactiveStyles(
     return () => {
       unsubscribe();
       delete target.dataset.audioActive;
-      for (const [, variable] of LEGACY_PROJECTIONS) target.style.removeProperty(variable);
-      for (const [, variable] of SHARED_PROJECTIONS) target.style.removeProperty(variable);
+      for (const [, variable] of ENERGY_PROJECTIONS) {
+        target.style.removeProperty(variable);
+      }
       target.style.removeProperty("--signal-color");
       target.style.removeProperty("--signal-glow");
     };

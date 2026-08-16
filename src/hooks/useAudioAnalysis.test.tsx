@@ -108,7 +108,8 @@ describe("useAudioAnalysis", () => {
     act(() => runNextFrame());
 
     expect(result.current).toBe(stableBus);
-    expect(result.current.frameRef.current.snapshot.bass).toBeGreaterThan(0);
+    expect(result.current.frameRef.current.snapshot.bassEnergy).toBeGreaterThan(0);
+    expect(Object.keys(result.current).sort()).toEqual(["frameRef", "subscribe"]);
     expect(renders).toBe(1);
   });
 
@@ -119,14 +120,14 @@ describe("useAudioAnalysis", () => {
       { initialProps: { active: true } },
     );
     act(() => runNextFrame());
-    const playingVolume = result.current.snapshotRef.current.volume;
+    const playingEnergy = result.current.frameRef.current.snapshot.overallEnergy;
 
     rerender({ active: false });
     expect(cancelAnimationFrame).toHaveBeenCalled();
     act(() => runNextFrame(32));
 
-    expect(result.current.snapshotRef.current.volume).toBeLessThan(playingVolume);
-    expect(result.current.snapshotRef.current.volume).toBeGreaterThan(0);
+    expect(result.current.frameRef.current.snapshot.overallEnergy).toBeLessThan(playingEnergy);
+    expect(result.current.frameRef.current.snapshot.overallEnergy).toBeGreaterThan(0);
   });
 
   it("leaves the idle snapshot intact when no analyser is available", () => {
@@ -135,7 +136,7 @@ describe("useAudioAnalysis", () => {
       useAudioAnalysis(analysersRef, { active: true, resetKey: null }),
     );
 
-    expect(result.current.snapshotRef.current).toEqual(IDLE_AUDIO_SNAPSHOT);
+    expect(result.current.frameRef.current.snapshot).toEqual(IDLE_AUDIO_SNAPSHOT);
     expect(frames).toHaveLength(0);
   });
 
@@ -178,7 +179,7 @@ describe("useAudioAnalysis", () => {
       { initialProps: { active: false } },
     );
 
-    result.current.snapshotRef.current = {
+    result.current.frameRef.current.snapshot = {
       ...IDLE_AUDIO_SNAPSHOT,
       peakEventId: 1,
       peakSeed: 0.618,

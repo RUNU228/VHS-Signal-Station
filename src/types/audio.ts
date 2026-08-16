@@ -35,14 +35,6 @@ export type AudioReactiveSnapshot = {
   signalState: SignalState;
   peakEventId: number;
   peakSeed: number;
-  volume: number;
-  bass: number;
-  lowMid: number;
-  mid: number;
-  highMid: number;
-  treble: number;
-  peak: number;
-  smoothed: number;
 };
 
 export type AudioAnalysisState = {
@@ -75,7 +67,6 @@ export type AudioVisualizationListener = (
 
 export type AudioVisualizationBus = {
   frameRef: MutableRefObject<AudioVisualizationFrame>;
-  snapshotRef: MutableRefObject<AudioReactiveSnapshot>;
   subscribe: (listener: AudioVisualizationListener) => () => void;
 };
 

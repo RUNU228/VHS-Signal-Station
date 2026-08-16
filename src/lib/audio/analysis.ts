@@ -37,14 +37,6 @@ export const IDLE_AUDIO_SNAPSHOT: Readonly<AudioReactiveSnapshot> = Object.freez
   signalState: "IDLE",
   peakEventId: 0,
   peakSeed: 0,
-  volume: 0,
-  bass: 0,
-  lowMid: 0,
-  mid: 0,
-  highMid: 0,
-  treble: 0,
-  peak: 0,
-  smoothed: 0,
 });
 
 function clamp01(value: number): number {
@@ -91,25 +83,6 @@ function rms(
     sumSquares += value * value;
   }
   return clamp01(Math.sqrt(sumSquares / (end - start)));
-}
-
-function withCompatibilityAliases(
-  values: Omit<
-    AudioReactiveSnapshot,
-    "volume" | "bass" | "lowMid" | "mid" | "highMid" | "treble" | "peak" | "smoothed"
-  >,
-): AudioReactiveSnapshot {
-  return {
-    ...values,
-    volume: values.overallEnergy,
-    bass: values.bassEnergy,
-    lowMid: values.midEnergy,
-    mid: values.midEnergy,
-    highMid: values.highEnergy,
-    treble: values.highEnergy,
-    peak: values.peakStrength,
-    smoothed: values.smoothedEnergy,
-  };
 }
 
 function peakSeedFor(eventId: number): number {
@@ -214,7 +187,7 @@ export function analyseFrequencyData(input: AnalysisInput | LegacyAnalysisInput)
   const slowEnvelope = smooth(state.slowEnvelope, rawOverall, 0.04, 0.04);
 
   return asResult({
-    snapshot: withCompatibilityAliases({
+    snapshot: {
       lowEnergy,
       midEnergy,
       highEnergy,
@@ -228,7 +201,7 @@ export function analyseFrequencyData(input: AnalysisInput | LegacyAnalysisInput)
       signalState: classifySignalState(overallEnergy, state.snapshot.signalState),
       peakEventId,
       peakSeed: eligible ? peakSeedFor(peakEventId) : state.snapshot.peakSeed,
-    }),
+    },
     previousRawEnergy: rawOverall,
     slowEnvelope: eligible ? rawOverall : slowEnvelope,
     lastPeakAt: eligible ? nowMs : state.lastPeakAt,
@@ -250,7 +223,7 @@ export function decayAudioAnalysis(
   const smoothedEnergy = smooth(snapshot.smoothedEnergy, 0, 0.18, 0.045);
 
   return asResult({
-    snapshot: withCompatibilityAliases({
+    snapshot: {
       lowEnergy,
       midEnergy,
       highEnergy,
@@ -264,7 +237,7 @@ export function decayAudioAnalysis(
       signalState: classifySignalState(overallEnergy, snapshot.signalState),
       peakEventId: snapshot.peakEventId,
       peakSeed: snapshot.peakSeed,
-    }),
+    },
     previousRawEnergy: 0,
     slowEnvelope: smooth(state.slowEnvelope, 0, 0.04, 0.04),
     lastPeakAt: state.lastPeakAt,

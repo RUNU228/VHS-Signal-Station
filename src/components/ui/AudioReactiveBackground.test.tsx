@@ -1,38 +1,76 @@
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { IDLE_AUDIO_SNAPSHOT } from "@/lib/audio/analysis";
+import type {
+  AudioVisualizationBus,
+  AudioVisualizationFrame,
+  AudioVisualizationListener,
+} from "@/types/audio";
 import { AudioReactiveBackground } from "./AudioReactiveBackground";
 
-const idleRef = { current: { ...IDLE_AUDIO_SNAPSHOT } };
-let scheduledFrames: FrameRequestCallback[] = [];
 let resizeCallbacks: ResizeObserverCallback[] = [];
+
+function frame(
+  options: Partial<AudioVisualizationFrame> = {},
+): AudioVisualizationFrame {
+  return {
+    snapshot: { ...IDLE_AUDIO_SNAPSHOT },
+    frequencyData: new Uint8Array([0, 32, 96, 160, 224, 255]),
+    oscilloscopeData: new Float32Array(),
+    leftChannelData: new Float32Array(),
+    rightChannelData: new Float32Array(),
+    sampleRate: 48_000,
+    frequencyFftSize: 4_096,
+    frameId: 0,
+    sourceRevision: 0,
+    quality: "HIGH",
+    reducedMotion: false,
+    ...options,
+  };
+}
+
+function fakeBus(initialFrame = frame()) {
+  const listeners = new Set<AudioVisualizationListener>();
+  const analysis: AudioVisualizationBus = {
+    frameRef: { current: initialFrame },
+    subscribe: vi.fn((listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    }),
+  };
+
+  return {
+    analysis,
+    publish(nextFrame = initialFrame, time = 16) {
+      analysis.frameRef.current = nextFrame;
+      for (const listener of listeners) listener(nextFrame, time);
+    },
+  };
+}
+
+function canvasContext(): CanvasRenderingContext2D {
+  const gradient = { addColorStop: vi.fn() } as unknown as CanvasGradient;
+  return {
+    beginPath: vi.fn(),
+    clearRect: vi.fn(),
+    createRadialGradient: vi.fn(() => gradient),
+    fillRect: vi.fn(),
+    lineTo: vi.fn(),
+    moveTo: vi.fn(),
+    stroke: vi.fn(),
+    fillStyle: "",
+    globalAlpha: 1,
+    lineWidth: 1,
+    strokeStyle: "",
+  } as unknown as CanvasRenderingContext2D;
+}
 
 describe("AudioReactiveBackground", () => {
   beforeEach(() => {
-    scheduledFrames = [];
     resizeCallbacks = [];
-    vi.stubGlobal(
-      "requestAnimationFrame",
-      vi.fn((callback: FrameRequestCallback) => {
-        scheduledFrames.push(callback);
-        return scheduledFrames.length;
-      }),
-    );
+    vi.stubGlobal("requestAnimationFrame", vi.fn(() => 1));
     vi.stubGlobal("cancelAnimationFrame", vi.fn());
-    vi.stubGlobal(
-      "matchMedia",
-      vi.fn((query: string) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      })),
-    );
     vi.stubGlobal(
       "ResizeObserver",
       class {
@@ -55,7 +93,7 @@ describe("AudioReactiveBackground", () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
 
     const { container } = render(
-      <AudioReactiveBackground reactiveRef={idleRef} active={false} />,
+      <AudioReactiveBackground analysis={fakeBus().analysis} active={false} />,
     );
     const canvases = container.querySelectorAll(
       "canvas.audio-reactive-background",
@@ -69,71 +107,39 @@ describe("AudioReactiveBackground", () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
 
     expect(() =>
-      render(<AudioReactiveBackground reactiveRef={idleRef} active />),
+      render(<AudioReactiveBackground analysis={fakeBus().analysis} active />),
     ).not.toThrow();
   });
 
-  it("draws only one scheduled frame when reduced motion is requested", () => {
-    vi.mocked(matchMedia).mockImplementation((query: string) => ({
-      matches: query === "(prefers-reduced-motion: reduce)",
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
-    render(<AudioReactiveBackground reactiveRef={idleRef} active />);
+  it("draws persistent idle frames from the shared bus without a private RAF", () => {
+    const context = canvasContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
+    const bus = fakeBus();
 
-    expect(scheduledFrames).toHaveLength(1);
-    scheduledFrames[0](16);
-    expect(requestAnimationFrame).toHaveBeenCalledTimes(1);
+    render(<AudioReactiveBackground analysis={bus.analysis} active={false} />);
+    act(() => bus.publish(frame(), 0));
+
+    expect(bus.analysis.subscribe).toHaveBeenCalledTimes(1);
+    expect(context.clearRect).toHaveBeenCalledTimes(1);
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
   });
 
-  it("keeps mobile drawing close to 30 frames per second", () => {
-    vi.mocked(matchMedia).mockImplementation((query: string) => ({
-      matches: query === "(max-width: 760px)",
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
-    const gradient = { addColorStop: vi.fn() } as unknown as CanvasGradient;
-    const context = {
-      clearRect: vi.fn(),
-      fillRect: vi.fn(),
-      createRadialGradient: vi.fn(() => gradient),
-      fillStyle: "",
-    } as unknown as CanvasRenderingContext2D;
+  it("keeps low-quality drawing close to 30 frames per second", () => {
+    const context = canvasContext();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
-    render(<AudioReactiveBackground reactiveRef={idleRef} active />);
+    const lowFrame = frame({ quality: "LOW" });
+    const bus = fakeBus(lowFrame);
+    render(<AudioReactiveBackground analysis={bus.analysis} active />);
 
     for (const time of [0, 16, 32, 48, 64]) {
-      const callback = scheduledFrames.shift();
-      expect(callback).toBeDefined();
-      callback!(time);
+      act(() => bus.publish(lowFrame, time));
     }
 
     expect(context.clearRect).toHaveBeenCalledTimes(3);
   });
 
-  it("keeps the reduced mobile resolution after a canvas resize", () => {
+  it("keeps the reduced low-quality resolution after a canvas resize", () => {
     vi.stubGlobal("devicePixelRatio", 3);
-    vi.mocked(matchMedia).mockImplementation((query: string) => ({
-      matches: query === "(max-width: 760px)",
-      media: query,
-      onchange: null,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    }));
     vi.spyOn(HTMLCanvasElement.prototype, "getBoundingClientRect").mockReturnValue({
       width: 400,
       height: 200,
@@ -141,7 +147,10 @@ describe("AudioReactiveBackground", () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
 
     const { container } = render(
-      <AudioReactiveBackground reactiveRef={idleRef} active />,
+      <AudioReactiveBackground
+        analysis={fakeBus(frame({ quality: "LOW" })).analysis}
+        active
+      />,
     );
     const canvas = container.querySelector("canvas")!;
     expect(canvas.width).toBe(300);

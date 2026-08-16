@@ -36,7 +36,6 @@ function fakeBus() {
   const frame = syntheticFrame();
   const analysis: AudioVisualizationBus = {
     frameRef: { current: frame },
-    snapshotRef: { current: frame.snapshot },
     subscribe: vi.fn((listener: AudioVisualizationListener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);

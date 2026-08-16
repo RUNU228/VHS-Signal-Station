@@ -22,7 +22,6 @@ function fakeBus(overrides: Partial<AudioVisualizationBus> = {}): AudioVisualiza
         reducedMotion: false,
       },
     },
-    snapshotRef: { current: { ...IDLE_AUDIO_SNAPSHOT } },
     subscribe: vi.fn(() => vi.fn()),
     ...overrides,
   };

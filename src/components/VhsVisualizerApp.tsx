@@ -67,7 +67,7 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
 
   return (
     <main ref={stationRef} className="station-shell">
-      <AudioReactiveBackground reactiveRef={analysis.snapshotRef} active={signalActive} />
+      <AudioReactiveBackground analysis={analysis} active={signalActive} />
       <VhsNoise />
       <header className="station-header">
         <div className="station-brand">

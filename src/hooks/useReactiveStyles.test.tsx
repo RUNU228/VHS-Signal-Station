@@ -16,14 +16,6 @@ const snapshot: AudioReactiveSnapshot = {
   overallEnergy: 0.4,
   peakStrength: 0.9,
   smoothedEnergy: 0.45,
-  volume: 0.4,
-  bass: 0.8,
-  lowMid: 0.3,
-  mid: 0.5,
-  highMid: 0.2,
-  treble: 0.6,
-  peak: 0.9,
-  smoothed: 0.45,
 };
 
 function fakeBus(current = snapshot): AudioVisualizationBus {
@@ -43,7 +35,6 @@ function fakeBus(current = snapshot): AudioVisualizationBus {
         reducedMotion: false,
       },
     },
-    snapshotRef: { current },
     subscribe: vi.fn(() => vi.fn()),
   };
 }
@@ -66,7 +57,7 @@ describe("useReactiveStyles", () => {
   it("writes bounded audio variables directly to the station root", () => {
     const target = document.createElement("main");
     const targetRef = { current: target };
-    const bus = fakeBus({ ...snapshot, bass: 8, treble: -2 });
+    const bus = fakeBus({ ...snapshot, lowEnergy: 8, highEnergy: -2 });
     renderHook(() => useReactiveStyles(targetRef, bus, true));
 
     act(() => frameCallback?.(16));
@@ -78,8 +69,8 @@ describe("useReactiveStyles", () => {
     expect(target.style.getPropertyValue("--signal-strength")).toBe("0.400");
     expect(target.style.getPropertyValue("--peak-strength")).toBe("0.900");
     expect(target.style.getPropertyValue("--background-reactivity")).toBe("0.450");
-    expect(target.style.getPropertyValue("--audio-low")).toBe("0.200");
-    expect(target.style.getPropertyValue("--audio-high")).toBe("0.600");
+    expect(target.style.getPropertyValue("--audio-low")).toBe("1.000");
+    expect(target.style.getPropertyValue("--audio-high")).toBe("0.000");
     expect(target.style.getPropertyValue("--signal-color")).toMatch(/^rgba\(/);
     expect(target.dataset.audioActive).toBe("true");
   });

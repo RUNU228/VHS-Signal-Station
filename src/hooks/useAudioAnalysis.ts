@@ -102,7 +102,6 @@ export function useAudioAnalysis(
 ): AudioVisualizationBus {
   const initialSnapshot = { ...IDLE_AUDIO_SNAPSHOT };
   const frameRef = useRef<AudioVisualizationFrame>(emptyFrame(initialSnapshot));
-  const snapshotRef = useRef<AudioReactiveSnapshot>(initialSnapshot);
   const analysisStateRef = useRef<AudioAnalysisState>(createAudioAnalysisState());
   const listenersRef = useRef(new Set<AudioVisualizationListener>());
   const synchronizeClockRef = useRef<() => void>(() => {});
@@ -110,14 +109,12 @@ export function useAudioAnalysis(
 
   const publish = (frame: AudioVisualizationFrame, time: number) => {
     frameRef.current = frame;
-    snapshotRef.current = frame.snapshot;
     for (const listener of [...listenersRef.current]) listener(frame, time);
   };
 
   const bus = useMemo<AudioVisualizationBus>(
     () => ({
       frameRef,
-      snapshotRef,
       subscribe: (listener) => {
         listenersRef.current.add(listener);
         synchronizeClockRef.current();
@@ -127,7 +124,7 @@ export function useAudioAnalysis(
         };
       },
     }),
-    [frameRef, snapshotRef],
+    [frameRef],
   );
 
   useEffect(() => {
@@ -157,7 +154,7 @@ export function useAudioAnalysis(
     const shouldSchedule = () => {
       const hasAnalyser = options.active && Boolean(analysersRef.current?.frequency);
       return hasAnalyser ||
-        hasAudibleEnergy(snapshotRef.current) ||
+        hasAudibleEnergy(frameRef.current.snapshot) ||
         listenersRef.current.size > 0;
     };
 

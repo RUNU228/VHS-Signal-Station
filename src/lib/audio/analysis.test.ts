@@ -37,6 +37,24 @@ function stateWith(
 }
 
 describe("analyseFrequencyData", () => {
+  it("exposes only the required shared snapshot fields", () => {
+    expect(IDLE_AUDIO_SNAPSHOT).toEqual({
+      lowEnergy: 0,
+      midEnergy: 0,
+      highEnergy: 0,
+      overallEnergy: 0,
+      bassEnergy: 0,
+      transientEnergy: 0,
+      peakStrength: 0,
+      smoothedEnergy: 0,
+      stereoBalance: 0,
+      stereoWidth: 0,
+      signalState: "IDLE",
+      peakEventId: 0,
+      peakSeed: 0,
+    });
+  });
+
   it("returns exact idle values for silent input", () => {
     expect(analyseFrequencyData(frameFor(new Uint8Array(BIN_COUNT), 16)).snapshot).toEqual(
       IDLE_AUDIO_SNAPSHOT,
