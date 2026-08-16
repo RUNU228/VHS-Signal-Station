@@ -20,6 +20,13 @@ function clamp(value: number, minimum = 0, maximum = 1): number {
   return Math.min(maximum, Math.max(minimum, Number.isFinite(value) ? value : minimum));
 }
 
+export function localSignalLevel(
+  localLevel: number,
+  overallEnergy: number,
+): number {
+  return clamp(localLevel * 0.82 + overallEnergy * 0.18);
+}
+
 function smoothstep(value: number): number {
   const amount = clamp(value);
   return amount * amount * (3 - 2 * amount);

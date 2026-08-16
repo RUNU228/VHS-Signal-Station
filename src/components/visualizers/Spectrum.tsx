@@ -1,85 +1,58 @@
 "use client";
 
-import { useCallback, useRef, type MutableRefObject } from "react";
+import { useCallback, useRef } from "react";
 
-import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
 import {
   frequencyForBin,
   logFrequencyPosition,
   SPECTRUM_MAX_FREQUENCY,
   SPECTRUM_MIN_FREQUENCY,
 } from "@/lib/audio/frequency";
+import { signalGlow } from "@/lib/visualization/canvas";
 import {
-  energySignalColor,
-  signalGlow,
-  smoothEnergy,
-} from "@/lib/visualization/canvas";
-import type { AudioAnalyserBundle } from "@/types/audio";
+  localSignalLevel,
+  signalColorForLevel,
+} from "@/lib/visualization/signalTheme";
+import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
 const BAR_COUNT = 42;
 
 export function Spectrum({
-  analysersRef,
+  analysis,
   active,
 }: {
-  analysersRef: MutableRefObject<AudioAnalyserBundle | null>;
+  analysis: AudioVisualizationBus;
   active: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const dataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  const levelsRef = useRef(new Float32Array(BAR_COUNT));
   const peaksRef = useRef(new Float32Array(BAR_COUNT));
-  const colorEnergyRef = useRef(0);
+  const sourceRevisionRef = useRef<number | null>(null);
   useCanvasSurface(canvasRef);
 
-  const draw = useCallback(() => {
+  const draw = useCallback((frame: AudioVisualizationFrame) => {
     const canvas = canvasRef.current;
-    const bundle = analysersRef.current;
-    const analyser = bundle?.frequency;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context || !analyser || !bundle) return;
-    if (!dataRef.current || dataRef.current.length !== analyser.frequencyBinCount) {
-      dataRef.current = new Uint8Array(analyser.frequencyBinCount);
+    if (!canvas || !context) return;
+
+    if (sourceRevisionRef.current !== frame.sourceRevision) {
+      sourceRevisionRef.current = frame.sourceRevision;
+      peaksRef.current.fill(0);
     }
-    const data = dataRef.current;
-    analyser.getByteFrequencyData(data);
+
     const width = canvas.width;
     const height = canvas.height;
     context.fillStyle = "rgba(5, 7, 7, .32)";
     context.fillRect(0, 0, width, height);
+    if (frame.frequencyData.length === 0) return;
 
     const gap = Math.max(2, width * 0.004);
     const barWidth = Math.max(1, width / BAR_COUNT - gap);
-    const levels = new Float32Array(BAR_COUNT);
-    let visibleBarCount = 0;
-    let meanEnergy = 0;
-    for (let bar = 0; bar < BAR_COUNT; bar += 1) {
-      const position = bar / (BAR_COUNT - 1);
-      const frequency = Math.exp(
-        Math.log(SPECTRUM_MIN_FREQUENCY) +
-          position *
-            (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
-      );
-      const estimatedBin = Math.round(
-        (frequency * analyser.fftSize) / bundle.context.sampleRate,
-      );
-      const actualFrequency = frequencyForBin(
-        estimatedBin,
-        bundle.context.sampleRate,
-        analyser.fftSize,
-      );
-      if (
-        actualFrequency < SPECTRUM_MIN_FREQUENCY ||
-        actualFrequency > SPECTRUM_MAX_FREQUENCY
-      ) continue;
-      const level = data[Math.min(data.length - 1, estimatedBin)] / 255;
-      levels[bar] = level;
-      meanEnergy += level;
-      visibleBarCount += 1;
-    }
-    meanEnergy /= Math.max(1, visibleBarCount);
-    colorEnergyRef.current = smoothEnergy(colorEnergyRef.current, meanEnergy);
+    const levels = levelsRef.current;
+    levels.fill(0);
 
     for (let bar = 0; bar < BAR_COUNT; bar += 1) {
       const position = bar / (BAR_COUNT - 1);
@@ -89,17 +62,42 @@ export function Spectrum({
             (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
       );
       const estimatedBin = Math.round(
-        (frequency * analyser.fftSize) / bundle.context.sampleRate,
+        (frequency * frame.frequencyFftSize) / frame.sampleRate,
       );
       const actualFrequency = frequencyForBin(
         estimatedBin,
-        bundle.context.sampleRate,
-        analyser.fftSize,
+        frame.sampleRate,
+        frame.frequencyFftSize,
       );
       if (
         actualFrequency < SPECTRUM_MIN_FREQUENCY ||
         actualFrequency > SPECTRUM_MAX_FREQUENCY
       ) continue;
+      levels[bar] = frame.frequencyData[
+        Math.min(frame.frequencyData.length - 1, estimatedBin)
+      ] / 255;
+    }
+
+    for (let bar = 0; bar < BAR_COUNT; bar += 1) {
+      const position = bar / (BAR_COUNT - 1);
+      const frequency = Math.exp(
+        Math.log(SPECTRUM_MIN_FREQUENCY) +
+          position *
+            (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
+      );
+      const estimatedBin = Math.round(
+        (frequency * frame.frequencyFftSize) / frame.sampleRate,
+      );
+      const actualFrequency = frequencyForBin(
+        estimatedBin,
+        frame.sampleRate,
+        frame.frequencyFftSize,
+      );
+      if (
+        actualFrequency < SPECTRUM_MIN_FREQUENCY ||
+        actualFrequency > SPECTRUM_MAX_FREQUENCY
+      ) continue;
+
       const level = levels[bar];
       const x = logFrequencyPosition(
         frequency,
@@ -107,11 +105,8 @@ export function Spectrum({
         SPECTRUM_MAX_FREQUENCY,
       ) * (width - barWidth);
       const barHeight = Math.max(1, level * height * 0.88);
-      const colorLevel = Math.min(
-        1,
-        level * 0.72 + colorEnergyRef.current * 0.28,
-      );
-      context.fillStyle = energySignalColor(
+      const colorLevel = localSignalLevel(level, frame.snapshot.overallEnergy);
+      context.fillStyle = signalColorForLevel(
         colorLevel,
         signalGlow(colorLevel).barAlpha,
       );
@@ -119,19 +114,16 @@ export function Spectrum({
 
       const peak = Math.max(level, peaksRef.current[bar] - 0.009);
       peaksRef.current[bar] = peak;
-      const peakColorLevel = Math.min(
-        1,
-        peak * 0.72 + colorEnergyRef.current * 0.28,
-      );
-      context.fillStyle = energySignalColor(
+      const peakColorLevel = localSignalLevel(peak, frame.snapshot.overallEnergy);
+      context.fillStyle = signalColorForLevel(
         peakColorLevel,
         signalGlow(peakColorLevel).peakAlpha,
       );
       context.fillRect(x, height - peak * height * 0.88 - 3, barWidth, 2);
     }
-  }, [analysersRef]);
+  }, []);
 
-  useAnimationFrame(draw, active);
+  useVisualizationFrame(analysis, draw, active);
 
   return (
     <VisualizerFrame

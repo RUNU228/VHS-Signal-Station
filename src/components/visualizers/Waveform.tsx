@@ -1,78 +1,90 @@
 "use client";
 
-import { useCallback, useRef, type MutableRefObject } from "react";
+import { useCallback, useRef } from "react";
 
-import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
 import { toMidSide } from "@/lib/audio/midSide";
-import { smoothSignalColor } from "@/lib/visualization/canvas";
 import {
+  localSignalLevel,
+  signalColorForLevel,
+} from "@/lib/visualization/signalTheme";
+import {
+  clearWaveformHistory,
+  createWaveformHistory,
   measureWaveformColumn,
   pushWaveformColumn,
   type WaveformHistory,
 } from "@/lib/visualization/waveform";
-import type { AudioAnalyserBundle } from "@/types/audio";
+import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
 type WaveBuffers = {
-  left: Float32Array<ArrayBuffer>;
-  right: Float32Array<ArrayBuffer>;
   mid: Float32Array<ArrayBuffer>;
   side: Float32Array<ArrayBuffer>;
 };
 
 const HISTORY_COLUMNS = 360;
+const HISTORY_SEGMENT_LENGTH = 6;
 
 type ChannelHistory = {
   mid: WaveformHistory;
   side: WaveformHistory;
 };
 
-function createHistory(): WaveformHistory {
-  return {
-    negative: new Float32Array(HISTORY_COLUMNS),
-    positive: new Float32Array(HISTORY_COLUMNS),
-    rms: new Float32Array(HISTORY_COLUMNS),
-  };
-}
-
 export function Waveform({
-  analysersRef,
+  analysis,
   active,
 }: {
-  analysersRef: MutableRefObject<AudioAnalyserBundle | null>;
+  analysis: AudioVisualizationBus;
   active: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const buffersRef = useRef<WaveBuffers | null>(null);
   const historyRef = useRef<ChannelHistory>({
-    mid: createHistory(),
-    side: createHistory(),
+    mid: createWaveformHistory(HISTORY_COLUMNS),
+    side: createWaveformHistory(HISTORY_COLUMNS),
   });
-  const colorLevelsRef = useRef([0, 0]);
+  const sourceRevisionRef = useRef<number | null>(null);
   useCanvasSurface(canvasRef);
 
-  const draw = useCallback(() => {
+  const draw = useCallback((frame: AudioVisualizationFrame) => {
     const canvas = canvasRef.current;
-    const bundle = analysersRef.current;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context || !bundle) return;
-    const size = bundle.left.fftSize;
-    if (!buffersRef.current || buffersRef.current.left.length !== size) {
+    if (!canvas || !context) return;
+
+    if (sourceRevisionRef.current !== frame.sourceRevision) {
+      sourceRevisionRef.current = frame.sourceRevision;
+      clearWaveformHistory(historyRef.current.side);
+      clearWaveformHistory(historyRef.current.mid);
+    }
+
+    const size = Math.min(
+      frame.leftChannelData.length,
+      frame.rightChannelData.length,
+    );
+    if (!buffersRef.current || buffersRef.current.mid.length !== size) {
       buffersRef.current = {
-        left: new Float32Array(size),
-        right: new Float32Array(size),
         mid: new Float32Array(size),
         side: new Float32Array(size),
       };
     }
     const buffers = buffersRef.current;
-    bundle.left.getFloatTimeDomainData(buffers.left);
-    bundle.right.getFloatTimeDomainData(buffers.right);
-    toMidSide(buffers.left, buffers.right, buffers.mid, buffers.side);
+    toMidSide(
+      frame.leftChannelData,
+      frame.rightChannelData,
+      buffers.mid,
+      buffers.side,
+    );
 
-    pushWaveformColumn(historyRef.current.side, measureWaveformColumn(buffers.side));
-    pushWaveformColumn(historyRef.current.mid, measureWaveformColumn(buffers.mid));
+    pushWaveformColumn(
+      historyRef.current.side,
+      measureWaveformColumn(buffers.side),
+    );
+    pushWaveformColumn(
+      historyRef.current.mid,
+      measureWaveformColumn(buffers.mid),
+    );
 
     const width = canvas.width;
     const height = canvas.height;
@@ -91,51 +103,75 @@ export function Waveform({
       context.lineTo(width, center);
       context.stroke();
 
-      let peak = 0;
-      for (let index = 0; index < HISTORY_COLUMNS; index += 1) {
-        peak = Math.max(peak, history.positive[index], -history.negative[index]);
-      }
-      const previousColorLevel = colorLevelsRef.current[traceIndex];
-      const colorEase = peak > previousColorLevel ? 0.09 : 0.035;
-      const colorLevel = previousColorLevel + (peak - previousColorLevel) * colorEase;
-      colorLevelsRef.current[traceIndex] = colorLevel;
-
       const amplitude = height * 0.19;
-      context.fillStyle = smoothSignalColor(colorLevel, 0.16);
-      context.strokeStyle = smoothSignalColor(colorLevel, 0.9);
-      context.shadowColor = smoothSignalColor(colorLevel, 0.46);
-      context.shadowBlur = 4;
-      context.lineWidth = Math.max(1, canvas.width / 1100);
-      context.beginPath();
-      for (let index = 0; index < HISTORY_COLUMNS; index += 1) {
-        const x = (index / (HISTORY_COLUMNS - 1)) * width;
-        const y = center - history.positive[index] * amplitude;
-        if (index === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
-      }
-      for (let index = HISTORY_COLUMNS - 1; index >= 0; index -= 1) {
-        const x = (index / (HISTORY_COLUMNS - 1)) * width;
-        context.lineTo(x, center - history.negative[index] * amplitude);
-      }
-      context.closePath();
-      context.fill();
-      context.stroke();
+      for (
+        let start = 0;
+        start < HISTORY_COLUMNS - 1;
+        start += HISTORY_SEGMENT_LENGTH
+      ) {
+        const end = Math.min(
+          HISTORY_COLUMNS - 1,
+          start + HISTORY_SEGMENT_LENGTH,
+        );
+        let segmentEnergy = 0;
+        for (let index = start; index <= end; index += 1) {
+          segmentEnergy = Math.max(segmentEnergy, history.localEnergy[index]);
+        }
+        const colorLevel = localSignalLevel(
+          segmentEnergy,
+          frame.snapshot.overallEnergy,
+        );
 
-      context.strokeStyle = smoothSignalColor(colorLevel, 0.58);
-      context.lineWidth = Math.max(1, canvas.width / 1400);
-      context.beginPath();
-      for (let index = 0; index < HISTORY_COLUMNS; index += 1) {
-        const x = (index / (HISTORY_COLUMNS - 1)) * width;
-        const y = center - history.rms[index] * amplitude * 0.72;
-        if (index === 0) context.moveTo(x, y);
-        else context.lineTo(x, y);
+        context.fillStyle = signalColorForLevel(colorLevel, 0.16);
+        context.beginPath();
+        for (let index = start; index <= end; index += 1) {
+          const x = (index / (HISTORY_COLUMNS - 1)) * width;
+          const y = center - history.positive[index] * amplitude;
+          if (index === start) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        }
+        for (let index = end; index >= start; index -= 1) {
+          const x = (index / (HISTORY_COLUMNS - 1)) * width;
+          context.lineTo(x, center - history.negative[index] * amplitude);
+        }
+        context.closePath();
+        context.fill();
+
+        context.strokeStyle = signalColorForLevel(colorLevel, 0.9);
+        context.shadowColor = signalColorForLevel(colorLevel, 0.46);
+        context.shadowBlur = 4;
+        context.lineWidth = Math.max(1, canvas.width / 1100);
+        context.beginPath();
+        for (let index = start; index <= end; index += 1) {
+          const x = (index / (HISTORY_COLUMNS - 1)) * width;
+          const y = center - history.positive[index] * amplitude;
+          if (index === start) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        }
+        for (let index = start; index <= end; index += 1) {
+          const x = (index / (HISTORY_COLUMNS - 1)) * width;
+          const y = center - history.negative[index] * amplitude;
+          if (index === start) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        }
+        context.stroke();
+
+        context.strokeStyle = signalColorForLevel(colorLevel, 0.58);
+        context.lineWidth = Math.max(1, canvas.width / 1400);
+        context.beginPath();
+        for (let index = start; index <= end; index += 1) {
+          const x = (index / (HISTORY_COLUMNS - 1)) * width;
+          const y = center - history.rms[index] * amplitude * 0.72;
+          if (index === start) context.moveTo(x, y);
+          else context.lineTo(x, y);
+        }
+        context.stroke();
       }
-      context.stroke();
       context.shadowBlur = 0;
     }
-  }, [analysersRef]);
+  }, []);
 
-  useAnimationFrame(draw, active);
+  useVisualizationFrame(analysis, draw, active);
 
   return (
     <VisualizerFrame

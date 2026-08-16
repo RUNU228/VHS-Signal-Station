@@ -99,7 +99,11 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
         </div>
       ) : null}
 
-      <VisualizerRack analysersRef={engine.analysersRef} active={signalActive} />
+      <VisualizerRack
+        analysis={analysis}
+        analysersRef={engine.analysersRef}
+        active={signalActive}
+      />
       <AudioPlayer engine={engine} />
       <TrackUploader onFiles={(files) => void handleFiles(files)} loading={loading} />
       <TrackLibrary

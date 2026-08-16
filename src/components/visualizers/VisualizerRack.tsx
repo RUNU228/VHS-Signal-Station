@@ -1,6 +1,6 @@
 import type { MutableRefObject } from "react";
 
-import type { AudioAnalyserBundle } from "@/types/audio";
+import type { AudioAnalyserBundle, AudioVisualizationBus } from "@/types/audio";
 import { Oscilloscope } from "./Oscilloscope";
 import { Spectrogram } from "./Spectrogram";
 import { Spectrum } from "./Spectrum";
@@ -8,11 +8,16 @@ import { Stereometer } from "./Stereometer";
 import { Waveform } from "./Waveform";
 
 type VisualizerRackProps = {
+  analysis: AudioVisualizationBus;
   analysersRef: MutableRefObject<AudioAnalyserBundle | null>;
   active: boolean;
 };
 
-export function VisualizerRack({ analysersRef, active }: VisualizerRackProps) {
+export function VisualizerRack({
+  analysis,
+  analysersRef,
+  active,
+}: VisualizerRackProps) {
   return (
     <section className="visualizer-section" aria-labelledby="rack-title">
       <header className="section-heading">
@@ -27,11 +32,11 @@ export function VisualizerRack({ analysersRef, active }: VisualizerRackProps) {
         </div>
       </header>
       <div className="visualizer-rack">
-        <Spectrogram analysersRef={analysersRef} active={active} />
-        <Waveform analysersRef={analysersRef} active={active} />
+        <Spectrogram analysis={analysis} active={active} />
+        <Waveform analysis={analysis} active={active} />
         <Stereometer analysersRef={analysersRef} active={active} />
-        <Oscilloscope analysersRef={analysersRef} active={active} />
-        <Spectrum analysersRef={analysersRef} active={active} />
+        <Oscilloscope analysis={analysis} active={active} />
+        <Spectrum analysis={analysis} active={active} />
       </div>
     </section>
   );

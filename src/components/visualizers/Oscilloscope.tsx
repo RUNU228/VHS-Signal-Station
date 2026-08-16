@@ -1,16 +1,15 @@
 "use client";
 
-import { useCallback, useRef, type MutableRefObject } from "react";
+import { useCallback, useRef } from "react";
 
-import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
+import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
+import { drawScopeGrid, signalGlow } from "@/lib/visualization/canvas";
 import {
-  drawScopeGrid,
-  energySignalColor,
-  signalGlow,
-  smoothEnergy,
-} from "@/lib/visualization/canvas";
-import type { AudioAnalyserBundle } from "@/types/audio";
+  localSignalLevel,
+  signalColorForLevel,
+} from "@/lib/visualization/signalTheme";
+import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
 function findZeroCrossing(samples: Float32Array): number {
@@ -21,28 +20,46 @@ function findZeroCrossing(samples: Float32Array): number {
   return 0;
 }
 
+function splitOffset(
+  point: number,
+  visible: number,
+  peakStrength: number,
+  peakSeed: number,
+): number {
+  const region = Math.min(2, Math.floor((point / Math.max(1, visible)) * 3));
+  const seedDirection = peakSeed < 0.5 ? -1 : 1;
+  const regionDirection = region % 2 === 0 ? seedDirection : -seedDirection;
+  return regionDirection * 4 * Math.min(1, Math.max(0, peakStrength));
+}
+
 export function Oscilloscope({
-  analysersRef,
+  analysis,
   active,
 }: {
-  analysersRef: MutableRefObject<AudioAnalyserBundle | null>;
+  analysis: AudioVisualizationBus;
   active: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const dataRef = useRef<Float32Array<ArrayBuffer> | null>(null);
-  const colorEnergyRef = useRef(0);
+  const sourceRevisionRef = useRef<number | null>(null);
+  const peakEventRef = useRef(0);
+  const splitFramesRef = useRef(0);
   useCanvasSurface(canvasRef);
 
-  const draw = useCallback(() => {
+  const draw = useCallback((frame: AudioVisualizationFrame) => {
     const canvas = canvasRef.current;
-    const analyser = analysersRef.current?.oscilloscope;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context || !analyser) return;
-    if (!dataRef.current || dataRef.current.length !== analyser.fftSize) {
-      dataRef.current = new Float32Array(analyser.fftSize);
+    if (!canvas || !context) return;
+
+    if (sourceRevisionRef.current !== frame.sourceRevision) {
+      sourceRevisionRef.current = frame.sourceRevision;
+      peakEventRef.current = frame.snapshot.peakEventId;
+      splitFramesRef.current = 0;
+    } else if (peakEventRef.current !== frame.snapshot.peakEventId) {
+      peakEventRef.current = frame.snapshot.peakEventId;
+      if (frame.snapshot.peakStrength > 0.72) splitFramesRef.current = 3;
     }
-    const data = dataRef.current;
-    analyser.getFloatTimeDomainData(data);
+
+    const data = frame.oscilloscopeData;
     const start = findZeroCrossing(data);
     const width = canvas.width;
     const height = canvas.height;
@@ -50,30 +67,56 @@ export function Oscilloscope({
     context.fillRect(0, 0, width, height);
     drawScopeGrid(context, width, height, 8, 4);
 
-    let peak = 0;
-    for (let index = 0; index < data.length; index += 1) {
-      peak = Math.max(peak, Math.abs(data[index]));
-    }
-    colorEnergyRef.current = smoothEnergy(colorEnergyRef.current, peak);
-    const glow = signalGlow(colorEnergyRef.current);
-    context.strokeStyle = energySignalColor(colorEnergyRef.current, glow.strokeAlpha);
-    context.shadowColor = energySignalColor(colorEnergyRef.current, glow.shadowAlpha);
-    context.shadowBlur = glow.shadowBlur;
-    context.lineWidth = Math.max(1, width / 650);
-    context.beginPath();
     const visible = data.length - start;
-    for (let point = 0; point < visible; point += 1) {
+    const splitActive = splitFramesRef.current > 0;
+    for (let point = 1; point < visible; point += 1) {
+      const previousSample = data[start + point - 1];
       const sample = data[start + point];
-      const x = (point / Math.max(1, visible - 1)) * width;
+      const localAmplitude = Math.min(
+        1,
+        Math.max(Math.abs(previousSample), Math.abs(sample)),
+      );
+      const colorLevel = localSignalLevel(
+        localAmplitude,
+        frame.snapshot.overallEnergy,
+      );
+      const glow = signalGlow(colorLevel);
+      const previousOffset = splitActive
+        ? splitOffset(
+            point - 1,
+            visible,
+            frame.snapshot.peakStrength,
+            frame.snapshot.peakSeed,
+          )
+        : 0;
+      const offset = splitActive
+        ? splitOffset(
+            point,
+            visible,
+            frame.snapshot.peakStrength,
+            frame.snapshot.peakSeed,
+          )
+        : 0;
+      const previousX =
+        ((point - 1) / Math.max(1, visible - 1)) * width + previousOffset;
+      const x = (point / Math.max(1, visible - 1)) * width + offset;
+      const previousY = height / 2 - previousSample * height * 0.43;
       const y = height / 2 - sample * height * 0.43;
-      if (point === 0) context.moveTo(x, y);
-      else context.lineTo(x, y);
-    }
-    context.stroke();
-    context.shadowBlur = 0;
-  }, [analysersRef]);
 
-  useAnimationFrame(draw, active);
+      context.strokeStyle = signalColorForLevel(colorLevel, glow.strokeAlpha);
+      context.shadowColor = signalColorForLevel(colorLevel, glow.shadowAlpha);
+      context.shadowBlur = Math.min(6, glow.shadowBlur);
+      context.lineWidth = 1 + localAmplitude * 1.8;
+      context.beginPath();
+      context.moveTo(previousX, previousY);
+      context.lineTo(x, y);
+      context.stroke();
+    }
+    context.shadowBlur = 0;
+    if (splitFramesRef.current > 0) splitFramesRef.current -= 1;
+  }, []);
+
+  useVisualizationFrame(analysis, draw, active);
 
   return (
     <VisualizerFrame

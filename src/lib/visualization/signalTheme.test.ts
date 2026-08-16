@@ -3,6 +3,7 @@ import type { AudioReactiveSnapshot } from "@/types/audio";
 import { describe, expect, it } from "vitest";
 import {
   createSignalTheme,
+  localSignalLevel,
   signalColor,
   signalColorForLevel,
 } from "./signalTheme";
@@ -27,6 +28,12 @@ function channelDistance(
 }
 
 describe("signal theme", () => {
+  it("weights local geometry more than global energy", () => {
+    expect(localSignalLevel(0, 0.5)).toBeCloseTo(0.09);
+    expect(localSignalLevel(0.5, 0.5)).toBeCloseTo(0.5);
+    expect(localSignalLevel(1, 0.5)).toBeCloseTo(0.91);
+  });
+
   it("travels continuously from blue through yellow and orange to red", () => {
     expect(signalColorForLevel(0)).toBe("rgba(53, 69, 82, 1)");
     expect(signalColorForLevel(0.65)).toBe("rgba(230, 215, 163, 1)");

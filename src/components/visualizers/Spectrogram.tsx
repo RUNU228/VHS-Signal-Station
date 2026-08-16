@@ -1,50 +1,52 @@
 "use client";
 
-import { useCallback, useRef, type MutableRefObject } from "react";
+import { useCallback, useRef } from "react";
 
-import { useAnimationFrame } from "@/hooks/useAnimationFrame";
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
-import { signalColor } from "@/lib/visualization/canvas";
-import type { AudioAnalyserBundle } from "@/types/audio";
+import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
+import { signalColorForLevel } from "@/lib/visualization/signalTheme";
+import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
 const HISTORY_COLUMNS = 72;
 const FREQUENCY_ROWS = 34;
 
 export function Spectrogram({
-  analysersRef,
+  analysis,
   active,
 }: {
-  analysersRef: MutableRefObject<AudioAnalyserBundle | null>;
+  analysis: AudioVisualizationBus;
   active: boolean;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const dataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
   const historyRef = useRef(new Uint8Array(HISTORY_COLUMNS * FREQUENCY_ROWS));
+  const sourceRevisionRef = useRef<number | null>(null);
   useCanvasSurface(canvasRef);
 
-  const draw = useCallback(() => {
+  const draw = useCallback((frame: AudioVisualizationFrame) => {
     const canvas = canvasRef.current;
-    const analyser = analysersRef.current?.frequency;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context || !analyser) return;
-
-    if (!dataRef.current || dataRef.current.length !== analyser.frequencyBinCount) {
-      dataRef.current = new Uint8Array(analyser.frequencyBinCount);
-    }
-    const data = dataRef.current;
-    analyser.getByteFrequencyData(data);
+    if (!canvas || !context) return;
 
     const history = historyRef.current;
+    if (sourceRevisionRef.current !== frame.sourceRevision) {
+      sourceRevisionRef.current = frame.sourceRevision;
+      history.fill(0);
+    }
+
+    const data = frame.frequencyData;
     history.copyWithin(0, FREQUENCY_ROWS);
-    for (let row = 0; row < FREQUENCY_ROWS; row += 1) {
-      const normalized = row / (FREQUENCY_ROWS - 1);
-      const bin = Math.min(
-        data.length - 1,
-        Math.floor(Math.pow(normalized, 1.65) * data.length * 0.52),
-      );
-      history[(HISTORY_COLUMNS - 1) * FREQUENCY_ROWS + (FREQUENCY_ROWS - 1 - row)] =
-        data[bin];
+    const newestColumn = (HISTORY_COLUMNS - 1) * FREQUENCY_ROWS;
+    history.fill(0, newestColumn);
+    if (data.length > 0) {
+      for (let row = 0; row < FREQUENCY_ROWS; row += 1) {
+        const normalized = row / (FREQUENCY_ROWS - 1);
+        const bin = Math.min(
+          data.length - 1,
+          Math.floor(Math.pow(normalized, 1.65) * data.length * 0.52),
+        );
+        history[newestColumn + FREQUENCY_ROWS - 1 - row] = data[bin];
+      }
     }
 
     const width = canvas.width;
@@ -59,7 +61,10 @@ export function Spectrogram({
         const energy = history[column * FREQUENCY_ROWS + row] / 255;
         if (energy < 0.055) continue;
         const age = 0.42 + (column / HISTORY_COLUMNS) * 0.58;
-        context.fillStyle = signalColor(energy, Math.max(0.12, energy * age));
+        context.fillStyle = signalColorForLevel(
+          energy,
+          Math.max(0.08, energy * age),
+        );
         context.fillRect(
           column * cellWidth + 1,
           row * cellHeight + 1,
@@ -68,9 +73,9 @@ export function Spectrogram({
         );
       }
     }
-  }, [analysersRef]);
+  }, []);
 
-  useAnimationFrame(draw, active);
+  useVisualizationFrame(analysis, draw, active);
 
   return (
     <VisualizerFrame
