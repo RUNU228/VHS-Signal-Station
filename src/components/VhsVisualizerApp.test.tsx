@@ -34,10 +34,12 @@ describe("VhsVisualizerApp", () => {
     expect(rack.compareDocumentPosition(player) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(player.compareDocumentPosition(library) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByText("DROP AUDIO TAPE HERE")).toBeInTheDocument();
-    expect(container.querySelector("main.station-shell")).toHaveAttribute(
+    const station = container.querySelector("main.station-shell");
+    expect(station).toHaveAttribute(
       "data-audio-active",
       "false",
     );
+    expect(station).toHaveStyle({ "--signal-strength": "0.000" });
     const background = container.querySelector(
       "canvas.audio-reactive-background",
     );

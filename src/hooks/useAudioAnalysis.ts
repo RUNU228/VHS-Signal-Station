@@ -1,14 +1,21 @@
 "use client";
 
-import { useEffect, useRef, type MutableRefObject } from "react";
+import { useEffect, useMemo, useRef, type MutableRefObject } from "react";
 
 import {
   IDLE_AUDIO_SNAPSHOT,
   analyseFrequencyData,
+  createAudioAnalysisState,
+  decayAudioAnalysis,
 } from "@/lib/audio/analysis";
 import type {
   AudioAnalyserBundle,
+  AudioAnalysisState,
   AudioReactiveSnapshot,
+  AudioVisualizationBus,
+  AudioVisualizationFrame,
+  AudioVisualizationListener,
+  VisualQuality,
 } from "@/types/audio";
 
 const DECAY_THRESHOLD = 0.001;
@@ -24,12 +31,117 @@ function hasAudibleEnergy(snapshot: AudioReactiveSnapshot): boolean {
   );
 }
 
+function currentQuality(): { quality: VisualQuality; reducedMotion: boolean } {
+  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+    return { quality: "HIGH", reducedMotion: false };
+  }
+
+  const low = window.matchMedia("(max-width: 760px)").matches;
+  const medium = window.matchMedia(
+    "(min-width: 761px) and (max-width: 1100px)",
+  ).matches;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  return {
+    quality: low ? "LOW" : medium ? "MEDIUM" : "HIGH",
+    reducedMotion,
+  };
+}
+
+function emptyFrame(snapshot: AudioReactiveSnapshot): AudioVisualizationFrame {
+  const { quality, reducedMotion } = currentQuality();
+  return {
+    snapshot,
+    frequencyData: new Uint8Array(0),
+    oscilloscopeData: new Float32Array(0),
+    leftChannelData: new Float32Array(0),
+    rightChannelData: new Float32Array(0),
+    sampleRate: 48_000,
+    frequencyFftSize: 4_096,
+    frameId: 0,
+    sourceRevision: 0,
+    quality,
+    reducedMotion,
+  };
+}
+
+function arraysFor(
+  frame: AudioVisualizationFrame,
+  bundle: AudioAnalyserBundle,
+): Pick<
+  AudioVisualizationFrame,
+  "frequencyData" | "oscilloscopeData" | "leftChannelData" | "rightChannelData"
+> {
+  const timeDomainLength = bundle.oscilloscope.fftSize;
+  return {
+    frequencyData: frame.frequencyData.length === bundle.frequency.frequencyBinCount
+      ? frame.frequencyData
+      : new Uint8Array(bundle.frequency.frequencyBinCount),
+    oscilloscopeData: frame.oscilloscopeData.length === timeDomainLength
+      ? frame.oscilloscopeData
+      : new Float32Array(timeDomainLength),
+    leftChannelData: frame.leftChannelData.length === bundle.left.fftSize
+      ? frame.leftChannelData
+      : new Float32Array(bundle.left.fftSize),
+    rightChannelData: frame.rightChannelData.length === bundle.right.fftSize
+      ? frame.rightChannelData
+      : new Float32Array(bundle.right.fftSize),
+  };
+}
+
+function clearFrameBuffers(frame: AudioVisualizationFrame): void {
+  frame.frequencyData.fill(0);
+  frame.oscilloscopeData.fill(0);
+  frame.leftChannelData.fill(0);
+  frame.rightChannelData.fill(0);
+}
+
 export function useAudioAnalysis(
   analysersRef: MutableRefObject<AudioAnalyserBundle | null>,
-  active: boolean,
-): MutableRefObject<AudioReactiveSnapshot> {
-  const snapshotRef = useRef<AudioReactiveSnapshot>({ ...IDLE_AUDIO_SNAPSHOT });
-  const binsRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
+  options: { active: boolean; resetKey: string | null },
+): AudioVisualizationBus {
+  const initialSnapshot = { ...IDLE_AUDIO_SNAPSHOT };
+  const frameRef = useRef<AudioVisualizationFrame>(emptyFrame(initialSnapshot));
+  const snapshotRef = useRef<AudioReactiveSnapshot>(initialSnapshot);
+  const analysisStateRef = useRef<AudioAnalysisState>(createAudioAnalysisState());
+  const listenersRef = useRef(new Set<AudioVisualizationListener>());
+  const resetKeyRef = useRef(options.resetKey);
+
+  const publish = (frame: AudioVisualizationFrame, time: number) => {
+    frameRef.current = frame;
+    snapshotRef.current = frame.snapshot;
+    for (const listener of [...listenersRef.current]) listener(frame, time);
+  };
+
+  const bus = useMemo<AudioVisualizationBus>(
+    () => ({
+      frameRef,
+      snapshotRef,
+      subscribe: (listener) => {
+        listenersRef.current.add(listener);
+        return () => listenersRef.current.delete(listener);
+      },
+    }),
+    [frameRef, snapshotRef],
+  );
+
+  useEffect(() => {
+    if (resetKeyRef.current === options.resetKey) return;
+
+    resetKeyRef.current = options.resetKey;
+    analysisStateRef.current = createAudioAnalysisState();
+    const previousFrame = frameRef.current;
+    clearFrameBuffers(previousFrame);
+    const { quality, reducedMotion } = currentQuality();
+    publish({
+      ...previousFrame,
+      snapshot: { ...IDLE_AUDIO_SNAPSHOT },
+      frameId: 0,
+      sourceRevision: previousFrame.sourceRevision + 1,
+      quality,
+      reducedMotion,
+    }, globalThis.performance?.now() ?? Date.now());
+  }, [options.resetKey]);
 
   useEffect(() => {
     if (typeof requestAnimationFrame === "undefined") return;
@@ -37,54 +149,61 @@ export function useAudioAnalysis(
     let disposed = false;
     let frame = 0;
 
-    const hasAnalyser = () =>
-      active && Boolean(analysersRef.current?.frequency);
+    const shouldSchedule = () => {
+      const hasAnalyser = options.active && Boolean(analysersRef.current?.frequency);
+      return hasAnalyser || hasAudibleEnergy(snapshotRef.current);
+    };
 
     const schedule = () => {
-      if (disposed || document.hidden || frame !== 0) return;
+      if (disposed || document.hidden || frame !== 0 || !shouldSchedule()) return;
       frame = requestAnimationFrame(sample);
     };
 
-    const sample = () => {
+    const sample = (time: number) => {
       frame = 0;
       if (disposed || document.hidden) return;
 
       const bundle = analysersRef.current;
-      const analyser = bundle?.frequency;
-      if (active && bundle && analyser) {
-        if (
-          binsRef.current === null ||
-          binsRef.current.length !== analyser.frequencyBinCount
-        ) {
-          binsRef.current = new Uint8Array(analyser.frequencyBinCount);
-        }
-        analyser.getByteFrequencyData(binsRef.current);
-        snapshotRef.current = analyseFrequencyData({
-          bins: binsRef.current,
+      const previousFrame = frameRef.current;
+      const { quality, reducedMotion } = currentQuality();
+
+      if (options.active && bundle?.frequency) {
+        const buffers = arraysFor(previousFrame, bundle);
+        bundle.frequency.getByteFrequencyData(buffers.frequencyData);
+        bundle.oscilloscope.getFloatTimeDomainData(buffers.oscilloscopeData);
+        bundle.left.getFloatTimeDomainData(buffers.leftChannelData);
+        bundle.right.getFloatTimeDomainData(buffers.rightChannelData);
+
+        analysisStateRef.current = analyseFrequencyData({
+          bins: buffers.frequencyData,
           sampleRate: bundle.context.sampleRate,
-          fftSize: analyser.fftSize,
-          previous: snapshotRef.current,
+          fftSize: bundle.frequency.fftSize,
+          nowMs: time,
+          state: analysisStateRef.current,
         });
-      } else if (hasAudibleEnergy(snapshotRef.current)) {
-        const fftSize = analyser?.fftSize ?? 4_096;
-        const length = analyser?.frequencyBinCount ?? fftSize / 2;
-        if (binsRef.current === null || binsRef.current.length !== length) {
-          binsRef.current = new Uint8Array(length);
-        } else {
-          binsRef.current.fill(0);
-        }
-        snapshotRef.current = analyseFrequencyData({
-          bins: binsRef.current,
-          sampleRate: bundle?.context.sampleRate ?? 48_000,
-          fftSize,
-          previous: snapshotRef.current,
-        });
-        if (!hasAudibleEnergy(snapshotRef.current)) {
-          snapshotRef.current = { ...IDLE_AUDIO_SNAPSHOT };
-        }
+        publish({
+          ...previousFrame,
+          ...buffers,
+          snapshot: analysisStateRef.current.snapshot,
+          sampleRate: bundle.context.sampleRate,
+          frequencyFftSize: bundle.frequency.fftSize,
+          frameId: previousFrame.frameId + 1,
+          quality,
+          reducedMotion,
+        }, time);
+      } else {
+        clearFrameBuffers(previousFrame);
+        analysisStateRef.current = decayAudioAnalysis(analysisStateRef.current, time);
+        publish({
+          ...previousFrame,
+          snapshot: analysisStateRef.current.snapshot,
+          frameId: previousFrame.frameId + 1,
+          quality,
+          reducedMotion,
+        }, time);
       }
 
-      if (hasAnalyser() || hasAudibleEnergy(snapshotRef.current)) schedule();
+      schedule();
     };
 
     const handleVisibility = () => {
@@ -93,18 +212,18 @@ export function useAudioAnalysis(
         frame = 0;
         return;
       }
-      if (hasAnalyser() || hasAudibleEnergy(snapshotRef.current)) schedule();
+      schedule();
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
-    if (hasAnalyser() || hasAudibleEnergy(snapshotRef.current)) schedule();
+    schedule();
 
     return () => {
       disposed = true;
       document.removeEventListener("visibilitychange", handleVisibility);
       if (frame !== 0) cancelAnimationFrame(frame);
     };
-  }, [active, analysersRef]);
+  }, [analysersRef, options.active]);
 
-  return snapshotRef;
+  return bus;
 }

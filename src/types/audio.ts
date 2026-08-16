@@ -1,3 +1,5 @@
+import type { MutableRefObject } from "react";
+
 export type AudioFormat = "WAV" | "MP3";
 
 export type AudioTrack = {
@@ -48,6 +50,33 @@ export type AudioAnalysisState = {
   previousRawEnergy: number;
   slowEnvelope: number;
   lastPeakAt: number;
+};
+
+export type VisualQuality = "LOW" | "MEDIUM" | "HIGH";
+
+export type AudioVisualizationFrame = {
+  snapshot: AudioReactiveSnapshot;
+  frequencyData: Uint8Array<ArrayBuffer>;
+  oscilloscopeData: Float32Array<ArrayBuffer>;
+  leftChannelData: Float32Array<ArrayBuffer>;
+  rightChannelData: Float32Array<ArrayBuffer>;
+  sampleRate: number;
+  frequencyFftSize: number;
+  frameId: number;
+  sourceRevision: number;
+  quality: VisualQuality;
+  reducedMotion: boolean;
+};
+
+export type AudioVisualizationListener = (
+  frame: AudioVisualizationFrame,
+  time: number,
+) => void;
+
+export type AudioVisualizationBus = {
+  frameRef: MutableRefObject<AudioVisualizationFrame>;
+  snapshotRef: MutableRefObject<AudioReactiveSnapshot>;
+  subscribe: (listener: AudioVisualizationListener) => () => void;
 };
 
 export type AnalysisInput = {

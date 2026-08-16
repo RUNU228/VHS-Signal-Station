@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, type MutableRefObject, type RefObject } from "react";
+import { useEffect, type RefObject } from "react";
 
-import type { AudioReactiveSnapshot } from "@/types/audio";
+import { createSignalTheme, signalColor } from "@/lib/visualization/signalTheme";
+import type { AudioReactiveSnapshot, AudioVisualizationBus } from "@/types/audio";
 
-const PROJECTIONS = [
+const LEGACY_PROJECTIONS = [
   ["volume", "--audio-volume"],
   ["bass", "--audio-bass"],
   ["mid", "--audio-mid"],
@@ -15,6 +16,17 @@ const PROJECTIONS = [
   readonly [keyof AudioReactiveSnapshot, `--audio-${string}`]
 >;
 
+const SHARED_PROJECTIONS = [
+  ["overallEnergy", "--signal-strength"],
+  ["peakStrength", "--peak-strength"],
+  ["smoothedEnergy", "--background-reactivity"],
+  ["lowEnergy", "--audio-low"],
+  ["midEnergy", "--audio-mid"],
+  ["highEnergy", "--audio-high"],
+] as const satisfies ReadonlyArray<
+  readonly [keyof AudioReactiveSnapshot, `--${string}`]
+>;
+
 function formatEnergy(value: number): string {
   const bounded = Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
   return bounded.toFixed(3);
@@ -22,45 +34,48 @@ function formatEnergy(value: number): string {
 
 export function useReactiveStyles(
   targetRef: RefObject<HTMLElement | null>,
-  snapshotRef: MutableRefObject<AudioReactiveSnapshot>,
+  bus: AudioVisualizationBus,
   active: boolean,
 ): void {
   useEffect(() => {
     const target = targetRef.current;
-    if (!target || typeof requestAnimationFrame === "undefined") return;
+    if (!target) return;
 
     const previous = new Map<string, string>();
-    let frame = 0;
-    let disposed = false;
-
     target.dataset.audioActive = String(active);
 
-    const project = () => {
-      frame = 0;
-      if (disposed) return;
+    const project = (snapshot: AudioReactiveSnapshot) => {
+      const theme = createSignalTheme(snapshot);
+      const projections: readonly (readonly [string, string])[] = [
+        ...LEGACY_PROJECTIONS.map(([key, variable]) => [
+          variable,
+          formatEnergy(snapshot[key]),
+        ] as const),
+        ...SHARED_PROJECTIONS.map(([key, variable]) => [
+          variable,
+          formatEnergy(snapshot[key]),
+        ] as const),
+        ["--signal-color", signalColor(theme)],
+        ["--signal-glow", formatEnergy(theme.glow)],
+      ];
 
-      for (const [key, variable] of PROJECTIONS) {
-        const formatted = formatEnergy(snapshotRef.current[key]);
-        if (previous.get(variable) === formatted) continue;
-        target.style.setProperty(variable, formatted);
-        previous.set(variable, formatted);
+      for (const [variable, value] of projections) {
+        if (previous.get(variable) === value) continue;
+        target.style.setProperty(variable, value);
+        previous.set(variable, value);
       }
-
-      const hasEnergy = PROJECTIONS.some(
-        ([key]) => snapshotRef.current[key] > 0.0005,
-      );
-      if (active || hasEnergy) frame = requestAnimationFrame(project);
     };
 
-    frame = requestAnimationFrame(project);
+    project(bus.frameRef.current.snapshot);
+    const unsubscribe = bus.subscribe((frame) => project(frame.snapshot));
 
     return () => {
-      disposed = true;
-      if (frame !== 0) cancelAnimationFrame(frame);
+      unsubscribe();
       delete target.dataset.audioActive;
-      for (const [, variable] of PROJECTIONS) {
-        target.style.removeProperty(variable);
-      }
+      for (const [, variable] of LEGACY_PROJECTIONS) target.style.removeProperty(variable);
+      for (const [, variable] of SHARED_PROJECTIONS) target.style.removeProperty(variable);
+      target.style.removeProperty("--signal-color");
+      target.style.removeProperty("--signal-glow");
     };
-  }, [active, snapshotRef, targetRef]);
+  }, [active, bus, targetRef]);
 }

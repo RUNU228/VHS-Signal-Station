@@ -27,9 +27,29 @@ function analyserBundle(fill = 255): AudioAnalyserBundle {
   return {
     context: { sampleRate: 48_000 } as AudioContext,
     frequency,
-    oscilloscope: {} as AnalyserNode,
-    left: {} as AnalyserNode,
-    right: {} as AnalyserNode,
+    oscilloscope: {
+      fftSize: 4_096,
+      getFloatTimeDomainData: vi.fn((target: Float32Array) => target.fill(0.25)),
+    } as unknown as AnalyserNode,
+    left: {
+      fftSize: 4_096,
+      getFloatTimeDomainData: vi.fn((target: Float32Array) => target.fill(0.5)),
+    } as unknown as AnalyserNode,
+    right: {
+      fftSize: 4_096,
+      getFloatTimeDomainData: vi.fn((target: Float32Array) => target.fill(-0.5)),
+    } as unknown as AnalyserNode,
+  };
+}
+
+function spiedBundle(fill = 255) {
+  const bundle = analyserBundle(fill);
+  return {
+    analysersRef: { current: bundle },
+    frequency: bundle.frequency,
+    oscilloscope: bundle.oscilloscope,
+    left: bundle.left,
+    right: bundle.right,
   };
 }
 
@@ -58,55 +78,75 @@ describe("useAudioAnalysis", () => {
     vi.unstubAllGlobals();
   });
 
-  it("samples into one stable ref without causing a React render loop", () => {
+  it("samples every analyser once and publishes one shared frame", () => {
+    const { analysersRef, frequency, oscilloscope, left, right } = spiedBundle();
+    const listener = vi.fn();
+    const { result } = renderHook(() =>
+      useAudioAnalysis(analysersRef, { active: true, resetKey: "track-a" }),
+    );
+    const unsubscribe = result.current.subscribe(listener);
+
+    act(() => runNextFrame(16));
+
+    expect(frequency.getByteFrequencyData).toHaveBeenCalledTimes(1);
+    expect(oscilloscope.getFloatTimeDomainData).toHaveBeenCalledTimes(1);
+    expect(left.getFloatTimeDomainData).toHaveBeenCalledTimes(1);
+    expect(right.getFloatTimeDomainData).toHaveBeenCalledTimes(1);
+    expect(listener).toHaveBeenCalledWith(result.current.frameRef.current, 16);
+    unsubscribe();
+  });
+
+  it("samples into one stable bus without causing a React render loop", () => {
     const analysersRef = { current: analyserBundle() };
     let renders = 0;
     const { result } = renderHook(() => {
       renders += 1;
-      return useAudioAnalysis(analysersRef, true);
+      return useAudioAnalysis(analysersRef, { active: true, resetKey: "track-a" });
     });
-    const stableRef = result.current;
+    const stableBus = result.current;
 
     act(() => runNextFrame());
 
-    expect(result.current).toBe(stableRef);
-    expect(result.current.current.bass).toBeGreaterThan(0);
+    expect(result.current).toBe(stableBus);
+    expect(result.current.frameRef.current.snapshot.bass).toBeGreaterThan(0);
     expect(renders).toBe(1);
   });
 
   it("cancels the active loop and decays smoothly when playback stops", () => {
     const analysersRef = { current: analyserBundle() };
     const { result, rerender } = renderHook(
-      ({ active }) => useAudioAnalysis(analysersRef, active),
+      ({ active }) => useAudioAnalysis(analysersRef, { active, resetKey: "track-a" }),
       { initialProps: { active: true } },
     );
     act(() => runNextFrame());
-    const playingVolume = result.current.current.volume;
+    const playingVolume = result.current.snapshotRef.current.volume;
 
     rerender({ active: false });
     expect(cancelAnimationFrame).toHaveBeenCalled();
     act(() => runNextFrame(32));
 
-    expect(result.current.current.volume).toBeLessThan(playingVolume);
-    expect(result.current.current.volume).toBeGreaterThan(0);
+    expect(result.current.snapshotRef.current.volume).toBeLessThan(playingVolume);
+    expect(result.current.snapshotRef.current.volume).toBeGreaterThan(0);
   });
 
   it("leaves the idle snapshot intact when no analyser is available", () => {
     const analysersRef = createRef<AudioAnalyserBundle | null>();
-    const { result } = renderHook(() => useAudioAnalysis(analysersRef, true));
+    const { result } = renderHook(() =>
+      useAudioAnalysis(analysersRef, { active: true, resetKey: null }),
+    );
 
-    expect(result.current.current).toEqual(IDLE_AUDIO_SNAPSHOT);
+    expect(result.current.snapshotRef.current).toEqual(IDLE_AUDIO_SNAPSHOT);
     expect(frames).toHaveLength(0);
   });
 
   it("does not schedule frames for peak metadata after energy has decayed", () => {
     const analysersRef = createRef<AudioAnalyserBundle | null>();
     const { result, rerender } = renderHook(
-      ({ active }) => useAudioAnalysis(analysersRef, active),
+      ({ active }) => useAudioAnalysis(analysersRef, { active, resetKey: "track-a" }),
       { initialProps: { active: false } },
     );
 
-    result.current.current = {
+    result.current.snapshotRef.current = {
       ...IDLE_AUDIO_SNAPSHOT,
       peakEventId: 1,
       peakSeed: 0.618,
@@ -120,7 +160,7 @@ describe("useAudioAnalysis", () => {
     let hidden = false;
     vi.spyOn(document, "hidden", "get").mockImplementation(() => hidden);
     const analysersRef = { current: analyserBundle() };
-    renderHook(() => useAudioAnalysis(analysersRef, true));
+    renderHook(() => useAudioAnalysis(analysersRef, { active: true, resetKey: "track-a" }));
 
     hidden = true;
     act(() => document.dispatchEvent(new Event("visibilitychange")));
@@ -130,5 +170,20 @@ describe("useAudioAnalysis", () => {
     hidden = false;
     act(() => document.dispatchEvent(new Event("visibilitychange")));
     expect(frames).toHaveLength(1);
+  });
+
+  it("clears buffers and peak state when resetKey changes", () => {
+    const { analysersRef } = spiedBundle();
+    const { result, rerender } = renderHook(
+      ({ resetKey }) => useAudioAnalysis(analysersRef, { active: true, resetKey }),
+      { initialProps: { resetKey: "track-a" } },
+    );
+
+    act(() => runNextFrame(16));
+    rerender({ resetKey: "track-b" });
+
+    expect(result.current.frameRef.current.snapshot.peakEventId).toBe(0);
+    expect(result.current.frameRef.current.frequencyData.every((value) => value === 0)).toBe(true);
+    expect(result.current.frameRef.current.sourceRevision).toBe(1);
   });
 });

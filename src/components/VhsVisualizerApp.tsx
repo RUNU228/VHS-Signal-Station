@@ -58,13 +58,16 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
 
   const signalActive = engine.isPlaying && engine.analysersRef.current !== null;
   const stationRef = useRef<HTMLElement>(null);
-  const reactiveRef = useAudioAnalysis(engine.analysersRef, signalActive);
-  useReactiveStyles(stationRef, reactiveRef, signalActive);
+  const analysis = useAudioAnalysis(engine.analysersRef, {
+    active: signalActive,
+    resetKey: engine.currentTrack?.id ?? null,
+  });
+  useReactiveStyles(stationRef, analysis, signalActive);
   const message = engine.error ?? notice;
 
   return (
     <main ref={stationRef} className="station-shell">
-      <AudioReactiveBackground reactiveRef={reactiveRef} active={signalActive} />
+      <AudioReactiveBackground reactiveRef={analysis.snapshotRef} active={signalActive} />
       <VhsNoise />
       <header className="station-header">
         <div className="station-brand">
