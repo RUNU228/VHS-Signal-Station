@@ -139,6 +139,38 @@ describe("useAudioAnalysis", () => {
     expect(frames).toHaveLength(0);
   });
 
+  it("wakes and sustains the idle clock while a subscriber is active", () => {
+    const analysersRef = createRef<AudioAnalyserBundle | null>();
+    const listener = vi.fn();
+    const { result } = renderHook(() =>
+      useAudioAnalysis(analysersRef, { active: true, resetKey: null }),
+    );
+
+    expect(frames).toHaveLength(0);
+    const unsubscribe = result.current.subscribe(listener);
+    expect(frames).toHaveLength(1);
+
+    act(() => runNextFrame(16));
+
+    expect(listener).toHaveBeenCalledTimes(1);
+    expect(frames).toHaveLength(1);
+    unsubscribe();
+  });
+
+  it("stops the idle clock when its final subscriber unsubscribes", () => {
+    const analysersRef = createRef<AudioAnalyserBundle | null>();
+    const { result } = renderHook(() =>
+      useAudioAnalysis(analysersRef, { active: true, resetKey: null }),
+    );
+
+    const unsubscribe = result.current.subscribe(vi.fn());
+    expect(frames).toHaveLength(1);
+    unsubscribe();
+
+    expect(cancelAnimationFrame).toHaveBeenCalledTimes(1);
+    expect(frames).toHaveLength(0);
+  });
+
   it("does not schedule frames for peak metadata after energy has decayed", () => {
     const analysersRef = createRef<AudioAnalyserBundle | null>();
     const { result, rerender } = renderHook(

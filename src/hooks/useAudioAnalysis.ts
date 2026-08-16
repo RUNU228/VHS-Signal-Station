@@ -105,6 +105,7 @@ export function useAudioAnalysis(
   const snapshotRef = useRef<AudioReactiveSnapshot>(initialSnapshot);
   const analysisStateRef = useRef<AudioAnalysisState>(createAudioAnalysisState());
   const listenersRef = useRef(new Set<AudioVisualizationListener>());
+  const synchronizeClockRef = useRef<() => void>(() => {});
   const resetKeyRef = useRef(options.resetKey);
 
   const publish = (frame: AudioVisualizationFrame, time: number) => {
@@ -119,7 +120,11 @@ export function useAudioAnalysis(
       snapshotRef,
       subscribe: (listener) => {
         listenersRef.current.add(listener);
-        return () => listenersRef.current.delete(listener);
+        synchronizeClockRef.current();
+        return () => {
+          listenersRef.current.delete(listener);
+          synchronizeClockRef.current();
+        };
       },
     }),
     [frameRef, snapshotRef],
@@ -151,13 +156,25 @@ export function useAudioAnalysis(
 
     const shouldSchedule = () => {
       const hasAnalyser = options.active && Boolean(analysersRef.current?.frequency);
-      return hasAnalyser || hasAudibleEnergy(snapshotRef.current);
+      return hasAnalyser ||
+        hasAudibleEnergy(snapshotRef.current) ||
+        listenersRef.current.size > 0;
     };
 
     const schedule = () => {
       if (disposed || document.hidden || frame !== 0 || !shouldSchedule()) return;
       frame = requestAnimationFrame(sample);
     };
+
+    const synchronizeClock = () => {
+      if (shouldSchedule()) {
+        schedule();
+      } else if (frame !== 0) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+    };
+    synchronizeClockRef.current = synchronizeClock;
 
     const sample = (time: number) => {
       frame = 0;
@@ -203,7 +220,7 @@ export function useAudioAnalysis(
         }, time);
       }
 
-      schedule();
+      synchronizeClock();
     };
 
     const handleVisibility = () => {
@@ -212,14 +229,15 @@ export function useAudioAnalysis(
         frame = 0;
         return;
       }
-      schedule();
+      synchronizeClock();
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
-    schedule();
+    synchronizeClock();
 
     return () => {
       disposed = true;
+      synchronizeClockRef.current = () => {};
       document.removeEventListener("visibilitychange", handleVisibility);
       if (frame !== 0) cancelAnimationFrame(frame);
     };
