@@ -1,8 +1,7 @@
+import { signalColorForLevel } from "./signalTheme";
+
 export function signalColor(level: number, alpha = 1): string {
-  const value = Math.min(Math.max(level, 0), 1);
-  if (value > 0.78) return `rgba(168, 77, 67, ${alpha})`;
-  if (value > 0.48) return `rgba(196, 154, 82, ${alpha})`;
-  return `rgba(111, 145, 168, ${alpha})`;
+  return signalColorForLevel(level, alpha);
 }
 
 export function smoothEnergy(
@@ -28,97 +27,12 @@ export function signalGlow(level: number) {
   };
 }
 
-type Rgb = readonly [number, number, number];
-
-const SIGNAL_PALETTE = {
-  low: [111, 145, 168],
-  middle: [196, 154, 82],
-  high: [168, 77, 67],
-} as const satisfies Record<string, Rgb>;
-
-const ENERGY_SIGNAL_PALETTE = {
-  low: [53, 69, 82],
-  amber: SIGNAL_PALETTE.middle,
-  redOrange: [228, 166, 90],
-  phosphor: [230, 215, 163],
-} as const satisfies Record<string, Rgb>;
-
-function smoothstep(value: number): number {
-  return value * value * (3 - 2 * value);
-}
-
-function blendRgb(
-  start: Rgb,
-  end: Rgb,
-  amount: number,
-): Rgb {
-  return [
-    start[0] + (end[0] - start[0]) * amount,
-    start[1] + (end[1] - start[1]) * amount,
-    start[2] + (end[2] - start[2]) * amount,
-  ];
-}
-
-function formatLegacyRgb([red, green, blue]: Rgb): string {
-  return `${Math.round(red)}, ${Math.round(green)}, ${Math.round(blue)}`;
-}
-
-function formatEnergyRgb([red, green, blue]: Rgb): string {
-  const formatChannel = (value: number) =>
-    Number.isInteger(value) ? String(value) : value.toFixed(2);
-
-  return `${formatChannel(red)}, ${formatChannel(green)}, ${formatChannel(blue)}`;
-}
-
-function interpolateRgb(start: Rgb, end: Rgb, amount: number): string {
-  return formatLegacyRgb(blendRgb(start, end, amount));
-}
-
 export function smoothSignalColor(level: number, alpha = 1): string {
-  const value = Math.min(Math.max(level, 0), 1);
-  const opacity = Math.min(Math.max(alpha, 0), 1);
-  let start: Rgb;
-  let end: Rgb;
-
-  if (value <= 0.5) {
-    start = SIGNAL_PALETTE.low;
-    end = SIGNAL_PALETTE.middle;
-  } else {
-    start = SIGNAL_PALETTE.middle;
-    end = SIGNAL_PALETTE.high;
-  }
-
-  const localValue = value <= 0.5 ? value * 2 : (value - 0.5) * 2;
-
-  return `rgba(${interpolateRgb(start, end, smoothstep(localValue))}, ${opacity})`;
+  return signalColorForLevel(level, alpha);
 }
 
 export function energySignalColor(level: number, alpha = 1): string {
-  const value = Math.min(Math.max(level, 0), 1);
-  const opacity = Math.min(Math.max(alpha, 0), 1);
-  let color: Rgb;
-
-  if (value <= 0.5) {
-    color = blendRgb(
-      ENERGY_SIGNAL_PALETTE.low,
-      ENERGY_SIGNAL_PALETTE.amber,
-      smoothstep(value * 2),
-    );
-  } else if (value <= 0.75) {
-    color = blendRgb(
-      ENERGY_SIGNAL_PALETTE.amber,
-      ENERGY_SIGNAL_PALETTE.redOrange,
-      smoothstep((value - 0.5) * 4),
-    );
-  } else {
-    color = blendRgb(
-      ENERGY_SIGNAL_PALETTE.redOrange,
-      ENERGY_SIGNAL_PALETTE.phosphor,
-      smoothstep((value - 0.75) * 4),
-    );
-  }
-
-  return `rgba(${formatEnergyRgb(color)}, ${opacity})`;
+  return signalColorForLevel(level, alpha);
 }
 
 export function drawScopeGrid(
