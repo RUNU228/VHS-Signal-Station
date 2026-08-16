@@ -1,11 +1,9 @@
 import { act, render, screen } from "@testing-library/react";
-import { createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { VisualizerRack } from "./VisualizerRack";
 import { IDLE_AUDIO_SNAPSHOT } from "@/lib/audio/analysis";
 import type {
-  AudioAnalyserBundle,
   AudioVisualizationBus,
   AudioVisualizationFrame,
   AudioVisualizationListener,
@@ -109,7 +107,6 @@ describe("VisualizerRack", () => {
     render(
       <VisualizerRack
         analysis={analysis}
-        analysersRef={createRef<AudioAnalyserBundle | null>()}
         active={false}
       />,
     );
@@ -135,7 +132,6 @@ describe("VisualizerRack", () => {
     const { container } = render(
       <VisualizerRack
         analysis={analysis}
-        analysersRef={createRef<AudioAnalyserBundle | null>()}
         active
       />,
     );
@@ -149,17 +145,16 @@ describe("VisualizerRack", () => {
     }
   });
 
-  it("subscribes the four migrated renderers to one bus", () => {
+  it("subscribes all five renderers to one bus", () => {
     const { analysis } = fakeBus();
     render(
       <VisualizerRack
         analysis={analysis}
-        analysersRef={createRef<AudioAnalyserBundle | null>()}
         active
       />,
     );
 
-    expect(analysis.subscribe).toHaveBeenCalledTimes(4);
+    expect(analysis.subscribe).toHaveBeenCalledTimes(5);
   });
 
   it("draws blue, yellow, and red local signal colors from one published frame", () => {
@@ -171,7 +166,6 @@ describe("VisualizerRack", () => {
     render(
       <VisualizerRack
         analysis={bus.analysis}
-        analysersRef={createRef<AudioAnalyserBundle | null>()}
         active
       />,
     );

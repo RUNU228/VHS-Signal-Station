@@ -1,6 +1,4 @@
-import type { MutableRefObject } from "react";
-
-import type { AudioAnalyserBundle, AudioVisualizationBus } from "@/types/audio";
+import type { AudioVisualizationBus } from "@/types/audio";
 import { Oscilloscope } from "./Oscilloscope";
 import { Spectrogram } from "./Spectrogram";
 import { Spectrum } from "./Spectrum";
@@ -9,13 +7,11 @@ import { Waveform } from "./Waveform";
 
 type VisualizerRackProps = {
   analysis: AudioVisualizationBus;
-  analysersRef: MutableRefObject<AudioAnalyserBundle | null>;
   active: boolean;
 };
 
 export function VisualizerRack({
   analysis,
-  analysersRef,
   active,
 }: VisualizerRackProps) {
   return (
@@ -34,7 +30,7 @@ export function VisualizerRack({
       <div className="visualizer-rack">
         <Spectrogram analysis={analysis} active={active} />
         <Waveform analysis={analysis} active={active} />
-        <Stereometer analysersRef={analysersRef} active={active} />
+        <Stereometer analysis={analysis} active={active} />
         <Oscilloscope analysis={analysis} active={active} />
         <Spectrum analysis={analysis} active={active} />
       </div>

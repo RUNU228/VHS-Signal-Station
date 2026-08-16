@@ -56,7 +56,7 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
     return () => window.removeEventListener("keydown", handleKeyboard);
   }, [currentTime, next, previous, seek, setVolume, toggleMute, togglePlayback, volume]);
 
-  const signalActive = engine.isPlaying && engine.analysersRef.current !== null;
+  const signalActive = engine.isPlaying;
   const stationRef = useRef<HTMLElement>(null);
   const analysis = useAudioAnalysis(engine.analysersRef, {
     active: signalActive,
@@ -101,7 +101,6 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
 
       <VisualizerRack
         analysis={analysis}
-        analysersRef={engine.analysersRef}
         active={signalActive}
       />
       <AudioPlayer engine={engine} />
