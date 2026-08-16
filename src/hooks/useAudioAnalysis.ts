@@ -14,7 +14,9 @@ import type {
 const DECAY_THRESHOLD = 0.001;
 
 function hasAudibleEnergy(snapshot: AudioReactiveSnapshot): boolean {
-  return Object.values(snapshot).some((value) => value > DECAY_THRESHOLD);
+  return Object.values(snapshot).some(
+    (value) => typeof value === "number" && value > DECAY_THRESHOLD,
+  );
 }
 
 export function useAudioAnalysis(

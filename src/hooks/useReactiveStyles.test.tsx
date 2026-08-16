@@ -3,11 +3,13 @@ import { createRef } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AudioReactiveSnapshot } from "@/types/audio";
+import { IDLE_AUDIO_SNAPSHOT } from "@/lib/audio/analysis";
 import { useReactiveStyles } from "./useReactiveStyles";
 
 let frameCallback: FrameRequestCallback | null = null;
 
 const snapshot: AudioReactiveSnapshot = {
+  ...IDLE_AUDIO_SNAPSHOT,
   volume: 0.4,
   bass: 0.8,
   lowMid: 0.3,

@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import type { AnalysisInput, AudioAnalysisState, AudioReactiveSnapshot } from "@/types/audio";
 import {
-  IDLE_AUDIO_SNAPSHOT,
   analyseFrequencyData,
+  classifySignalState,
+  createAudioAnalysisState,
+  decayAudioAnalysis,
+  IDLE_AUDIO_SNAPSHOT,
 } from "./analysis";
 
 const SAMPLE_RATE = 48_000;
@@ -17,72 +21,89 @@ function binsForRange(fromHz: number, toHz: number, value = 255): Uint8Array {
   return bins;
 }
 
+function frameFor(
+  bins: Uint8Array,
+  nowMs: number,
+  state = createAudioAnalysisState(),
+): AnalysisInput {
+  return { bins, sampleRate: SAMPLE_RATE, fftSize: FFT_SIZE, nowMs, state };
+}
+
+function stateWith(
+  values: Partial<AudioReactiveSnapshot>,
+): AudioAnalysisState {
+  const state = createAudioAnalysisState();
+  return { ...state, snapshot: { ...state.snapshot, ...values } };
+}
+
 describe("analyseFrequencyData", () => {
   it("returns exact idle values for silent input", () => {
-    expect(
-      analyseFrequencyData({
-        bins: new Uint8Array(BIN_COUNT),
-        sampleRate: SAMPLE_RATE,
-        fftSize: FFT_SIZE,
-        previous: IDLE_AUDIO_SNAPSHOT,
-      }),
-    ).toEqual(IDLE_AUDIO_SNAPSHOT);
+    expect(analyseFrequencyData(frameFor(new Uint8Array(BIN_COUNT), 16)).snapshot).toEqual(
+      IDLE_AUDIO_SNAPSHOT,
+    );
   });
 
-  it("isolates bass energy and keeps every output normalized", () => {
-    const value = analyseFrequencyData({
-      bins: binsForRange(30, 220),
-      sampleRate: SAMPLE_RATE,
-      fftSize: FFT_SIZE,
-      previous: IDLE_AUDIO_SNAPSHOT,
-    });
+  it("isolates the required low, mid, and high ranges", () => {
+    const low = analyseFrequencyData(frameFor(binsForRange(30, 220), 16));
+    const mid = analyseFrequencyData(frameFor(binsForRange(300, 3_500), 16));
+    const high = analyseFrequencyData(frameFor(binsForRange(5_000, 18_000), 16));
+    expect(low.snapshot.lowEnergy).toBeGreaterThan(low.snapshot.midEnergy);
+    expect(mid.snapshot.midEnergy).toBeGreaterThan(mid.snapshot.highEnergy);
+    expect(high.snapshot.highEnergy).toBeGreaterThan(high.snapshot.lowEnergy);
+  });
 
-    expect(value.bass).toBeGreaterThan(value.mid);
-    expect(value.bass).toBeGreaterThan(value.treble);
-    for (const energy of Object.values(value)) {
+  it("keeps public numeric energy fields normalized", () => {
+    const analysis = analyseFrequencyData(
+      frameFor(new Uint8Array(BIN_COUNT).fill(255), 100),
+    );
+    const { signalState, peakEventId, peakSeed, ...energies } = analysis.snapshot;
+    expect(signalState).toBe("LOW");
+    expect(peakEventId).toBe(1);
+    expect(peakSeed).toBeGreaterThan(0);
+    for (const energy of Object.values(energies)) {
       expect(energy).toBeGreaterThanOrEqual(0);
       expect(energy).toBeLessThanOrEqual(1);
     }
   });
 
-  it("maps each frequency range to its corresponding band", () => {
-    const cases = [
-      ["lowMid", 250, 500],
-      ["mid", 500, 2_000],
-      ["highMid", 2_000, 6_000],
-      ["treble", 6_000, 20_000],
-    ] as const;
-
-    for (const [band, fromHz, toHz] of cases) {
-      const value = analyseFrequencyData({
-        bins: binsForRange(fromHz, toHz),
-        sampleRate: SAMPLE_RATE,
-        fftSize: FFT_SIZE,
-        previous: IDLE_AUDIO_SNAPSHOT,
-      });
-      expect(value[band], band).toBeGreaterThan(0.2);
-    }
-  });
-
-  it("uses a faster attack than release and preserves transient peaks", () => {
+  it("distinguishes a sudden peak from sustained loud audio", () => {
     const loud = new Uint8Array(BIN_COUNT).fill(255);
-    const attacked = analyseFrequencyData({
+    const attacked = analyseFrequencyData(frameFor(loud, 100));
+    const sustained = analyseFrequencyData({
       bins: loud,
       sampleRate: SAMPLE_RATE,
       fftSize: FFT_SIZE,
-      previous: IDLE_AUDIO_SNAPSHOT,
+      nowMs: 220,
+      state: attacked,
     });
-    const released = analyseFrequencyData({
-      bins: new Uint8Array(BIN_COUNT),
-      sampleRate: SAMPLE_RATE,
-      fftSize: FFT_SIZE,
-      previous: attacked,
+    expect(attacked.snapshot.transientEnergy).toBeGreaterThan(
+      sustained.snapshot.transientEnergy,
+    );
+    expect(attacked.snapshot.peakEventId).toBe(1);
+    expect(sustained.snapshot.peakEventId).toBe(1);
+  });
+
+  it("uses hysteresis when leaving HIGH", () => {
+    const state = stateWith({ overallEnergy: 0.71, signalState: "HIGH" });
+    expect(classifySignalState(0.66, "HIGH")).toBe("HIGH");
+    expect(classifySignalState(0.63, "HIGH")).toBe("MEDIUM");
+    expect(decayAudioAnalysis(state, 400).snapshot.peakStrength).toBe(0);
+  });
+
+  it("smooths attack faster than release and resets invalid frames", () => {
+    const attacked = analyseFrequencyData(
+      frameFor(new Uint8Array(BIN_COUNT).fill(255), 200),
+    );
+    const released = analyseFrequencyData(frameFor(new Uint8Array(BIN_COUNT), 216, attacked));
+    const invalid = analyseFrequencyData({
+      ...frameFor(new Uint8Array(), 232, released),
+      sampleRate: 0,
     });
 
-    expect(attacked.volume).toBeCloseTo(0.24);
-    expect(attacked.smoothed).toBeCloseTo(0.16);
-    expect(attacked.peak).toBeGreaterThanOrEqual(attacked.volume);
-    expect(released.volume).toBeGreaterThan(attacked.volume * 0.8);
-    expect(released.smoothed).toBeGreaterThan(attacked.smoothed * 0.9);
+    expect(attacked.snapshot.overallEnergy).toBeCloseTo(0.32);
+    expect(released.snapshot.overallEnergy).toBeGreaterThan(
+      attacked.snapshot.overallEnergy * 0.9,
+    );
+    expect(invalid.snapshot).toEqual(IDLE_AUDIO_SNAPSHOT);
   });
 });
