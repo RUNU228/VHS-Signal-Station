@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
@@ -18,6 +20,7 @@ export function Spectrogram({
   analysis: AudioVisualizationBus;
   active: boolean;
 }) {
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const historyRef = useRef(new Uint8Array(HISTORY_COLUMNS * FREQUENCY_ROWS));
   const sourceRevisionRef = useRef<number | null>(null);
@@ -79,16 +82,16 @@ export function Spectrogram({
 
   return (
     <VisualizerFrame
-      title="SPECTROGRAM"
-      serial="FFT-4096 / HIST"
+      title={t.visualizers.spectrogram}
+      serial={t.visualizers.spectrogramSerial}
       canvasRef={canvasRef}
       active={active}
       className="module--spectrogram"
-      meta={<span>PARTICLE FIELD</span>}
+      meta={<span>{t.visualizers.particles}</span>}
     >
-      <span className="screen-label screen-label--tl">LOW</span>
-      <span className="screen-label screen-label--bl">HIGH</span>
-      <span className="screen-label screen-label--br">LIVE →</span>
+      <span className="screen-label screen-label--tl">{t.visualizers.low}</span>
+      <span className="screen-label screen-label--bl">{t.visualizers.high}</span>
+      <span className="screen-label screen-label--br">{t.visualizers.live}</span>
     </VisualizerFrame>
   );
 }

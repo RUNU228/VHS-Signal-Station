@@ -6,7 +6,7 @@ export type AudioFileEnvironment = {
   createId: () => string;
   createObjectURL: (file: File) => string;
   revokeObjectURL: (url: string) => void;
-  readDuration: (url: string) => Promise<number>;
+  readDuration: (url: string, signal?: AbortSignal) => Promise<number>;
 };
 
 export type AudioLoadResult = {
@@ -14,7 +14,7 @@ export type AudioLoadResult = {
   rejected: string[];
 };
 
-function readBrowserDuration(url: string): Promise<number> {
+function readBrowserDuration(url: string, signal?: AbortSignal): Promise<number> {
   return new Promise((resolve, reject) => {
     const audio = new Audio();
     audio.preload = "metadata";
@@ -22,6 +22,7 @@ function readBrowserDuration(url: string): Promise<number> {
     const cleanup = () => {
       audio.removeEventListener("loadedmetadata", handleMetadata);
       audio.removeEventListener("error", handleError);
+      signal?.removeEventListener("abort", handleAbort);
       audio.removeAttribute("src");
       audio.load();
     };
@@ -38,9 +39,15 @@ function readBrowserDuration(url: string): Promise<number> {
       cleanup();
       reject(new Error("Unable to read audio metadata"));
     };
+    const handleAbort = () => {
+      cleanup();
+      reject(new DOMException("Audio loading cancelled", "AbortError"));
+    };
 
+    if (signal?.aborted) { handleAbort(); return; }
     audio.addEventListener("loadedmetadata", handleMetadata);
     audio.addEventListener("error", handleError);
+    signal?.addEventListener("abort", handleAbort, { once: true });
     audio.src = url;
   });
 }
@@ -67,11 +74,13 @@ function formatForFile(file: File): AudioFormat {
 export async function loadAudioTracks(
   files: Iterable<File>,
   environment: AudioFileEnvironment = browserEnvironment,
+  signal?: AbortSignal,
 ): Promise<AudioLoadResult> {
   const tracks: AudioTrack[] = [];
   const rejected: string[] = [];
 
   for (const file of files) {
+    if (signal?.aborted) break;
     if (!isSupportedAudioFile(file)) {
       rejected.push(file.name);
       continue;
@@ -81,7 +90,7 @@ export async function loadAudioTracks(
     const url = environment.createObjectURL(file);
 
     try {
-      const duration = await environment.readDuration(url);
+      const duration = await environment.readDuration(url, signal);
       tracks.push({
         id,
         file,
@@ -92,9 +101,14 @@ export async function loadAudioTracks(
       });
     } catch {
       environment.revokeObjectURL(url);
+      if (signal?.aborted) break;
       rejected.push(file.name);
     }
   }
 
+  if (signal?.aborted) {
+    for (const track of tracks) environment.revokeObjectURL(track.url);
+    return { tracks: [], rejected: [] };
+  }
   return { tracks, rejected };
 }

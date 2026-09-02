@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 
+import { LanguageProvider, useLanguage } from "@/components/LanguageProvider";
 import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { TrackLibrary } from "@/components/audio/TrackLibrary";
 import { TrackUploader } from "@/components/audio/TrackUploader";
@@ -13,31 +14,66 @@ import { useAudioEngine, type AudioEngineOptions } from "@/hooks/useAudioEngine"
 import { useAudioAnalysis } from "@/hooks/useAudioAnalysis";
 import { useReactiveStyles } from "@/hooks/useReactiveStyles";
 import { loadAudioTracks } from "@/lib/audio/files";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { audioError, tapesLoaded, unreadableFiles } from "@/lib/i18n";
 import { commandForKey, isEditableTarget } from "@/lib/audio/keyboard";
 
 export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngineOptions }) {
+  return (
+    <LanguageProvider>
+      <Station engineOptions={engineOptions} />
+    </LanguageProvider>
+  );
+}
+
+type Notice =
+  | { kind: "reading" }
+  | { kind: "loaded"; count: number }
+  | { kind: "rejected"; names: string[] };
+
+function Station({ engineOptions }: { engineOptions?: AudioEngineOptions }) {
+  const { t, language } = useLanguage();
   const engine = useAudioEngine(engineOptions);
   const [loading, setLoading] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [notice, setNotice] = useState<Notice | null>(null);
   const appendTracks = engine.appendTracks;
+  const pendingUploadsRef = useRef(new Set<AbortController>());
+
+  useEffect(() => {
+    const pending = pendingUploadsRef.current;
+    return () => {
+      for (const controller of pending) controller.abort();
+      pending.clear();
+    };
+  }, []);
 
   const handleFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) return;
+    const controller = new AbortController();
+    const pending = pendingUploadsRef.current;
+    pending.add(controller);
     setLoading(true);
-    setNotice("READING TAPE...");
-    const result = await loadAudioTracks(files);
-    appendTracks(result.tracks);
-    if (result.rejected.length > 0) {
-      setNotice(`UNABLE TO READ: ${result.rejected.join(", ")}`);
-    } else {
-      setNotice(`${result.tracks.length.toString().padStart(2, "0")} TAPE${result.tracks.length === 1 ? "" : "S"} LOADED`);
+    setNotice({ kind: "reading" });
+    try {
+      const result = await loadAudioTracks(files, undefined, controller.signal);
+      if (controller.signal.aborted) {
+        for (const track of result.tracks) URL.revokeObjectURL(track.url);
+        return;
+      }
+      appendTracks(result.tracks);
+      if (result.rejected.length > 0) {
+        setNotice({ kind: "rejected", names: result.rejected });
+      } else {
+        setNotice({ kind: "loaded", count: result.tracks.length });
+      }
+    } finally {
+      pending.delete(controller);
+      if (!controller.signal.aborted) setLoading(pending.size > 0);
     }
-    setLoading(false);
   }, [appendTracks]);
 
   const { currentTime, volume, togglePlayback, seek, setVolume, toggleMute, next, previous } = engine;
-  useEffect(() => {
-    const handleKeyboard = (event: KeyboardEvent) => {
+  const onKeyboard = useEffectEvent((event: KeyboardEvent) => {
       if (isEditableTarget(event.target)) return;
       const command = commandForKey(event.key);
       if (!command) return;
@@ -52,10 +88,12 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
         case "next": next(); break;
         case "previous": previous(); break;
       }
-    };
+  });
+  useEffect(() => {
+    const handleKeyboard = (event: KeyboardEvent) => onKeyboard(event);
     window.addEventListener("keydown", handleKeyboard);
     return () => window.removeEventListener("keydown", handleKeyboard);
-  }, [currentTime, next, previous, seek, setVolume, toggleMute, togglePlayback, volume]);
+  }, []);
 
   const signalActive = engine.isPlaying;
   const stationRef = useRef<HTMLElement>(null);
@@ -64,7 +102,15 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
     resetKey: engine.currentTrack?.id ?? null,
   });
   useReactiveStyles(stationRef, analysis, signalActive);
-  const message = engine.error ?? notice;
+  const message = engine.error
+    ? audioError(engine.error, language)
+    : !notice
+      ? null
+      : notice.kind === "reading"
+        ? t.upload.reading
+        : notice.kind === "loaded"
+          ? tapesLoaded(notice.count, language)
+          : unreadableFiles(notice.names, language);
 
   return (
     <main ref={stationRef} className="station-shell">
@@ -75,28 +121,31 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
         <div className="station-brand">
           <span className="brand-mark" aria-hidden="true">VS</span>
           <div>
-            <p>BROADCAST AUDIO ANALYSIS SYSTEM</p>
+            <p>{t.station.subtitle}</p>
             <h1>VHS SIGNAL STATION</h1>
           </div>
         </div>
-        <div className="station-status" aria-label="System status">
-          <span><i data-active={signalActive} /> SIGNAL {signalActive ? "ONLINE" : "IDLE"}</span>
-          <span>WEB AUDIO / 24-BIT</span>
-          <span>LOCAL DECK / NO UPLINK</span>
+        <div className="station-tools">
+          <LanguageSwitcher />
+          <div className="station-status" aria-label={t.station.systemStatus}>
+            <span><i data-active={signalActive} /> {t.station.signal} {signalActive ? t.station.online : t.station.idle}</span>
+            <span>{t.station.audio}</span>
+            <span>{t.station.local}</span>
+          </div>
         </div>
       </header>
       <div className="station-dateline">
-        <span>STATION 08-KV</span>
-        <span>MONITOR PATH A+B</span>
-        <span>QUEUE {engine.tracks.length.toString().padStart(2, "0")}</span>
+        <span>{t.station.station}</span>
+        <span>{t.station.monitor}</span>
+        <span>{t.station.queue} {engine.tracks.length.toString().padStart(2, "0")}</span>
       </div>
 
       {message ? (
         <div className="system-message" role={engine.error ? "alert" : "status"}>
-          <span>{engine.error ? "FAULT" : "SYSTEM"}</span>
+          <span>{engine.error ? t.station.fault : t.station.system}</span>
           <strong>{message}</strong>
-          <button type="button" aria-label="Dismiss system message" onClick={() => { engine.clearError(); setNotice(null); }}>
-            CLEAR
+          <button type="button" aria-label={t.station.dismiss} onClick={() => { engine.clearError(); setNotice(null); }}>
+            {t.station.clear}
           </button>
         </div>
       ) : null}
@@ -114,9 +163,9 @@ export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngin
         onSelect={engine.selectTrack}
       />
       <footer className="station-footer">
-        <span>VS-880 SIGNAL CONTROL</span>
-        <span>SPACE PLAY · ← → SEEK · ↑ ↓ LEVEL · M MUTE · N/P QUEUE</span>
-        <span>NO AUDIO LEAVES THIS BROWSER</span>
+        <span>{t.station.footer}</span>
+        <span>{t.station.keys}</span>
+        <span>{t.station.privacy}</span>
       </footer>
     </main>
   );

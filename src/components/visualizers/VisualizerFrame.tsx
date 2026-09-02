@@ -1,3 +1,5 @@
+import { useLanguage } from "@/components/LanguageProvider";
+import { signalDisplayLabel } from "@/lib/i18n";
 import type { ReactNode, RefObject } from "react";
 
 import { Led } from "@/components/ui/Led";
@@ -22,6 +24,7 @@ export function VisualizerFrame({
   children,
   meta,
 }: VisualizerFrameProps) {
+  const { t, language } = useLanguage();
   return (
     <Panel
       title={title}
@@ -30,15 +33,15 @@ export function VisualizerFrame({
       reactive={active}
       meta={
         <>
-          <Led label="SYNC" active={active} tone="blue" />
-          <span>CAL / 24</span>
+          <Led label={t.visualizers.sync} active={active} tone="blue" />
+          <span>{t.visualizers.cal}</span>
           {meta}
         </>
       }
     >
       <div className="crt-screen">
-        <canvas ref={canvasRef} aria-label={`${title} signal display`} />
-        {!active ? <span className="no-signal">NO SIGNAL</span> : null}
+        <canvas ref={canvasRef} aria-label={signalDisplayLabel(title, language)} />
+        {!active ? <span className="no-signal">{t.visualizers.noSignal}</span> : null}
         {children}
       </div>
     </Panel>

@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
@@ -28,6 +30,7 @@ export function Stereometer({
   analysis: AudioVisualizationBus;
   active: boolean;
 }) {
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Float32Array | null>(null);
   const qualityRef = useRef<VisualQuality | null>(null);
@@ -122,16 +125,16 @@ export function Stereometer({
 
   return (
     <VisualizerFrame
-      title="STEREOMETER"
-      serial="SCALED / BIPOLAR"
+      title={t.visualizers.stereometer}
+      serial={t.visualizers.stereoSerial}
       canvasRef={canvasRef}
       active={active}
       className="module--stereometer"
-      meta={<span>PHASE FIELD</span>}
+      meta={<span>{t.visualizers.phase}</span>}
     >
-      <span className="screen-label screen-label--tl">L</span>
-      <span className="screen-label screen-label--tr">R</span>
-      <span className="screen-label screen-label--bc">MONO / WIDE</span>
+      <span className="screen-label screen-label--tl">{t.visualizers.left}</span>
+      <span className="screen-label screen-label--tr">{t.visualizers.right}</span>
+      <span className="screen-label screen-label--bc">{t.visualizers.width}</span>
     </VisualizerFrame>
   );
 }

@@ -1,3 +1,4 @@
+import { useLanguage } from "@/components/LanguageProvider";
 import { formatTime } from "@/lib/utils/formatTime";
 
 type SeekBarProps = {
@@ -8,15 +9,16 @@ type SeekBarProps = {
 };
 
 export function SeekBar({ currentTime, duration, disabled, onSeek }: SeekBarProps) {
+  const { t } = useLanguage();
   const maximum = Math.max(duration, 0);
   const value = Math.min(currentTime, maximum);
   const progress = maximum > 0 ? (value / maximum) * 100 : 0;
   return (
     <div className="seek-module">
       <div className="seek-readout">
-        <span>CURRENT TIME</span>
+        <span>{t.player.currentTime}</span>
         <strong>{formatTime(currentTime)}</strong>
-        <span className="seek-readout__end">TOTAL TIME</span>
+        <span className="seek-readout__end">{t.player.totalTime}</span>
         <strong>{formatTime(duration)}</strong>
       </div>
       <div className="range-housing" style={{ "--range-value": `${progress}%` } as React.CSSProperties}>
@@ -28,7 +30,7 @@ export function SeekBar({ currentTime, duration, disabled, onSeek }: SeekBarProp
           value={value}
           onChange={(event) => onSeek(Number(event.currentTarget.value))}
           disabled={disabled}
-          aria-label="Playback position"
+          aria-label={t.player.position}
         />
       </div>
     </div>

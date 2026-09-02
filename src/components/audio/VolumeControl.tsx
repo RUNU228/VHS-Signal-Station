@@ -1,3 +1,4 @@
+import { useLanguage } from "@/components/LanguageProvider";
 type VolumeControlProps = {
   volume: number;
   muted: boolean;
@@ -13,12 +14,13 @@ export function VolumeControl({
   onVolume,
   onMute,
 }: VolumeControlProps) {
+  const { t } = useLanguage();
   const percentage = Math.round(volume * 100);
   return (
     <div className="volume-module">
       <div className="volume-readout">
-        <span>OUTPUT LEVEL</span>
-        <strong>{muted ? "MUTED" : `${percentage}%`}</strong>
+        <span>{t.player.output}</span>
+        <strong>{muted ? t.player.muted : `${percentage}%`}</strong>
       </div>
       <div className="range-housing" style={{ "--range-value": `${percentage}%` } as React.CSSProperties}>
         <input
@@ -28,7 +30,7 @@ export function VolumeControl({
           value={percentage}
           onChange={(event) => onVolume(Number(event.currentTarget.value) / 100)}
           disabled={disabled}
-          aria-label="Output level"
+          aria-label={t.player.outputLabel}
         />
       </div>
       <button
@@ -36,10 +38,10 @@ export function VolumeControl({
         className="mute-button"
         onClick={onMute}
         disabled={disabled}
-        aria-label={muted ? "Unmute output" : "Mute output"}
+        aria-label={muted ? t.player.unmuteLabel : t.player.muteLabel}
         aria-pressed={muted}
       >
-        MUTE
+        {t.player.mute}
       </button>
     </div>
   );

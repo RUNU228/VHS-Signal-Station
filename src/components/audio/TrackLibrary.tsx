@@ -1,3 +1,5 @@
+import { useLanguage } from "@/components/LanguageProvider";
+import { selectTrackLabel, tapesLoaded } from "@/lib/i18n";
 import { formatTime } from "@/lib/utils/formatTime";
 import type { AudioTrack } from "@/types/audio";
 
@@ -14,20 +16,21 @@ export function TrackLibrary({
   isPlaying,
   onSelect,
 }: TrackLibraryProps) {
+  const { t, language } = useLanguage();
   return (
     <section className="library-section" aria-labelledby="library-title">
       <header className="section-heading">
         <div>
-          <p>LOCAL TAPE ARCHIVE / QUEUE C</p>
-          <h2 id="library-title">TRACK LIBRARY</h2>
+          <p>{t.tracks.subtitle}</p>
+          <h2 id="library-title">{t.tracks.title}</h2>
         </div>
-        <span className="library-count">{tracks.length.toString().padStart(2, "0")} TAPES LOADED</span>
+        <span className="library-count">{tapesLoaded(tracks.length, language)}</span>
       </header>
       {tracks.length === 0 ? (
         <div className="library-empty">
           <span className="empty-led" aria-hidden="true" />
-          <strong>NO AUDIO LOADED</strong>
-          <p>Insert local WAV or MP3 media using the deck above.</p>
+          <strong>{t.tracks.empty}</strong>
+          <p>{t.tracks.help}</p>
         </div>
       ) : (
         <ol className="track-list">
@@ -42,18 +45,18 @@ export function TrackLibrary({
                   data-selected={selected}
                   data-playing={playing}
                   aria-current={selected ? "true" : undefined}
-                  aria-label={`Select ${track.name}`}
+                  aria-label={selectTrackLabel(track.name, language)}
                   onClick={() => onSelect(index)}
                 >
                   <span className="track-index">{(index + 1).toString().padStart(2, "0")}</span>
                   <span className="cassette-mark" aria-hidden="true"><i /><i /></span>
                   <span className="track-copy">
                     <strong>{track.name}</strong>
-                    <small>{track.format} / LOCAL SIGNAL</small>
+                    <small>{track.format} / {t.tracks.local}</small>
                   </span>
                   <span className="track-duration">{formatTime(track.duration)}</span>
                   <span className="track-state">
-                    {selected ? (playing ? "PLAYING" : "SELECTED") : "READY"}
+                    {selected ? (playing ? t.player.playing : t.tracks.selected) : t.player.ready}
                   </span>
                 </button>
               </li>

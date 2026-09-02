@@ -962,3 +962,22 @@ input:focus-visible {
   .tape-bay[data-playing="true"] .reel { animation: none !important; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* Keep the locale selector within the station header at every viewport. */
+.station-tools { display: grid; justify-items: end; gap: 12px; min-width: 0; }
+.language-switcher { display: flex; gap: 4px; }
+.language-switcher button { min-width: 44px; min-height: 44px; border: 1px solid var(--line); background: #111313; color: var(--dim); font-size: 11px; cursor: pointer; }
+.language-switcher button[aria-pressed="true"] { border-color: var(--amber); color: var(--phosphor); background: #25221b; }
+.station-brand, .station-brand > div, .section-heading > div, .panel-header > div { min-width: 0; }
+.brand-mark { flex-shrink: 0; }
+.section-heading, .panel-header, .panel-meta, .status-leds { flex-wrap: wrap; }
+.hardware-button { overflow-wrap: anywhere; }
+.queue-display b, .system-message strong, .library-empty p { overflow-wrap: anywhere; }
+@media (max-width: 760px) {
+  .station-header { flex-wrap: wrap; gap: 12px; }
+  .station-brand { flex: 1 1 100%; }
+  .station-tools { margin-left: auto; }
+  .panel-header > div:first-child { flex: 1 1 120px; }
+  .panel-meta { max-width: 100%; }
+  .library-empty { padding: 16px; }
+}

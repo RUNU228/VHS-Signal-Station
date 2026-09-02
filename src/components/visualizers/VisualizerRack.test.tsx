@@ -52,11 +52,27 @@ function fakeBus() {
   };
 }
 
-function canvasContext(colors: string[]): CanvasRenderingContext2D {
+type RecordedGradient = {
+  stops: Array<[number, string]>;
+  addColorStop: (offset: number, color: string) => void;
+};
+
+function canvasContext(
+  colors: string[], gradients: RecordedGradient[] = [],
+): CanvasRenderingContext2D {
   let fillStyle: string | CanvasGradient | CanvasPattern = "";
   let strokeStyle: string | CanvasGradient | CanvasPattern = "";
   let shadowColor = "";
   return {
+    createLinearGradient: () => {
+      const stops: Array<[number, string]> = [];
+      const gradient = {
+        stops,
+        addColorStop: (offset: number, color: string) => { stops.push([offset, color]); },
+      };
+      gradients.push(gradient);
+      return gradient;
+    },
     beginPath: vi.fn(),
     closePath: vi.fn(),
     fill: vi.fn(),
@@ -173,7 +189,7 @@ describe("VisualizerRack", () => {
     expect(listenerCount()).toBe(0);
   });
 
-  it("draws blue, yellow, and red local signal colors from one published frame", () => {
+  it("preserves blue, yellow, and red local signal colors in the other instruments", () => {
     const colors: string[] = [];
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
       canvasContext(colors),
@@ -192,5 +208,47 @@ describe("VisualizerRack", () => {
     expect(channels.some(([red, green, blue]) => blue > red && blue > green)).toBe(true);
     expect(channels.some(([red, green, blue]) => red > blue * 1.2 && green > blue * 1.2 && Math.abs(red - green) < 30)).toBe(true);
     expect(channels.some(([red, green, blue]) => red > green * 1.5 && red > blue * 1.5)).toBe(true);
+  });
+
+  it("retains frequency-colored waveform history across rerenders with one gradient per frame", () => {
+    const gradients: RecordedGradient[] = [];
+    const context = canvasContext([], gradients);
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(context);
+    const bus = fakeBus();
+    const { container, rerender } = render(<VisualizerRack analysis={bus.analysis} active />);
+    const canvas = container.querySelector(".module--waveform canvas");
+    expect(canvas).not.toBeNull();
+
+    const midFrame = syntheticFrame();
+    midFrame.frequencyFftSize = 4800;
+    midFrame.frequencyData = new Uint8Array(2400);
+    midFrame.frequencyData[100] = 255; // 1 kHz, yellow.
+    act(() => bus.publish(midFrame, 0));
+    expect(gradients).toHaveLength(1);
+    expect(gradients[0].stops.at(-1)).toEqual([1, "hsl(60 100% 60%)"]);
+    expect(gradients[0].stops.some(([, color]) => color.startsWith("hsl(180"))).toBe(true);
+
+    rerender(<VisualizerRack analysis={bus.analysis} active />);
+    expect(container.querySelector(".module--waveform canvas")).toBe(canvas);
+    expect(bus.analysis.subscribe).toHaveBeenCalledTimes(5);
+    expect(bus.listenerCount()).toBe(5);
+    expect(gradients).toHaveLength(1);
+
+    const highFrame = { ...midFrame, frequencyData: new Uint8Array(2400), frameId: 2,
+      snapshot: { ...midFrame.snapshot, overallEnergy: 0.01 } };
+    highFrame.frequencyData[1000] = 255; // 10 kHz, smoothed toward red.
+    act(() => bus.publish(highFrame, 65));
+    expect(gradients).toHaveLength(2);
+    expect(gradients[1].stops).toContainEqual([358 / 359, "hsl(60 100% 60%)"]);
+    const newestHue = Number(gradients[1].stops.at(-1)![1].match(/^hsl\(([\d.]+)/)![1]);
+    expect(newestHue).toBeGreaterThan(20);
+    expect(newestHue).toBeLessThan(25);
+
+    act(() => bus.publish({ ...highFrame, sourceRevision: 2 }, 66));
+    expect(gradients).toHaveLength(3);
+    expect(gradients[2].stops).toContainEqual([358 / 359, "hsl(220 100% 60%)"]);
+    expect(gradients[2].stops.at(-1)).toEqual([1, "hsl(0 100% 60%)"]);
+    expect(container.querySelector(".module--waveform canvas")).toBe(canvas);
+    expect(bus.listenerCount()).toBe(5);
   });
 });

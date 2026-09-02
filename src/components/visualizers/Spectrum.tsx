@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
@@ -19,6 +21,17 @@ import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/aud
 import { VisualizerFrame } from "./VisualizerFrame";
 
 const BAR_COUNT = 42;
+const BANDS = Array.from({ length: BAR_COUNT }, (_, bar) => {
+  const frequency = Math.exp(
+    Math.log(SPECTRUM_MIN_FREQUENCY) +
+      (bar / (BAR_COUNT - 1)) *
+        (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
+  );
+  return {
+    frequency,
+    position: logFrequencyPosition(frequency, SPECTRUM_MIN_FREQUENCY, SPECTRUM_MAX_FREQUENCY),
+  };
+});
 
 export function Spectrum({
   analysis,
@@ -27,8 +40,9 @@ export function Spectrum({
   analysis: AudioVisualizationBus;
   active: boolean;
 }) {
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const levelsRef = useRef(new Float32Array(BAR_COUNT));
+  const binsRef = useRef<{ sampleRate: number; fftSize: number; length: number; bins: Int32Array } | null>(null);
   const peaksRef = useRef(new Float32Array(BAR_COUNT));
   const sourceRevisionRef = useRef<number | null>(null);
   useCanvasSurface(canvasRef);
@@ -51,59 +65,31 @@ export function Spectrum({
 
     const gap = Math.max(2, width * 0.004);
     const barWidth = Math.max(1, width / BAR_COUNT - gap);
-    const levels = levelsRef.current;
-    levels.fill(0);
-
-    for (let bar = 0; bar < BAR_COUNT; bar += 1) {
-      const position = bar / (BAR_COUNT - 1);
-      const frequency = Math.exp(
-        Math.log(SPECTRUM_MIN_FREQUENCY) +
-          position *
-            (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
-      );
-      const estimatedBin = Math.round(
-        (frequency * frame.frequencyFftSize) / frame.sampleRate,
-      );
-      const actualFrequency = frequencyForBin(
-        estimatedBin,
-        frame.sampleRate,
-        frame.frequencyFftSize,
-      );
-      if (
-        actualFrequency < SPECTRUM_MIN_FREQUENCY ||
-        actualFrequency > SPECTRUM_MAX_FREQUENCY
-      ) continue;
-      levels[bar] = frame.frequencyData[
-        Math.min(frame.frequencyData.length - 1, estimatedBin)
-      ] / 255;
+    if (
+      !binsRef.current || binsRef.current.sampleRate !== frame.sampleRate ||
+      binsRef.current.fftSize !== frame.frequencyFftSize ||
+      binsRef.current.length !== frame.frequencyData.length
+    ) {
+      binsRef.current = {
+        sampleRate: frame.sampleRate,
+        fftSize: frame.frequencyFftSize,
+        length: frame.frequencyData.length,
+        bins: Int32Array.from(BANDS, ({ frequency }) => {
+          const bin = Math.round((frequency * frame.frequencyFftSize) / frame.sampleRate);
+          const actual = frequencyForBin(bin, frame.sampleRate, frame.frequencyFftSize);
+          return actual < SPECTRUM_MIN_FREQUENCY || actual > SPECTRUM_MAX_FREQUENCY
+            ? -1
+            : Math.min(frame.frequencyData.length - 1, bin);
+        }),
+      };
     }
 
     for (let bar = 0; bar < BAR_COUNT; bar += 1) {
-      const position = bar / (BAR_COUNT - 1);
-      const frequency = Math.exp(
-        Math.log(SPECTRUM_MIN_FREQUENCY) +
-          position *
-            (Math.log(SPECTRUM_MAX_FREQUENCY) - Math.log(SPECTRUM_MIN_FREQUENCY)),
-      );
-      const estimatedBin = Math.round(
-        (frequency * frame.frequencyFftSize) / frame.sampleRate,
-      );
-      const actualFrequency = frequencyForBin(
-        estimatedBin,
-        frame.sampleRate,
-        frame.frequencyFftSize,
-      );
-      if (
-        actualFrequency < SPECTRUM_MIN_FREQUENCY ||
-        actualFrequency > SPECTRUM_MAX_FREQUENCY
-      ) continue;
+      const bin = binsRef.current.bins[bar];
+      if (bin < 0) continue;
 
-      const level = levels[bar];
-      const x = logFrequencyPosition(
-        frequency,
-        SPECTRUM_MIN_FREQUENCY,
-        SPECTRUM_MAX_FREQUENCY,
-      ) * (width - barWidth);
+      const level = frame.frequencyData[bin] / 255;
+      const x = BANDS[bar].position * (width - barWidth);
       const barHeight = Math.max(1, level * height * 0.88);
       const colorLevel = localSignalLevel(level, frame.snapshot.overallEnergy);
       context.fillStyle = signalColorForLevel(
@@ -127,14 +113,14 @@ export function Spectrum({
 
   return (
     <VisualizerFrame
-      title="SPECTRUM"
-      serial="FFT-4096 / LOG"
+      title={t.visualizers.spectrum}
+      serial={t.visualizers.spectrumSerial}
       canvasRef={canvasRef}
       active={active}
       className="module--spectrum"
-      meta={<span>100 HZ — 5 KHZ</span>}
+      meta={<span>{t.visualizers.range}</span>}
     >
-      <div className="frequency-scale" aria-label="Frequency scale">
+      <div className="frequency-scale" aria-label={t.visualizers.scale}>
         {[
           ["100", 0],
           ["200", 0.18],
