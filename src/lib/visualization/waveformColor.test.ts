@@ -8,6 +8,21 @@ function tone(hz: number) {
 }
 
 describe("waveform frequency colors", () => {
+  it("uses only endpoints for a constant historical color", () => {
+    const stops: Array<[number, string]> = [];
+    addWaveformColorStops({ addColorStop: (at, color) => stops.push([at, color]) }, new Float32Array(360).fill(0.5));
+    expect(stops).toEqual([[0, "hsl(60 100% 60%)"], [1, "hsl(60 100% 60%)"]]);
+  });
+
+  it("retains both boundaries of plateaus around a color transition", () => {
+    const stops: Array<[number, string]> = [];
+    addWaveformColorStops({ addColorStop: (at, color) => stops.push([at, color]) }, new Float32Array([0, 0, 0, 1, 1, 1]));
+    expect(stops[0]).toEqual([0, "hsl(220 100% 60%)"]);
+    expect(stops[1]).toEqual([0.4, "hsl(220 100% 60%)"]);
+    expect(stops.at(-2)).toEqual([0.6, "hsl(0 100% 60%)"]);
+    expect(stops.at(-1)).toEqual([1, "hsl(0 100% 60%)"]);
+    expect(stops).toHaveLength(35);
+  });
   it("adds vivid intermediate hues even across an abrupt historical color jump", () => {
     const stops: Array<[number, string]> = [];
     addWaveformColorStops({ addColorStop: (at, color) => stops.push([at, color]) }, new Float32Array([0, 1]));

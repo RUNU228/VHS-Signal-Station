@@ -6,7 +6,6 @@ import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
 import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
-import { toMidSide } from "@/lib/audio/midSide";
 import {
   createWaveformColors,
   addWaveformColorStops,
@@ -16,17 +15,12 @@ import {
 import {
   clearWaveformHistory,
   createWaveformHistory,
-  measureWaveformColumn,
+  measureStereoWaveform,
   pushWaveformColumn,
   type WaveformHistory,
 } from "@/lib/visualization/waveform";
 import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
-
-type WaveBuffers = {
-  mid: Float32Array<ArrayBuffer>;
-  side: Float32Array<ArrayBuffer>;
-};
 
 const HISTORY_COLUMNS = 360;
 const HISTORY_SEGMENT_LENGTH = 6;
@@ -45,13 +39,12 @@ export function Waveform({
 }) {
   const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const buffersRef = useRef<WaveBuffers | null>(null);
   const historyRef = useRef<ChannelHistory | null>(null);
   const colorsRef = useRef<ReturnType<typeof createWaveformColors> | null>(null);
   const sourceRevisionRef = useRef<number | null>(null);
-  useCanvasSurface(canvasRef);
+  const visibleRef = useCanvasSurface(canvasRef, { active });
 
-  const draw = useCallback((frame: AudioVisualizationFrame, time: number) => {
+  const draw = useCallback((frame: AudioVisualizationFrame, time: number, renderOnly = false) => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
@@ -61,8 +54,10 @@ export function Waveform({
       side: createWaveformHistory(HISTORY_COLUMNS),
     };
     const colors = colorsRef.current ??= createWaveformColors(HISTORY_COLUMNS);
-    pushWaveformColor(colors, frame.frequencyData, frame.sampleRate,
-      frame.frequencyFftSize, time, frame.sourceRevision);
+    if (!renderOnly) {
+      pushWaveformColor(colors, frame.frequencyData, frame.sampleRate,
+        frame.frequencyFftSize, time, frame.sourceRevision);
+    }
 
     if (sourceRevisionRef.current !== frame.sourceRevision) {
       sourceRevisionRef.current = frame.sourceRevision;
@@ -70,35 +65,17 @@ export function Waveform({
       clearWaveformHistory(histories.mid);
     }
 
-    const size = Math.min(
-      frame.leftChannelData.length,
-      frame.rightChannelData.length,
-    );
-    if (!buffersRef.current || buffersRef.current.mid.length !== size) {
-      buffersRef.current = {
-        mid: new Float32Array(size),
-        side: new Float32Array(size),
-      };
+    if (!renderOnly) {
+      const columns = measureStereoWaveform(frame.leftChannelData, frame.rightChannelData);
+      pushWaveformColumn(histories.side, columns.side);
+      pushWaveformColumn(histories.mid, columns.mid);
     }
-    const buffers = buffersRef.current;
-    toMidSide(
-      frame.leftChannelData,
-      frame.rightChannelData,
-      buffers.mid,
-      buffers.side,
-    );
 
-    pushWaveformColumn(
-      histories.side,
-      measureWaveformColumn(buffers.side),
-    );
-    pushWaveformColumn(
-      histories.mid,
-      measureWaveformColumn(buffers.mid),
-    );
+    if (!visibleRef.current && !renderOnly) return;
 
     const width = canvas.width;
     const height = canvas.height;
+    if (renderOnly) context.clearRect(0, 0, width, height);
     context.fillStyle = "rgba(5, 7, 7, .48)";
     context.fillRect(0, 0, width, height);
 
@@ -180,9 +157,9 @@ export function Waveform({
       }
       context.shadowBlur = 0;
     }
-  }, []);
+  }, [visibleRef]);
 
-  useVisualizationFrame(analysis, draw, active);
+  useVisualizationFrame(analysis, draw, active, visibleRef);
 
   return (
     <VisualizerFrame

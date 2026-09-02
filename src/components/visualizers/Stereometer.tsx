@@ -36,9 +36,9 @@ export function Stereometer({
   const qualityRef = useRef<VisualQuality | null>(null);
   const sourceRevisionRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number | null>(null);
-  useCanvasSurface(canvasRef);
+  const visibleRef = useCanvasSurface(canvasRef, { active });
 
-  const draw = useCallback((frame: AudioVisualizationFrame, time: number) => {
+  const draw = useCallback((frame: AudioVisualizationFrame, time: number, renderOnly = false) => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
@@ -61,7 +61,7 @@ export function Stereometer({
         snapshot.midEnergy,
         snapshot.highEnergy,
       );
-    } else {
+    } else if (!renderOnly) {
       updateStereoTargets(
         particles,
         frame.leftChannelData,
@@ -76,39 +76,50 @@ export function Stereometer({
     const deltaSeconds = previousTime === null
       ? 1 / 60
       : Math.min(0.05, Math.max(0, (time - previousTime) / 1000));
-    lastFrameTimeRef.current = time;
+    if (!renderOnly) lastFrameTimeRef.current = time;
 
     const width = canvas.width;
     const height = canvas.height;
-    const clearAlpha = 0.32 + Math.min(1, Math.max(0, snapshot.overallEnergy)) * 0.2;
-    context.fillStyle = `rgba(5, 7, 7, ${clearAlpha})`;
-    context.fillRect(0, 0, width, height);
-    drawScopeGrid(context, width, height, 4, 4);
-    context.strokeStyle = "rgba(230, 215, 163, .14)";
-    context.beginPath();
-    context.moveTo(width / 2, 0);
-    context.lineTo(width / 2, height);
-    context.moveTo(0, height / 2);
-    context.lineTo(width, height / 2);
-    context.moveTo(0, height);
-    context.lineTo(width, 0);
-    context.moveTo(0, 0);
-    context.lineTo(width, height);
-    context.stroke();
+    const visible = visibleRef.current || renderOnly;
+    if (renderOnly) context.clearRect(0, 0, width, height);
+    if (visible) {
+      const clearAlpha = 0.32 + Math.min(1, Math.max(0, snapshot.overallEnergy)) * 0.2;
+      context.fillStyle = `rgba(5, 7, 7, ${clearAlpha})`;
+      context.fillRect(0, 0, width, height);
+      drawScopeGrid(context, width, height, 4, 4);
+      context.strokeStyle = "rgba(230, 215, 163, .14)";
+      context.beginPath();
+      context.moveTo(width / 2, 0);
+      context.lineTo(width / 2, height);
+      context.moveTo(0, height / 2);
+      context.lineTo(width, height / 2);
+      context.moveTo(0, height);
+      context.lineTo(width, 0);
+      context.moveTo(0, 0);
+      context.lineTo(width, height);
+      context.stroke();
+
+      context.fillStyle = smoothSignalColor(snapshot.overallEnergy);
+      context.shadowBlur = snapshot.peakStrength > 0.8
+        ? Math.min(2, (snapshot.peakStrength - 0.8) * 10)
+        : 0;
+      context.shadowColor = context.fillStyle as string;
+    }
 
     const peakExpansion = 1 + Math.min(1, snapshot.peakStrength) * 0.35;
-    context.fillStyle = smoothSignalColor(snapshot.overallEnergy);
-    context.shadowBlur = snapshot.peakStrength > 0.8
-      ? Math.min(2, (snapshot.peakStrength - 0.8) * 10)
-      : 0;
-    context.shadowColor = context.fillStyle as string;
-
     const particleCount = particles.length / STEREOMETER_PARTICLE_STRIDE;
+    const lowMotion = stereoMotionFactor(deltaSeconds, 0);
+    const midMotion = stereoMotionFactor(deltaSeconds, 1);
+    const highMotion = stereoMotionFactor(deltaSeconds, 2);
     for (let particle = 0; particle < particleCount; particle += 1) {
       const offset = particle * STEREOMETER_PARTICLE_STRIDE;
-      const motionEase = stereoMotionFactor(deltaSeconds, particles[offset + 5]);
-      particles[offset] += (particles[offset + 2] - particles[offset]) * motionEase;
-      particles[offset + 1] += (particles[offset + 3] - particles[offset + 1]) * motionEase;
+      const cohort = particles[offset + 5];
+      const motionEase = cohort === 0 ? lowMotion : cohort === 1 ? midMotion : highMotion;
+      if (!renderOnly) {
+        particles[offset] += (particles[offset + 2] - particles[offset]) * motionEase;
+        particles[offset + 1] += (particles[offset + 3] - particles[offset + 1]) * motionEase;
+      }
+      if (!visible) continue;
       const intensity = particles[offset + 4];
       const opacity = particleFinalOpacity(intensity, particles[offset + 6]);
       const x = width / 2 + particles[offset] * width * 0.42;
@@ -117,11 +128,13 @@ export function Stereometer({
       context.globalAlpha = opacity;
       context.fillRect(x - size / 2, y - size / 2, size, size);
     }
-    context.globalAlpha = 1;
-    context.shadowBlur = 0;
-  }, []);
+    if (visible) {
+      context.globalAlpha = 1;
+      context.shadowBlur = 0;
+    }
+  }, [visibleRef]);
 
-  useVisualizationFrame(analysis, draw, active);
+  useVisualizationFrame(analysis, draw, active, visibleRef);
 
   return (
     <VisualizerFrame

@@ -78,6 +78,7 @@ describe("SmoothCursor", () => {
   it("enables only for a fine hover pointer without reduced motion", async () => {
     setMedia({ finePointer: true, reducedMotion: false });
     render(<SmoothCursor cursor={<span>VS</span>} />);
+    await act(async () => { await vi.dynamicImportSettled(); });
     await waitFor(() =>
       expect(document.documentElement.dataset.smoothCursor).toBe("active"),
     );

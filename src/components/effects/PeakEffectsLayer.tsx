@@ -98,6 +98,12 @@ export function PeakEffectsLayer({
     let peakEventId = analysis.frameRef.current.snapshot.peakEventId;
     let quality = analysis.frameRef.current.quality;
     let disposed = false;
+    let hasPeakVariables = true;
+    const clearVariables = () => {
+      if (!hasPeakVariables) return;
+      clearPeakVariables(target);
+      hasPeakVariables = false;
+    };
 
     const resize = () => {
       if (!renderer) return;
@@ -124,7 +130,7 @@ export function PeakEffectsLayer({
         peakEventId = frame.snapshot.peakEventId;
         activeRecipe = null;
         activeSnapshot = null;
-        clearPeakVariables(target);
+        clearVariables();
         clearRenderer(time);
         return;
       }
@@ -132,7 +138,7 @@ export function PeakEffectsLayer({
       if (frame.snapshot.peakStrength <= 0) {
         activeRecipe = null;
         activeSnapshot = null;
-        clearPeakVariables(target);
+        clearVariables();
         clearRenderer(time);
         return;
       }
@@ -151,7 +157,7 @@ export function PeakEffectsLayer({
       }
 
       if (!activeRecipe) {
-        clearPeakVariables(target);
+        clearVariables();
         clearRenderer(time);
         return;
       }
@@ -169,7 +175,7 @@ export function PeakEffectsLayer({
         );
         if (!activeRecipe) {
           activeSnapshot = null;
-          clearPeakVariables(target);
+          clearVariables();
           clearRenderer(time);
           return;
         }
@@ -179,13 +185,14 @@ export function PeakEffectsLayer({
       if (elapsedMs >= activeRecipe.durationMs) {
         activeRecipe = null;
         activeSnapshot = null;
-        clearPeakVariables(target);
+        clearVariables();
         clearRenderer(time);
         return;
       }
 
       const progress = elapsedMs / activeRecipe.durationMs;
       applyPeakVariables(target, activeRecipe, elapsedMs, frame.reducedMotion);
+      hasPeakVariables = true;
       renderer?.render(time, activeRecipe, progress);
       rendererHasFrame = Boolean(renderer);
     });
@@ -222,7 +229,7 @@ export function PeakEffectsLayer({
       rendererHasFrame = false;
       activeRecipe = null;
       activeSnapshot = null;
-      clearPeakVariables(target);
+      clearVariables();
     };
   }, [analysis, targetRef]);
 

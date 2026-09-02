@@ -184,7 +184,7 @@ describe("createVhsSignalRenderer", () => {
     expect(flashUniform?.[1]).toBeGreaterThan(0);
   });
 
-  it("clears with neutral uniforms when there is no active recipe", () => {
+  it("clears an inactive frame without executing the full-screen shader", () => {
     const gl = webGlContext();
     vi.spyOn(HTMLCanvasElement.prototype, "getContext")
       .mockReturnValue(gl as unknown as WebGLRenderingContext);
@@ -192,8 +192,26 @@ describe("createVhsSignalRenderer", () => {
 
     renderer.render(32, null, 1);
 
-    expect(gl.uniform1f).toHaveBeenCalledWith({ name: "u_strength" }, 0);
-    expect(gl.drawArrays).toHaveBeenCalledTimes(1);
+    expect(gl.clear).toHaveBeenCalledWith(gl.COLOR_BUFFER_BIT);
+    expect(gl.uniform1f).not.toHaveBeenCalled();
+    expect(gl.drawArrays).not.toHaveBeenCalled();
+  });
+
+  it("does not reset its drawing buffer for an unchanged physical size", () => {
+    const gl = webGlContext();
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext")
+      .mockReturnValue(gl as unknown as WebGLRenderingContext);
+    const canvas = document.createElement("canvas");
+    const renderer = createVhsSignalRenderer(canvas)!;
+    renderer.resize(320, 180, 2);
+    const width = vi.spyOn(canvas, "width", "set");
+    const height = vi.spyOn(canvas, "height", "set");
+    renderer.resize(320, 180, 2);
+    expect(width).not.toHaveBeenCalled();
+    expect(height).not.toHaveBeenCalled();
+    renderer.resize(400, 180, 2);
+    expect(canvas.width).toBe(800);
+    expect(gl.viewport).toHaveBeenLastCalledWith(0, 0, 800, 360);
   });
 
   it("disposes owned GPU resources exactly once", () => {

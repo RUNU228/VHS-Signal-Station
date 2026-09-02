@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
 
 const stateHarness = vi.hoisted(() => ({ updates: [] as unknown[] }));
@@ -39,6 +39,7 @@ beforeEach(() => {
 
 it("transitions visibility only once across repeated pointer moves", async () => {
   render(<SmoothCursor />);
+  await act(async () => { await vi.dynamicImportSettled(); });
   await screen.findByTestId("smooth-cursor");
   stateHarness.updates.length = 0;
 

@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { useLanguage } from "@/components/LanguageProvider";
 import type { AudioVisualizationBus } from "@/types/audio";
 import { Oscilloscope } from "./Oscilloscope";
@@ -11,7 +13,7 @@ type VisualizerRackProps = {
   active: boolean;
 };
 
-export function VisualizerRack({
+export const VisualizerRack = memo(function VisualizerRack({
   analysis,
   active,
 }: VisualizerRackProps) {
@@ -38,4 +40,4 @@ export function VisualizerRack({
       </div>
     </section>
   );
-}
+});

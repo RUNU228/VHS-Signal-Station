@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 
 import { LanguageProvider, useLanguage } from "@/components/LanguageProvider";
 import { AudioPlayer } from "@/components/audio/AudioPlayer";
@@ -17,6 +17,9 @@ import { loadAudioTracks } from "@/lib/audio/files";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { audioError, tapesLoaded, unreadableFiles } from "@/lib/i18n";
 import { commandForKey, isEditableTarget } from "@/lib/audio/keyboard";
+
+const MemoPeakEffectsLayer = memo(PeakEffectsLayer);
+const MemoAudioReactiveBackground = memo(AudioReactiveBackground);
 
 export function VhsVisualizerApp({ engineOptions }: { engineOptions?: AudioEngineOptions }) {
   return (
@@ -114,8 +117,8 @@ function Station({ engineOptions }: { engineOptions?: AudioEngineOptions }) {
 
   return (
     <main ref={stationRef} className="station-shell">
-      <AudioReactiveBackground analysis={analysis} active={signalActive} />
-      <PeakEffectsLayer analysis={analysis} targetRef={stationRef} />
+      <MemoAudioReactiveBackground analysis={analysis} active={signalActive} />
+      <MemoPeakEffectsLayer analysis={analysis} targetRef={stationRef} />
       <VhsNoise />
       <header className="station-header">
         <div className="station-brand">
@@ -155,7 +158,7 @@ function Station({ engineOptions }: { engineOptions?: AudioEngineOptions }) {
         active={signalActive}
       />
       <AudioPlayer engine={engine} />
-      <TrackUploader onFiles={(files) => void handleFiles(files)} loading={loading} />
+      <TrackUploader onFiles={handleFiles} loading={loading} />
       <TrackLibrary
         tracks={engine.tracks}
         currentTrackIndex={engine.currentTrackIndex}

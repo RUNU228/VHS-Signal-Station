@@ -45,9 +45,9 @@ export function Spectrum({
   const binsRef = useRef<{ sampleRate: number; fftSize: number; length: number; bins: Int32Array } | null>(null);
   const peaksRef = useRef(new Float32Array(BAR_COUNT));
   const sourceRevisionRef = useRef<number | null>(null);
-  useCanvasSurface(canvasRef);
+  const visibleRef = useCanvasSurface(canvasRef, { active });
 
-  const draw = useCallback((frame: AudioVisualizationFrame) => {
+  const draw = useCallback((frame: AudioVisualizationFrame, _time: number, renderOnly = false) => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
@@ -59,8 +59,12 @@ export function Spectrum({
 
     const width = canvas.width;
     const height = canvas.height;
-    context.fillStyle = "rgba(5, 7, 7, .32)";
-    context.fillRect(0, 0, width, height);
+    const visible = visibleRef.current || renderOnly;
+    if (renderOnly) context.clearRect(0, 0, width, height);
+    if (visible) {
+      context.fillStyle = "rgba(5, 7, 7, .32)";
+      context.fillRect(0, 0, width, height);
+    }
     if (frame.frequencyData.length === 0) return;
 
     const gap = Math.max(2, width * 0.004);
@@ -89,6 +93,9 @@ export function Spectrum({
       if (bin < 0) continue;
 
       const level = frame.frequencyData[bin] / 255;
+      const peak = renderOnly ? peaksRef.current[bar] : Math.max(level, peaksRef.current[bar] - 0.009);
+      peaksRef.current[bar] = peak;
+      if (!visible) continue;
       const x = BANDS[bar].position * (width - barWidth);
       const barHeight = Math.max(1, level * height * 0.88);
       const colorLevel = localSignalLevel(level, frame.snapshot.overallEnergy);
@@ -98,8 +105,6 @@ export function Spectrum({
       );
       context.fillRect(x, height - barHeight, barWidth, barHeight);
 
-      const peak = Math.max(level, peaksRef.current[bar] - 0.009);
-      peaksRef.current[bar] = peak;
       const peakColorLevel = localSignalLevel(peak, frame.snapshot.overallEnergy);
       context.fillStyle = signalColorForLevel(
         peakColorLevel,
@@ -107,9 +112,9 @@ export function Spectrum({
       );
       context.fillRect(x, height - peak * height * 0.88 - 3, barWidth, 2);
     }
-  }, []);
+  }, [visibleRef]);
 
-  useVisualizationFrame(analysis, draw, active);
+  useVisualizationFrame(analysis, draw, active, visibleRef);
 
   return (
     <VisualizerFrame

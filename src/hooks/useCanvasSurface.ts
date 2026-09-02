@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, type RefObject } from "react";
+import { useEffect, useEffectEvent, useRef, type RefObject } from "react";
 
 export type CanvasSurfaceOptions = {
   maxDevicePixelRatio?: number;
   resolutionScale?: number;
+  active?: boolean;
 };
 
 export function useCanvasSurface(
@@ -12,8 +13,29 @@ export function useCanvasSurface(
   {
     maxDevicePixelRatio = 2,
     resolutionScale = 1,
+    active = true,
   }: CanvasSurfaceOptions = {},
-): void {
+): RefObject<boolean> {
+  const visibleRef = useRef(true);
+  const reveal = useEffectEvent(() => {
+    const canvas = canvasRef.current;
+    // Live rendering resumes next frame. A paused surface already received its
+    // final frame during unsubscribe and must retain that image.
+    if (active && canvas) canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+  });
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting && !visibleRef.current) reveal();
+        visibleRef.current = entry.isIntersecting;
+      }
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, [canvasRef]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -42,4 +64,5 @@ export function useCanvasSurface(
     observer.observe(canvas);
     return () => observer.disconnect();
   }, [canvasRef, maxDevicePixelRatio, resolutionScale]);
+  return visibleRef;
 }

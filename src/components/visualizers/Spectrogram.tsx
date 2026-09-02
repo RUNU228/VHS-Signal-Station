@@ -6,12 +6,12 @@ import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
 import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
-import { signalColorForLevel } from "@/lib/visualization/signalTheme";
+import { createSpectrogramColors, SPECTROGRAM_COLUMNS, SPECTROGRAM_ROWS } from "@/lib/visualization/spectrogram";
 import type { AudioVisualizationBus, AudioVisualizationFrame } from "@/types/audio";
 import { VisualizerFrame } from "./VisualizerFrame";
 
-const HISTORY_COLUMNS = 72;
-const FREQUENCY_ROWS = 34;
+const HISTORY_COLUMNS = SPECTROGRAM_COLUMNS;
+const FREQUENCY_ROWS = SPECTROGRAM_ROWS;
 
 export function Spectrogram({
   analysis,
@@ -22,38 +22,48 @@ export function Spectrogram({
 }) {
   const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const historyRef = useRef(new Uint8Array(HISTORY_COLUMNS * FREQUENCY_ROWS));
+  const historyRef = useRef<Uint8Array | null>(null);
+  const colorsRef = useRef<ReturnType<typeof createSpectrogramColors> | null>(null);
+  const binsRef = useRef<{ length: number; indices: Uint32Array } | null>(null);
   const sourceRevisionRef = useRef<number | null>(null);
-  useCanvasSurface(canvasRef);
+  const visibleRef = useCanvasSurface(canvasRef, { active });
 
-  const draw = useCallback((frame: AudioVisualizationFrame) => {
+  const draw = useCallback((frame: AudioVisualizationFrame, _time: number, renderOnly = false) => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
 
-    const history = historyRef.current;
+    const history = historyRef.current ??= new Uint8Array(HISTORY_COLUMNS * FREQUENCY_ROWS);
+    const colorFor = colorsRef.current ??= createSpectrogramColors();
     if (sourceRevisionRef.current !== frame.sourceRevision) {
       sourceRevisionRef.current = frame.sourceRevision;
       history.fill(0);
     }
 
     const data = frame.frequencyData;
-    history.copyWithin(0, FREQUENCY_ROWS);
-    const newestColumn = (HISTORY_COLUMNS - 1) * FREQUENCY_ROWS;
-    history.fill(0, newestColumn);
-    if (data.length > 0) {
-      for (let row = 0; row < FREQUENCY_ROWS; row += 1) {
-        const normalized = row / (FREQUENCY_ROWS - 1);
-        const bin = Math.min(
-          data.length - 1,
-          Math.floor(Math.pow(normalized, 1.65) * data.length * 0.52),
-        );
-        history[newestColumn + FREQUENCY_ROWS - 1 - row] = data[bin];
+    if (!renderOnly) {
+      history.copyWithin(0, FREQUENCY_ROWS);
+      const newestColumn = (HISTORY_COLUMNS - 1) * FREQUENCY_ROWS;
+      history.fill(0, newestColumn);
+      if (data.length > 0) {
+        if (binsRef.current?.length !== data.length) {
+          const indices = new Uint32Array(FREQUENCY_ROWS);
+          for (let row = 0; row < FREQUENCY_ROWS; row += 1) {
+            indices[row] = Math.min(data.length - 1,
+              Math.floor(Math.pow(row / (FREQUENCY_ROWS - 1), 1.65) * data.length * 0.52));
+          }
+          binsRef.current = { length: data.length, indices };
+        }
+        const bins = binsRef.current.indices;
+        for (let row = 0; row < FREQUENCY_ROWS; row += 1) {
+          history[newestColumn + FREQUENCY_ROWS - 1 - row] = data[bins[row]];
+        }
       }
     }
-
+    if (!visibleRef.current && !renderOnly) return;
     const width = canvas.width;
     const height = canvas.height;
+    if (renderOnly) context.clearRect(0, 0, width, height);
     context.fillStyle = "#050707";
     context.fillRect(0, 0, width, height);
     const cellWidth = width / HISTORY_COLUMNS;
@@ -61,13 +71,9 @@ export function Spectrogram({
 
     for (let column = 0; column < HISTORY_COLUMNS; column += 1) {
       for (let row = 0; row < FREQUENCY_ROWS; row += 1) {
-        const energy = history[column * FREQUENCY_ROWS + row] / 255;
-        if (energy < 0.055) continue;
-        const age = 0.42 + (column / HISTORY_COLUMNS) * 0.58;
-        context.fillStyle = signalColorForLevel(
-          energy,
-          Math.max(0.08, energy * age),
-        );
+        const amplitude = history[column * FREQUENCY_ROWS + row];
+        if (amplitude < 15) continue;
+        context.fillStyle = colorFor(amplitude, column);
         context.fillRect(
           column * cellWidth + 1,
           row * cellHeight + 1,
@@ -76,9 +82,9 @@ export function Spectrogram({
         );
       }
     }
-  }, []);
+  }, [visibleRef]);
 
-  useVisualizationFrame(analysis, draw, active);
+  useVisualizationFrame(analysis, draw, active, visibleRef);
 
   return (
     <VisualizerFrame

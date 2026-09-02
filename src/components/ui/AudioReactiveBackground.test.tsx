@@ -177,11 +177,15 @@ describe("AudioReactiveBackground", () => {
     expect(canvas.width).toBe(300);
     expect(canvas.height).toBe(150);
 
+    const widthWrites = vi.spyOn(canvas, "width", "set");
+    const heightWrites = vi.spyOn(canvas, "height", "set");
     for (const callback of resizeCallbacks) {
       callback([], {} as ResizeObserver);
     }
 
     expect(canvas.width).toBe(300);
     expect(canvas.height).toBe(150);
+    expect(widthWrites).not.toHaveBeenCalled();
+    expect(heightWrites).not.toHaveBeenCalled();
   });
 });
