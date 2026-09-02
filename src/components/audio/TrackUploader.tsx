@@ -2,14 +2,14 @@
 
 import { useLanguage } from "@/components/LanguageProvider";
 
-import { useRef, useState, type DragEvent } from "react";
+import { memo, useRef, useState, type DragEvent } from "react";
 
 type TrackUploaderProps = {
   onFiles: (files: File[]) => void;
   loading: boolean;
 };
 
-export function TrackUploader({ onFiles, loading }: TrackUploaderProps) {
+export const TrackUploader = memo(function TrackUploader({ onFiles, loading }: TrackUploaderProps) {
   const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
@@ -64,4 +64,4 @@ export function TrackUploader({ onFiles, loading }: TrackUploaderProps) {
       </button>
     </div>
   );
-}
+});

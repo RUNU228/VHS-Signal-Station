@@ -226,12 +226,17 @@ export function createVhsSignalRenderer(
       resize(width, height, devicePixelRatio) {
         if (disposed) return;
         const dpr = Math.min(2, Math.max(0.5, devicePixelRatio || 1));
-        canvas.width = Math.max(1, Math.round(width * dpr));
-        canvas.height = Math.max(1, Math.round(height * dpr));
+        const pixelWidth = Math.max(1, Math.round(width * dpr));
+        const pixelHeight = Math.max(1, Math.round(height * dpr));
+        if (canvas.width === pixelWidth && canvas.height === pixelHeight) return;
+        canvas.width = pixelWidth;
+        canvas.height = pixelHeight;
         gl!.viewport(0, 0, canvas.width, canvas.height);
       },
       render(timeMs, recipe, progress) {
         if (disposed) return;
+        gl!.clear(gl!.COLOR_BUFFER_BIT);
+        if (!recipe) return;
         const boundedProgress = recipe
           ? Math.min(1, Math.max(0, progress))
           : 1;
@@ -247,7 +252,6 @@ export function createVhsSignalRenderer(
           ? recipe.strength * envelope
           : 0;
         gl!.useProgram(rendererProgram);
-        gl!.clear(gl!.COLOR_BUFFER_BIT);
         gl!.uniform2f(uniforms.resolution, canvas.width, canvas.height);
         gl!.uniform1f(uniforms.time, hasAnimatedArtifacts ? timeMs / 1_000 : 0);
         gl!.uniform1f(uniforms.progress, boundedProgress);

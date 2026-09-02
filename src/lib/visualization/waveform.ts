@@ -65,3 +65,37 @@ export function pushWaveformColumn(
   history.rms[last] = column.rms;
   history.localEnergy[last] = column.localEnergy;
 }
+
+export function measureStereoWaveform(
+  left: Float32Array,
+  right: Float32Array,
+): { mid: WaveformColumn; side: WaveformColumn } {
+  const length = Math.min(left.length, right.length);
+  let midNegative = 0;
+  let midPositive = 0;
+  let midSquares = 0;
+  let sideNegative = 0;
+  let sidePositive = 0;
+  let sideSquares = 0;
+  for (let index = 0; index < length; index++) {
+    const l = left[index];
+    const r = right[index];
+    // Match the former Float32 mid/side buffers before measuring the samples.
+    const mid = Math.fround((l + r) / 2);
+    const side = Math.fround((l - r) / 2);
+    midNegative = Math.min(midNegative, mid);
+    midPositive = Math.max(midPositive, mid);
+    midSquares += mid * mid;
+    sideNegative = Math.min(sideNegative, side);
+    sidePositive = Math.max(sidePositive, side);
+    sideSquares += side * side;
+  }
+  return {
+    mid: { negative: midNegative, positive: midPositive,
+      rms: length ? Math.sqrt(midSquares / length) : 0,
+      localEnergy: Math.max(Math.abs(midNegative), midPositive) },
+    side: { negative: sideNegative, positive: sidePositive,
+      rms: length ? Math.sqrt(sideSquares / length) : 0,
+      localEnergy: Math.max(Math.abs(sideNegative), sidePositive) },
+  };
+}

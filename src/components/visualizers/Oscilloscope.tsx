@@ -116,9 +116,9 @@ export function Oscilloscope({
       lineWidth: 1,
     })),
   );
-  useCanvasSurface(canvasRef);
+  const visibleRef = useCanvasSurface(canvasRef, { active });
 
-  const draw = useCallback((frame: AudioVisualizationFrame) => {
+  const draw = useCallback((frame: AudioVisualizationFrame, _time: number, renderOnly = false) => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
@@ -131,7 +131,7 @@ export function Oscilloscope({
         peakStrength: 0,
         peakSeed: 0,
       };
-    } else {
+    } else if (!renderOnly) {
       peakFrameRef.current = nextOscilloscopePeakFrame(peakFrameRef.current, {
         peakEventId: frame.snapshot.peakEventId,
         peakStrength: frame.snapshot.peakStrength,
@@ -139,10 +139,12 @@ export function Oscilloscope({
       });
     }
 
+    if (!visibleRef.current && !renderOnly) return;
     const data = frame.oscilloscopeData;
     const start = findZeroCrossing(data);
     const width = canvas.width;
     const height = canvas.height;
+    if (renderOnly) context.clearRect(0, 0, width, height);
     context.fillStyle = "rgba(5, 7, 7, .25)";
     context.fillRect(0, 0, width, height);
     drawScopeGrid(context, width, height, 8, 4);
@@ -218,9 +220,9 @@ export function Oscilloscope({
       context.stroke();
     }
     context.shadowBlur = 0;
-  }, []);
+  }, [visibleRef]);
 
-  useVisualizationFrame(analysis, draw, active);
+  useVisualizationFrame(analysis, draw, active, visibleRef);
 
   return (
     <VisualizerFrame

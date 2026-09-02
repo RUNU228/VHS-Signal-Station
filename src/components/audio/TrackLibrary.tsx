@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { useLanguage } from "@/components/LanguageProvider";
 import { selectTrackLabel, tapesLoaded } from "@/lib/i18n";
 import { formatTime } from "@/lib/utils/formatTime";
@@ -10,7 +12,7 @@ type TrackLibraryProps = {
   onSelect: (index: number) => void;
 };
 
-export function TrackLibrary({
+export const TrackLibrary = memo(function TrackLibrary({
   tracks,
   currentTrackIndex,
   isPlaying,
@@ -66,4 +68,4 @@ export function TrackLibrary({
       )}
     </section>
   );
-}
+});

@@ -86,6 +86,10 @@ export function addWaveformColorStops(
   for (let index = 1; index < history.length; index++) {
     const previous = bounded(history[index - 1]);
     const current = bounded(history[index]);
+    // Equal interior stops do not change Canvas interpolation. Keep the two
+    // ends of every plateau so the neighboring transitions keep their extent.
+    if (index < history.length - 1 && previous === current &&
+        current === bounded(history[index + 1])) continue;
     // Canvas interpolates RGB: subdivide large jumps along the vivid hue path.
     const steps = Math.max(1, Math.ceil(Math.abs(current - previous) * 32));
     for (let step = 1; step <= steps; step++) {

@@ -38,8 +38,10 @@ function resizeCanvas(canvas: HTMLCanvasElement, quality: VisualQuality): void {
   const height = Math.max(1, Math.round(bounds.height || canvas.clientHeight || 260));
   const { maxDevicePixelRatio, resolutionScale } = canvasQuality(quality);
   const dpr = Math.min(window.devicePixelRatio || 1, maxDevicePixelRatio);
-  canvas.width = Math.max(1, Math.round(width * dpr * resolutionScale));
-  canvas.height = Math.max(1, Math.round(height * dpr * resolutionScale));
+  const pixelWidth = Math.max(1, Math.round(width * dpr * resolutionScale));
+  const pixelHeight = Math.max(1, Math.round(height * dpr * resolutionScale));
+  if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+  if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
 }
 
 function seededNoise(x: number, y: number, frame: number): number {

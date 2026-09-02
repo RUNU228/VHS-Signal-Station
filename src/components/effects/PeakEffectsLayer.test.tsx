@@ -146,6 +146,23 @@ describe("PeakEffectsLayer", () => {
     expect(observe).toHaveBeenCalledWith(canvas);
   });
 
+  it("clears peak styles once, then does no repeated style work while idle", () => {
+    const { bus, target } = renderLayer();
+    const remove = vi.spyOn(target.style, "removeProperty");
+    act(() => bus.publish(frame(), 0));
+    remove.mockClear();
+    act(() => bus.publish(frame(), 16));
+    act(() => bus.publish(frame(), 32));
+    expect(remove).not.toHaveBeenCalled();
+    act(() => bus.publish(peakFrame(1), 48));
+    expect(target.style.getPropertyValue("--peak-flash")).not.toBe("");
+    act(() => bus.publish(frame(), 64));
+    expect(target.style.getPropertyValue("--peak-flash")).toBe("");
+    expect(remove).toHaveBeenCalledTimes(6);
+    act(() => bus.publish(frame(), 80));
+    expect(remove).toHaveBeenCalledTimes(6);
+  });
+
   it("resizes for viewport and DPR changes even when ResizeObserver exists", () => {
     const bounds = vi.spyOn(HTMLCanvasElement.prototype, "getBoundingClientRect");
     const { unmount } = renderLayer();
