@@ -1,3 +1,4 @@
+import { useLanguage } from "@/components/LanguageProvider";
 import type { AudioVisualizationBus } from "@/types/audio";
 import { Oscilloscope } from "./Oscilloscope";
 import { Spectrogram } from "./Spectrogram";
@@ -14,17 +15,18 @@ export function VisualizerRack({
   analysis,
   active,
 }: VisualizerRackProps) {
+  const { t } = useLanguage();
   return (
     <section className="visualizer-section" aria-labelledby="rack-title">
       <header className="section-heading">
         <div>
-          <p>ANALOG SIGNAL ANALYSIS / RACK A</p>
-          <h2 id="rack-title">VISUALIZER RACK</h2>
+          <p>{t.visualizers.subtitle}</p>
+          <h2 id="rack-title">{t.visualizers.title}</h2>
         </div>
-        <div className="rack-telemetry" aria-label="Rack telemetry">
-          <span>5 MODULES</span>
-          <span>48 KHZ READY</span>
-          <span>{active ? "SIGNAL LOCK" : "STANDBY"}</span>
+        <div className="rack-telemetry" aria-label={t.visualizers.telemetry}>
+          <span>{t.visualizers.modules}</span>
+          <span>{t.visualizers.sampleRate}</span>
+          <span>{active ? t.visualizers.lock : t.visualizers.standby}</span>
         </div>
       </header>
       <div className="visualizer-rack">

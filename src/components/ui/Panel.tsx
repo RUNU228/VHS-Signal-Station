@@ -1,3 +1,4 @@
+import { useLanguage } from "@/components/LanguageProvider";
 import { useId, type ReactNode } from "react";
 
 type PanelProps = {
@@ -17,6 +18,7 @@ export function Panel({
   children,
   meta,
 }: PanelProps) {
+  const { t } = useLanguage();
   const titleId = useId();
   return (
     <section
@@ -30,7 +32,7 @@ export function Panel({
       <span className="panel-screw panel-screw--br" aria-hidden="true" />
       <header className="panel-header">
         <div>
-          <p className="panel-kicker">SIGNAL MODULE / {serial}</p>
+          <p className="panel-kicker">{t.visualizers.module} / {serial}</p>
           <h3 id={titleId}>{title}</h3>
         </div>
         {meta ? <div className="panel-meta">{meta}</div> : null}

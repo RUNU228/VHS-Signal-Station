@@ -1,3 +1,4 @@
+import { useLanguage } from "@/components/LanguageProvider";
 type PlayerControlsProps = {
   disabled: boolean;
   isPlaying: boolean;
@@ -13,39 +14,40 @@ export function PlayerControls({
   onToggle,
   onNext,
 }: PlayerControlsProps) {
+  const { t } = useLanguage();
   return (
-    <div className="transport-controls" aria-label="Playback controls">
+    <div className="transport-controls" aria-label={t.player.controls}>
       <button
         type="button"
         className="hardware-button"
-        aria-label="Previous track"
+        aria-label={t.player.previousLabel}
         onClick={onPrevious}
         disabled={disabled}
       >
         <span aria-hidden="true">◀│</span>
-        PREVIOUS
+        {t.player.previous}
       </button>
       <button
         type="button"
         className="hardware-button hardware-button--primary"
-        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-label={isPlaying ? t.player.pauseLabel : t.player.playLabel}
         onClick={onToggle}
         disabled={disabled}
       >
         <span className="transport-symbol" aria-hidden="true">
           {isPlaying ? "Ⅱ" : "▶"}
         </span>
-        {isPlaying ? "PAUSE" : "PLAY"}
+        {isPlaying ? t.player.pause : t.player.play}
       </button>
       <button
         type="button"
         className="hardware-button"
-        aria-label="Next track"
+        aria-label={t.player.nextLabel}
         onClick={onNext}
         disabled={disabled}
       >
         <span aria-hidden="true">│▶</span>
-        NEXT
+        {t.player.nextButton}
       </button>
     </div>
   );

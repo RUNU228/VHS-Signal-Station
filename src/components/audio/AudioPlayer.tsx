@@ -1,3 +1,5 @@
+import { useLanguage } from "@/components/LanguageProvider";
+import { playbackStatus } from "@/lib/i18n";
 import { Led } from "@/components/ui/Led";
 import { Panel } from "@/components/ui/Panel";
 import type { AudioEngine } from "@/hooks/useAudioEngine";
@@ -7,6 +9,7 @@ import { SeekBar } from "./SeekBar";
 import { VolumeControl } from "./VolumeControl";
 
 export function AudioPlayer({ engine }: { engine: AudioEngine }) {
+  const { t } = useLanguage();
   const disabled = !engine.currentTrack;
   const index = engine.currentTrackIndex === null ? 0 : engine.currentTrackIndex + 1;
   const queueStamp = `${index.toString().padStart(2, "0")} / ${engine.tracks.length
@@ -21,21 +24,21 @@ export function AudioPlayer({ engine }: { engine: AudioEngine }) {
     >
       <header className="section-heading">
         <div>
-          <p>MASTER TRANSPORT / DECK B</p>
-          <h2 id="player-title">VHS AUDIO DECK</h2>
+          <p>{t.player.subtitle}</p>
+          <h2 id="player-title">{t.player.title}</h2>
         </div>
-        <span className="deck-model">MODEL VS-880 / LOCAL MEDIA</span>
+        <span className="deck-model">{t.player.model}</span>
       </header>
       <Panel
-        title="TAPE TRANSPORT"
-        serial="UNIT 02 / STEREO"
+        title={t.player.transport}
+        serial={t.player.unit}
         className="player-panel"
         meta={
           <div className="status-leds">
-            <Led label="READY" active={engine.audioReady && !engine.isPlaying} />
-            <Led label="PLAY" active={engine.isPlaying} tone="red" />
-            <Led label="MUTE" active={engine.isMuted} tone="red" />
-            <Led label="END" active={engine.endOfQueue} tone="amber" />
+            <Led label={t.player.ready} active={engine.audioReady && !engine.isPlaying} />
+            <Led label={t.player.play} active={engine.isPlaying} tone="red" />
+            <Led label={t.player.mute} active={engine.isMuted} tone="red" />
+            <Led label={t.player.end} active={engine.endOfQueue} tone="amber" />
           </div>
         }
       >
@@ -47,21 +50,21 @@ export function AudioPlayer({ engine }: { engine: AudioEngine }) {
               <span className="reel reel--right" />
             </div>
             <div className="now-playing-display">
-              <span>NOW PLAYING</span>
-              <strong>{engine.currentTrack?.name ?? "NO TAPE INSERTED"}</strong>
+              <span>{t.player.now}</span>
+              <strong>{engine.currentTrack?.name ?? t.player.empty}</strong>
               <div>
                 <span>{queueStamp}</span>
-                <span>{engine.status}</span>
+                <span>{playbackStatus(engine.status, t)}</span>
               </div>
               <b>{formatTime(engine.currentTime)} / {formatTime(engine.duration)}</b>
             </div>
           </div>
 
           <div className="queue-display">
-            <span>QUEUE {queueStamp}</span>
-            <strong>UP NEXT</strong>
-            <b>{engine.endOfQueue || !engine.nextTrack ? "END OF QUEUE" : engine.nextTrack.name}</b>
-            <small>AUTO ADVANCE / LOOP OFF</small>
+            <span>{t.station.queue} {queueStamp}</span>
+            <strong>{t.player.next}</strong>
+            <b>{engine.endOfQueue || !engine.nextTrack ? t.player.queueEnd : engine.nextTrack.name}</b>
+            <small>{t.player.advance}</small>
           </div>
 
           <PlayerControls

@@ -71,6 +71,7 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
   const durationRef = useRef(0);
   const volumeRef = useRef(0.72);
   const mutedRef = useRef(false);
+  const playRequestRef = useRef(0);
   const loadTrackRef = useRef<
     (index: number, shouldPlay: boolean, source?: AudioTrack[]) => void
   >(() => undefined);
@@ -91,13 +92,15 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
     setIsPlaying(value);
   }, []);
 
-  const ensureAudioGraph = useCallback(async () => {
+  const ensureAudioGraph = useCallback(() => {
     const audio = audioRef.current;
-    if (!audio || analysersRef.current) return;
+    if (!audio) return false;
+    if (analysersRef.current) return true;
 
+    let context: AudioContext | null = null;
     try {
-      const context = optionsRef.current.createAudioContext();
-      if (!context) return;
+      context = optionsRef.current.createAudioContext();
+      if (!context) return true;
 
       const source = context.createMediaElementSource(audio);
       const gain = context.createGain();
@@ -126,27 +129,28 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
       gainRef.current = gain;
       analysersRef.current = { context, frequency, oscilloscope, left, right };
 
-      if (context.state === "suspended") {
-        await context.resume();
-      }
+      return true;
     } catch {
+      void context?.close().catch(() => {});
       setError("UNABLE TO INITIALIZE AUDIO SIGNAL");
+      return false;
     }
   }, []);
 
   const playMedia = useCallback(async () => {
     const audio = audioRef.current;
     if (!audio || currentIndexRef.current === null) return;
-
-    await ensureAudioGraph();
-    const context = audioContextRef.current;
-    if (context?.state === "suspended") {
-      await context.resume();
-    }
+    const request = ++playRequestRef.current;
+    const isCurrent = () => audioRef.current === audio && playRequestRef.current === request;
 
     try {
+      if (!ensureAudioGraph()) return;
+      const context = audioContextRef.current;
+      if (context?.state === "suspended") await context.resume();
+      if (!isCurrent()) return;
       await audio.play();
     } catch {
+      if (!isCurrent()) return;
       setPlayingState(false);
       setError("UNABLE TO PLAY AUDIO SIGNAL");
     }
@@ -158,6 +162,7 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
       const audio = audioRef.current;
       if (!track || !audio) return;
 
+      playRequestRef.current += 1;
       audio.pause();
       currentIndexRef.current = index;
       currentTimeRef.current = 0;
@@ -236,6 +241,7 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
     audio.addEventListener("error", handleError);
 
     return () => {
+      playRequestRef.current += 1;
       audio.removeEventListener("timeupdate", handleTime);
       audio.removeEventListener("durationchange", handleDuration);
       audio.removeEventListener("loadedmetadata", handleDuration);
@@ -246,7 +252,7 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
       audio.pause();
       audio.removeAttribute("src");
       audio.load();
-      void audioContextRef.current?.close();
+      void audioContextRef.current?.close().catch(() => {});
       audioRef.current = null;
       audioContextRef.current = null;
       gainRef.current = null;
@@ -294,6 +300,7 @@ export function useAudioEngine(options: AudioEngineOptions = {}): AudioEngine {
     const audio = audioRef.current;
     if (!audio || currentIndexRef.current === null) return;
     if (isPlayingRef.current) {
+      playRequestRef.current += 1;
       audio.pause();
       return;
     }

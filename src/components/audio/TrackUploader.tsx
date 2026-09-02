@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useRef, useState, type DragEvent } from "react";
 
 type TrackUploaderProps = {
@@ -8,6 +10,7 @@ type TrackUploaderProps = {
 };
 
 export function TrackUploader({ onFiles, loading }: TrackUploaderProps) {
+  const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
   const [dragging, setDragging] = useState(false);
@@ -42,6 +45,7 @@ export function TrackUploader({ onFiles, loading }: TrackUploaderProps) {
       <input
         ref={inputRef}
         type="file"
+        aria-label={t.upload.load}
         accept=".wav,.mp3,audio/wav,audio/mpeg"
         multiple
         onChange={(event) => {
@@ -51,12 +55,12 @@ export function TrackUploader({ onFiles, loading }: TrackUploaderProps) {
       />
       <div className="loader-slot" aria-hidden="true"><span /></div>
       <div>
-        <span>{loading ? "READING TAPE..." : "LOCAL MEDIA INPUT"}</span>
-        <strong>{dragging ? "RELEASE TO LOAD SIGNAL" : "DROP AUDIO TAPE HERE"}</strong>
-        <small>WAV / MP3 · MULTI-FILE QUEUE · BROWSER LOCAL</small>
+        <span>{loading ? t.upload.reading : t.upload.input}</span>
+        <strong>{dragging ? t.upload.release : t.upload.drop}</strong>
+        <small>{t.upload.formats}</small>
       </div>
       <button type="button" onClick={() => inputRef.current?.click()} disabled={loading}>
-        {loading ? "READING" : "LOAD AUDIO"}
+        {loading ? t.upload.busy : t.upload.load}
       </button>
     </div>
   );

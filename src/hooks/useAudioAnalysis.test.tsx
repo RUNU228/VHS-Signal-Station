@@ -120,6 +120,38 @@ describe("useAudioAnalysis", () => {
     unsubscribe();
   });
 
+  it("reuses display queries across frames and rerenders while following preference changes", () => {
+    const queries = new Map<string, EventTarget & { matches: boolean }>();
+    const matchMedia = vi.fn((query: string) => {
+      const media = Object.assign(new EventTarget(), { matches: false });
+      queries.set(query, media);
+      return media;
+    });
+    vi.stubGlobal("matchMedia", matchMedia);
+    const analysersRef = { current: analyserBundle() };
+    const { result, rerender, unmount } = renderHook(() =>
+      useAudioAnalysis(analysersRef, { active: true, resetKey: "track-a" }),
+    );
+    const queryCount = matchMedia.mock.calls.length;
+    act(() => { runNextFrame(16); runNextFrame(32); });
+    rerender();
+    expect(matchMedia).toHaveBeenCalledTimes(queryCount);
+
+    const low = queries.get("(max-width: 760px)")!;
+    const reduced = queries.get("(prefers-reduced-motion: reduce)")!;
+    low.matches = true;
+    reduced.matches = true;
+    act(() => {
+      low.dispatchEvent(new Event("change"));
+      reduced.dispatchEvent(new Event("change"));
+      runNextFrame(48);
+    });
+    expect(result.current.frameRef.current.quality).toBe("LOW");
+    expect(result.current.frameRef.current.reducedMotion).toBe(true);
+    unmount();
+    expect(frames).toHaveLength(0);
+  });
+
   it("samples into one stable bus without causing a React render loop", () => {
     const analysersRef = { current: analyserBundle() };
     let renders = 0;

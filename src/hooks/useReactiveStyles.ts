@@ -38,22 +38,18 @@ export function useReactiveStyles(
     const previous = new Map<string, string>();
     target.dataset.audioActive = String(active);
 
+    const setVariable = (variable: string, value: string) => {
+      if (previous.get(variable) === value) return;
+      target.style.setProperty(variable, value);
+      previous.set(variable, value);
+    };
     const project = (snapshot: AudioReactiveSnapshot) => {
-      const theme = createSignalTheme(snapshot);
-      const projections: readonly (readonly [string, string])[] = [
-        ...ENERGY_PROJECTIONS.map(([key, variable]) => [
-          variable,
-          formatEnergy(snapshot[key]),
-        ] as const),
-        ["--signal-color", signalColor(theme)],
-        ["--signal-glow", formatEnergy(theme.glow)],
-      ];
-
-      for (const [variable, value] of projections) {
-        if (previous.get(variable) === value) continue;
-        target.style.setProperty(variable, value);
-        previous.set(variable, value);
+      for (const [key, variable] of ENERGY_PROJECTIONS) {
+        setVariable(variable, formatEnergy(snapshot[key]));
       }
+      const theme = createSignalTheme(snapshot);
+      setVariable("--signal-color", signalColor(theme));
+      setVariable("--signal-glow", formatEnergy(theme.glow));
     };
 
     project(bus.frameRef.current.snapshot);

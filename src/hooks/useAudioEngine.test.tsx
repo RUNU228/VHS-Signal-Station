@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { useAudioEngine } from "./useAudioEngine";
 import type { AudioTrack } from "@/types/audio";
@@ -45,7 +45,68 @@ function track(id: string, duration = 20): AudioTrack {
   };
 }
 
+function suspendedContext(resume: () => Promise<void>) {
+  const node = () => ({ connect() {}, gain: { value: 1 } });
+  return {
+    state: "suspended",
+    resume,
+    close: vi.fn(async () => {}),
+    createMediaElementSource: vi.fn(node),
+    createGain: node,
+    createAnalyser: node,
+    createChannelSplitter: node,
+  } as unknown as AudioContext;
+}
+
 describe("useAudioEngine", () => {
+  it("does not start detached playback after an outstanding context resume finishes", async () => {
+    let finishResume!: () => void;
+    const context = suspendedContext(() => new Promise<void>((resolve) => {
+      finishResume = () => {
+        Object.defineProperty(context, "state", { value: "running" });
+        resolve();
+      };
+    }));
+    const audio = new FakeAudio();
+    const { result, unmount } = renderHook(() => useAudioEngine({
+      createAudioElement: () => audio as unknown as HTMLAudioElement,
+      createAudioContext: () => context,
+    }));
+    act(() => result.current.appendTracks([track("one")]));
+    const pending = result.current.togglePlayback();
+    unmount();
+    await act(async () => { finishResume(); await pending; });
+    expect(audio.playCalls).toBe(0);
+    expect(context.close).toHaveBeenCalledTimes(1);
+  });
+
+  it("reports a rejected context resume without rejecting the playback action", async () => {
+    const context = suspendedContext(async () => { throw new Error("resume denied"); });
+    const audio = new FakeAudio();
+    const { result } = renderHook(() => useAudioEngine({
+      createAudioElement: () => audio as unknown as HTMLAudioElement,
+      createAudioContext: () => context,
+    }));
+    act(() => result.current.appendTracks([track("one")]));
+    await act(async () => { await expect(result.current.togglePlayback()).resolves.toBeUndefined(); });
+    expect(result.current.error).toBe("UNABLE TO PLAY AUDIO SIGNAL");
+    expect(audio.playCalls).toBe(0);
+  });
+
+  it("closes a partially initialized audio graph when node creation fails", async () => {
+    const context = suspendedContext(async () => {});
+    context.createAnalyser = () => { throw new Error("node unavailable"); };
+    const audio = new FakeAudio();
+    const { result } = renderHook(() => useAudioEngine({
+      createAudioElement: () => audio as unknown as HTMLAudioElement,
+      createAudioContext: () => context,
+    }));
+    act(() => result.current.appendTracks([track("one")]));
+    await act(async () => result.current.togglePlayback());
+    expect(context.close).toHaveBeenCalledTimes(1);
+    expect(result.current.error).toBe("UNABLE TO INITIALIZE AUDIO SIGNAL");
+  });
+
   it("loads the first appended track into the sole media element", async () => {
     const audio = new FakeAudio();
     const { result } = renderHook(() =>

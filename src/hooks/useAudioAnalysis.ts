@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, type MutableRefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type MutableRefObject } from "react";
 
 import {
   IDLE_AUDIO_SNAPSHOT,
@@ -31,25 +31,7 @@ function hasAudibleEnergy(snapshot: AudioReactiveSnapshot): boolean {
   );
 }
 
-function currentQuality(): { quality: VisualQuality; reducedMotion: boolean } {
-  if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
-    return { quality: "HIGH", reducedMotion: false };
-  }
-
-  const low = window.matchMedia("(max-width: 760px)").matches;
-  const medium = window.matchMedia(
-    "(min-width: 761px) and (max-width: 1100px)",
-  ).matches;
-  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  return {
-    quality: low ? "LOW" : medium ? "MEDIUM" : "HIGH",
-    reducedMotion,
-  };
-}
-
 function emptyFrame(snapshot: AudioReactiveSnapshot): AudioVisualizationFrame {
-  const { quality, reducedMotion } = currentQuality();
   return {
     snapshot,
     frequencyData: new Uint8Array(0),
@@ -60,8 +42,8 @@ function emptyFrame(snapshot: AudioReactiveSnapshot): AudioVisualizationFrame {
     frequencyFftSize: 4_096,
     frameId: 0,
     sourceRevision: 0,
-    quality,
-    reducedMotion,
+    quality: "HIGH",
+    reducedMotion: false,
   };
 }
 
@@ -100,12 +82,39 @@ export function useAudioAnalysis(
   analysersRef: MutableRefObject<AudioAnalyserBundle | null>,
   options: { active: boolean; resetKey: string | null },
 ): AudioVisualizationBus {
-  const initialSnapshot = { ...IDLE_AUDIO_SNAPSHOT };
-  const frameRef = useRef<AudioVisualizationFrame>(emptyFrame(initialSnapshot));
-  const analysisStateRef = useRef<AudioAnalysisState>(createAudioAnalysisState());
+  const [initial] = useState(() => {
+    const state = createAudioAnalysisState();
+    return { state, frame: emptyFrame(state.snapshot) };
+  });
+  const frameRef = useRef<AudioVisualizationFrame>(initial.frame);
+  const analysisStateRef = useRef<AudioAnalysisState>(initial.state);
+  const qualityRef = useRef<{ quality: VisualQuality; reducedMotion: boolean }>({
+    quality: "HIGH",
+    reducedMotion: false,
+  });
   const listenersRef = useRef(new Set<AudioVisualizationListener>());
   const synchronizeClockRef = useRef<() => void>(() => {});
   const resetKeyRef = useRef(options.resetKey);
+
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
+    const low = window.matchMedia("(max-width: 760px)");
+    const medium = window.matchMedia("(min-width: 761px) and (max-width: 1100px)");
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateQuality = () => {
+      qualityRef.current = {
+        quality: low.matches ? "LOW" : medium.matches ? "MEDIUM" : "HIGH",
+        reducedMotion: reduced.matches,
+      };
+      Object.assign(frameRef.current, qualityRef.current);
+    };
+    updateQuality();
+    const queries = [low, medium, reduced];
+    for (const query of queries) query.addEventListener("change", updateQuality);
+    return () => {
+      for (const query of queries) query.removeEventListener("change", updateQuality);
+    };
+  }, []);
 
   const publish = (frame: AudioVisualizationFrame, time: number) => {
     frameRef.current = frame;
@@ -134,7 +143,7 @@ export function useAudioAnalysis(
     analysisStateRef.current = createAudioAnalysisState();
     const previousFrame = frameRef.current;
     clearFrameBuffers(previousFrame);
-    const { quality, reducedMotion } = currentQuality();
+    const { quality, reducedMotion } = qualityRef.current;
     publish({
       ...previousFrame,
       snapshot: { ...IDLE_AUDIO_SNAPSHOT },
@@ -179,7 +188,7 @@ export function useAudioAnalysis(
 
       const bundle = analysersRef.current;
       const previousFrame = frameRef.current;
-      const { quality, reducedMotion } = currentQuality();
+      const { quality, reducedMotion } = qualityRef.current;
 
       if (options.active && bundle?.frequency) {
         const buffers = arraysFor(previousFrame, bundle);

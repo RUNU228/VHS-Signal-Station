@@ -1,5 +1,7 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
@@ -34,6 +36,7 @@ export function nextOscilloscopePeakFrame(
   event: OscilloscopePeakEvent,
 ): OscilloscopePeakFrame {
   if (previous.peakEventId !== event.peakEventId) {
+
     const peakStrength = Math.min(1, Math.max(0, event.peakStrength));
     return {
       peakEventId: event.peakEventId,
@@ -96,6 +99,7 @@ export function Oscilloscope({
   analysis: AudioVisualizationBus;
   active: boolean;
 }) {
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sourceRevisionRef = useRef<number | null>(null);
   const peakFrameRef = useRef<OscilloscopePeakFrame>({
@@ -220,15 +224,15 @@ export function Oscilloscope({
 
   return (
     <VisualizerFrame
-      title="OSCILLOSCOPE"
-      serial="TRIGGER / AUTO"
+      title={t.visualizers.oscilloscope}
+      serial={t.visualizers.scopeSerial}
       canvasRef={canvasRef}
       active={active}
       className="module--oscilloscope"
-      meta={<span>0.5 MS/DIV</span>}
+      meta={<span>{t.visualizers.division}</span>}
     >
-      <span className="screen-label screen-label--tl">CH A</span>
-      <span className="screen-label screen-label--br">TRIG +</span>
+      <span className="screen-label screen-label--tl">{t.visualizers.channel}</span>
+      <span className="screen-label screen-label--br">{t.visualizers.trigger}</span>
     </VisualizerFrame>
   );
 }

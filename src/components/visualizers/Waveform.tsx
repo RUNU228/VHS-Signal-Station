@@ -1,14 +1,18 @@
 "use client";
 
+import { useLanguage } from "@/components/LanguageProvider";
+
 import { useCallback, useRef } from "react";
 
 import { useCanvasSurface } from "@/hooks/useCanvasSurface";
 import { useVisualizationFrame } from "@/hooks/useVisualizationFrame";
 import { toMidSide } from "@/lib/audio/midSide";
 import {
-  localSignalLevel,
-  signalColorForLevel,
-} from "@/lib/visualization/signalTheme";
+  createWaveformColors,
+  addWaveformColorStops,
+  pushWaveformColor,
+  waveformColorForPosition,
+} from "@/lib/visualization/waveformColor";
 import {
   clearWaveformHistory,
   createWaveformHistory,
@@ -39,24 +43,31 @@ export function Waveform({
   analysis: AudioVisualizationBus;
   active: boolean;
 }) {
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const buffersRef = useRef<WaveBuffers | null>(null);
-  const historyRef = useRef<ChannelHistory>({
-    mid: createWaveformHistory(HISTORY_COLUMNS),
-    side: createWaveformHistory(HISTORY_COLUMNS),
-  });
+  const historyRef = useRef<ChannelHistory | null>(null);
+  const colorsRef = useRef<ReturnType<typeof createWaveformColors> | null>(null);
   const sourceRevisionRef = useRef<number | null>(null);
   useCanvasSurface(canvasRef);
 
-  const draw = useCallback((frame: AudioVisualizationFrame) => {
+  const draw = useCallback((frame: AudioVisualizationFrame, time: number) => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
 
+    const histories = historyRef.current ??= {
+      mid: createWaveformHistory(HISTORY_COLUMNS),
+      side: createWaveformHistory(HISTORY_COLUMNS),
+    };
+    const colors = colorsRef.current ??= createWaveformColors(HISTORY_COLUMNS);
+    pushWaveformColor(colors, frame.frequencyData, frame.sampleRate,
+      frame.frequencyFftSize, time, frame.sourceRevision);
+
     if (sourceRevisionRef.current !== frame.sourceRevision) {
       sourceRevisionRef.current = frame.sourceRevision;
-      clearWaveformHistory(historyRef.current.side);
-      clearWaveformHistory(historyRef.current.mid);
+      clearWaveformHistory(histories.side);
+      clearWaveformHistory(histories.mid);
     }
 
     const size = Math.min(
@@ -78,11 +89,11 @@ export function Waveform({
     );
 
     pushWaveformColumn(
-      historyRef.current.side,
+      histories.side,
       measureWaveformColumn(buffers.side),
     );
     pushWaveformColumn(
-      historyRef.current.mid,
+      histories.mid,
       measureWaveformColumn(buffers.mid),
     );
 
@@ -91,10 +102,13 @@ export function Waveform({
     context.fillStyle = "rgba(5, 7, 7, .48)";
     context.fillRect(0, 0, width, height);
 
+    const gradient = context.createLinearGradient(0, 0, width, 0);
+    addWaveformColorStops(gradient, colors.history);
+
     for (let traceIndex = 0; traceIndex < 2; traceIndex += 1) {
       const history = traceIndex === 0
-        ? historyRef.current.side
-        : historyRef.current.mid;
+        ? histories.side
+        : histories.mid;
       const center = height * (traceIndex === 0 ? 0.27 : 0.73);
       context.strokeStyle = "rgba(111, 145, 168, .18)";
       context.lineWidth = 1;
@@ -113,16 +127,8 @@ export function Waveform({
           HISTORY_COLUMNS - 1,
           start + HISTORY_SEGMENT_LENGTH,
         );
-        let segmentEnergy = 0;
-        for (let index = start; index <= end; index += 1) {
-          segmentEnergy = Math.max(segmentEnergy, history.localEnergy[index]);
-        }
-        const colorLevel = localSignalLevel(
-          segmentEnergy,
-          frame.snapshot.overallEnergy,
-        );
-
-        context.fillStyle = signalColorForLevel(colorLevel, 0.16);
+        context.fillStyle = gradient;
+        context.globalAlpha = 0.16;
         context.beginPath();
         for (let index = start; index <= end; index += 1) {
           const x = (index / (HISTORY_COLUMNS - 1)) * width;
@@ -137,8 +143,11 @@ export function Waveform({
         context.closePath();
         context.fill();
 
-        context.strokeStyle = signalColorForLevel(colorLevel, 0.9);
-        context.shadowColor = signalColorForLevel(colorLevel, 0.46);
+        context.strokeStyle = gradient;
+        context.globalAlpha = 0.9;
+        context.shadowColor = waveformColorForPosition(
+          colors.history[Math.floor((start + end) / 2)], true,
+        );
         context.shadowBlur = 4;
         context.lineWidth = Math.max(1, canvas.width / 1100);
         context.beginPath();
@@ -156,7 +165,8 @@ export function Waveform({
         }
         context.stroke();
 
-        context.strokeStyle = signalColorForLevel(colorLevel, 0.58);
+        context.strokeStyle = gradient;
+        context.globalAlpha = 0.58;
         context.lineWidth = Math.max(1, canvas.width / 1400);
         context.beginPath();
         for (let index = start; index <= end; index += 1) {
@@ -166,6 +176,7 @@ export function Waveform({
           else context.lineTo(x, y);
         }
         context.stroke();
+        context.globalAlpha = 1;
       }
       context.shadowBlur = 0;
     }
@@ -175,15 +186,15 @@ export function Waveform({
 
   return (
     <VisualizerFrame
-      title="WAVEFORM"
-      serial="M/S HISTORY / DUAL"
+      title={t.visualizers.waveform}
+      serial={t.visualizers.waveSerial}
       canvasRef={canvasRef}
       active={active}
       className="module--waveform"
-      meta={<span>6 SEC / SCROLL</span>}
+      meta={<span>{t.visualizers.scroll}</span>}
     >
-      <span className="channel-label channel-label--one">CHANNEL 1 — SIDE</span>
-      <span className="channel-label channel-label--two">CHANNEL 2 — MID</span>
+      <span className="channel-label channel-label--one">{t.visualizers.side}</span>
+      <span className="channel-label channel-label--two">{t.visualizers.mid}</span>
     </VisualizerFrame>
   );
 }
